@@ -1,0 +1,3 @@
+1370c94c3c2f650571b8ec9687fbb5f5861342960f3ead089ef0417ce168462d  WrapLab-0.1.0-Windows-x64-onedir-diagnostic.zip
+94610c39f04aa8cb8297212dc56fc27e3e153d89d1a6770d798e02abbbbe9ccd  WrapLab-0.1.0-Windows-Corel-Acceptance.zip
+95c8b3550fe4d0bd42d34b1c74db275c48cd7c835a76effb08008c3601984ecd  WrapLab-0.1.0-Windows-validation.json

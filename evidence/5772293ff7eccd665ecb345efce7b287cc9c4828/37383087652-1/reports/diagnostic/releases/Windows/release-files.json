@@ -1,0 +1,17 @@
+[
+  {
+    "file": "WrapLab-0.1.0-Windows-x64-onedir-diagnostic.zip",
+    "bytes": 81893640,
+    "sha256": "1370c94c3c2f650571b8ec9687fbb5f5861342960f3ead089ef0417ce168462d"
+  },
+  {
+    "file": "WrapLab-0.1.0-Windows-Corel-Acceptance.zip",
+    "bytes": 119925,
+    "sha256": "94610c39f04aa8cb8297212dc56fc27e3e153d89d1a6770d798e02abbbbe9ccd"
+  },
+  {
+    "file": "WrapLab-0.1.0-Windows-validation.json",
+    "bytes": 14327,
+    "sha256": "95c8b3550fe4d0bd42d34b1c74db275c48cd7c835a76effb08008c3601984ecd"
+  }
+]

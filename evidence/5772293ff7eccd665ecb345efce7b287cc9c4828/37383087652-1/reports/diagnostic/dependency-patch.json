@@ -1,0 +1,14 @@
+{
+  "id": "numpy-2.2.6-windows-testing-platform-1",
+  "package": "numpy",
+  "version": "2.2.6",
+  "file": "numpy/testing/_private/utils.py",
+  "original_line": "IS_WASM = platform.machine() in [\"wasm32\", \"wasm64\"]",
+  "replacement_line": "IS_WASM = sys.platform in (\"emscripten\", \"wasi\")  # WrapLab build: no OS/CPU probe for WebAssembly detection.",
+  "original_sha256": "1d4fb548bcc931af8e9c9b6dadc2e503851c63e141a05eee85cc4b324342b75b",
+  "patched_sha256": "f2b8542829deb1f0b01dea2e0c8030b046bfc2b21cf8c580112271f87386ea3b",
+  "reason": "Avoid local WMI OS/CPU queries and their possible shell fallback during scientific-library import; WebAssembly is identified by sys.platform",
+  "numerical_code_changed": false,
+  "native_binaries_changed": false,
+  "runtime_monkeypatch": false
+}

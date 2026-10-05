@@ -1,0 +1,159 @@
+Files Processed:
+	D:\a\wraplab\wraplab\artifacts\forensics\kernel.etl
+Total Buffers Processed 167
+Total Events  Processed 1259665
+Total Events  Lost      0
+Start Time              Monday, October 5, 2026
+End Time                Monday, October 5, 2026
+Elapsed Time            97 sec
++-------------------------------------------------------------------------------------------------------------------------+
+|Event Count   Event Name           Task            Opcode          Version         Guid                                  |
++-------------------------------------------------------------------------------------------------------------------------+
+|          1   EventTrace           0               PartitionInfoExtension 2               {68fdd900-4a3e-11d1-84f4-0000f80464e3}|
+|          1   EventTrace           0               Header          2               {68fdd900-4a3e-11d1-84f4-0000f80464e3}|
+|          2   Microsoft-Windows-Kernel-Registry  1               Stop            0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          2   Microsoft-Windows-Kernel-Registry  1               RegPerfOpHiveMountBaseFileMounted 0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          2   Microsoft-Windows-Kernel-Registry  1               Start           0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          1   Microsoft-Windows-Kernel-Registry  7               Stop            0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          1   Microsoft-Windows-Kernel-Registry  7               RegPerfOpSaveTreeCopied 0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          1   Microsoft-Windows-Kernel-Registry  7               Start           0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          3   Microsoft-Windows-Kernel-Registry  5               Stop            0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          3   Microsoft-Windows-Kernel-Registry  5               Start           0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          6   Microsoft-Windows-Kernel-Registry  0               FlushKey        0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          4   Microsoft-Windows-Kernel-Registry  2               Stop            0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          4   Microsoft-Windows-Kernel-Registry  3               RegPerfOpHiveFlushWrotePrimaryFile 0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          4   Microsoft-Windows-Kernel-Registry  2               Start           0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|        292   Microsoft-Windows-Kernel-Registry  0               SetSecurityKey  0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|        210   Microsoft-Windows-Kernel-Registry  0               DeleteValueKey  0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|         16   Microsoft-Windows-Kernel-Registry  0               QueryMultipleValueKey 0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|         97   Microsoft-Windows-Kernel-Registry  3               Stop            0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|         12   Microsoft-Windows-Kernel-Registry  3               RegPerfOpHiveFlushWroteLogFile 0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|         97   Microsoft-Windows-Kernel-Registry  3               Start           0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|        182   Microsoft-Windows-Kernel-Registry  0               DeleteKey       0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|       2397   Microsoft-Windows-Kernel-Registry  0               SetValueKey     0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      12628   Microsoft-Windows-Kernel-Registry  0               CreateKey       0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|       1222   Microsoft-Windows-Kernel-Registry  0               QuerySecurityKey 0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|       1429   Microsoft-Windows-Kernel-Registry  0               SetInformationKey 0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      46955   Microsoft-Windows-Kernel-Registry  0               QueryKey        0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|       5600   Microsoft-Windows-Kernel-Registry  0               EnumerateValueKey 0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      15297   Microsoft-Windows-Kernel-Registry  0               EnumerateKey    0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      70220   Microsoft-Windows-Kernel-Registry  0               OpenKey         0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      47168   Microsoft-Windows-Kernel-Registry  0               CloseKey        0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      84157   Microsoft-Windows-Kernel-Registry  0               QueryValueKey   0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|         28   Microsoft-Windows-Kernel-Process  1               Start           4               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|       3116   Microsoft-Windows-Kernel-Process  5               Info            0               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|         25   Microsoft-Windows-Kernel-Process  2               Stop            2               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|        662   Microsoft-Windows-Kernel-Process  4               Stop            1               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|       2984   Microsoft-Windows-Kernel-Process  6               Info            0               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|        622   Microsoft-Windows-Kernel-Process  3               Start           1               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|         38   Microsoft-Windows-Kernel-File  28              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|         56   Microsoft-Windows-Kernel-File  31              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|          2   Microsoft-Windows-Kernel-File  25              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        277   Microsoft-Windows-Kernel-File  33              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        410   Microsoft-Windows-Kernel-File  21              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        198   Microsoft-Windows-Kernel-File  26              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        198   Microsoft-Windows-Kernel-File  18              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|       3614   Microsoft-Windows-Kernel-File  23              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        874   Microsoft-Windows-Kernel-File  17              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|       3521   Microsoft-Windows-Kernel-File  11              Info            0               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        187   Microsoft-Windows-Kernel-File  27              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        225   Microsoft-Windows-Kernel-File  19              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|       7997   Microsoft-Windows-Kernel-File  16              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        238   Microsoft-Windows-Kernel-File  34              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|       1264   Microsoft-Windows-Kernel-File  32              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        728   Microsoft-Windows-Kernel-File  30              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      58954   Microsoft-Windows-Kernel-File  14              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      95515   Microsoft-Windows-Kernel-File  20              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      71654   Microsoft-Windows-Kernel-File  22              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      31193   Microsoft-Windows-Kernel-File  10              Info            0               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      63689   Microsoft-Windows-Kernel-File  12              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      58739   Microsoft-Windows-Kernel-File  13              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|     463971   Microsoft-Windows-Kernel-File  24              Info            0               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|     100268   Microsoft-Windows-Kernel-File  15              Info            1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|          4   Microsoft-Windows-Kernel-Network  11              Data received over UDP protocol.  0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|          4   Microsoft-Windows-Kernel-Network  11              Data sent over UDP protocol.  0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|         40   Microsoft-Windows-Kernel-Network  10              Disconnect issued.  0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|         41   Microsoft-Windows-Kernel-Network  10              Connection attempted.  0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|         95   Microsoft-Windows-Kernel-Network  10              Data received.  0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|         87   Microsoft-Windows-Kernel-Network  10              Data sent.      0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|        133   Microsoft-Windows-WMI-Activity  0               0               0               {1418ef04-b0b4-4623-bf7e-d74ab47bbdaa}|
++-------------------------------------------------------------------------------------------------------------------------+
++---------------------------------------------------------------------------------------------------------+
+|Event Count   Event Name           Event ID        Version         Guid                                  |
++---------------------------------------------------------------------------------------------------------+
+|          2   EventTrace           0               2               {68fdd900-4a3e-11d1-84f4-0000f80464e3}|
+|      12628   Microsoft-Windows-Kernel-Registry  1               0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      70220   Microsoft-Windows-Kernel-Registry  2               0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|        182   Microsoft-Windows-Kernel-Registry  3               0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      46955   Microsoft-Windows-Kernel-Registry  4               0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|       2397   Microsoft-Windows-Kernel-Registry  5               0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|        210   Microsoft-Windows-Kernel-Registry  6               0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      84157   Microsoft-Windows-Kernel-Registry  7               0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      15297   Microsoft-Windows-Kernel-Registry  8               0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|       5600   Microsoft-Windows-Kernel-Registry  9               0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|         16   Microsoft-Windows-Kernel-Registry  10              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|       1429   Microsoft-Windows-Kernel-Registry  11              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          6   Microsoft-Windows-Kernel-Registry  12              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|      47168   Microsoft-Windows-Kernel-Registry  13              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|       1222   Microsoft-Windows-Kernel-Registry  14              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|        292   Microsoft-Windows-Kernel-Registry  15              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          2   Microsoft-Windows-Kernel-Registry  16              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          2   Microsoft-Windows-Kernel-Registry  17              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          2   Microsoft-Windows-Kernel-Registry  19              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          4   Microsoft-Windows-Kernel-Registry  20              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          4   Microsoft-Windows-Kernel-Registry  21              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|         97   Microsoft-Windows-Kernel-Registry  22              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|         12   Microsoft-Windows-Kernel-Registry  26              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          4   Microsoft-Windows-Kernel-Registry  27              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|         97   Microsoft-Windows-Kernel-Registry  31              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          3   Microsoft-Windows-Kernel-Registry  37              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          3   Microsoft-Windows-Kernel-Registry  38              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          1   Microsoft-Windows-Kernel-Registry  41              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          1   Microsoft-Windows-Kernel-Registry  43              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|          1   Microsoft-Windows-Kernel-Registry  45              0               {70eb4f03-c1de-4f73-a051-33d13d5413bd}|
+|         28   Microsoft-Windows-Kernel-Process  1               4               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|         25   Microsoft-Windows-Kernel-Process  2               2               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|        622   Microsoft-Windows-Kernel-Process  3               1               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|        662   Microsoft-Windows-Kernel-Process  4               1               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|       3116   Microsoft-Windows-Kernel-Process  5               0               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|       2984   Microsoft-Windows-Kernel-Process  6               0               {22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716}|
+|      31193   Microsoft-Windows-Kernel-File  10              0               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|       3521   Microsoft-Windows-Kernel-File  11              0               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      63689   Microsoft-Windows-Kernel-File  12              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      58739   Microsoft-Windows-Kernel-File  13              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      58954   Microsoft-Windows-Kernel-File  14              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|     100268   Microsoft-Windows-Kernel-File  15              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|       7997   Microsoft-Windows-Kernel-File  16              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        874   Microsoft-Windows-Kernel-File  17              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        198   Microsoft-Windows-Kernel-File  18              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        187   Microsoft-Windows-Kernel-File  19              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      95515   Microsoft-Windows-Kernel-File  20              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        410   Microsoft-Windows-Kernel-File  21              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|      71654   Microsoft-Windows-Kernel-File  22              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|       3614   Microsoft-Windows-Kernel-File  23              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|     463971   Microsoft-Windows-Kernel-File  24              0               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|          2   Microsoft-Windows-Kernel-File  25              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        198   Microsoft-Windows-Kernel-File  26              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        187   Microsoft-Windows-Kernel-File  27              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|         38   Microsoft-Windows-Kernel-File  28              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|         38   Microsoft-Windows-Kernel-File  29              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        728   Microsoft-Windows-Kernel-File  30              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|         56   Microsoft-Windows-Kernel-File  31              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|       1264   Microsoft-Windows-Kernel-File  32              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        277   Microsoft-Windows-Kernel-File  33              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|        238   Microsoft-Windows-Kernel-File  34              1               {edd08927-9cc4-4e65-b970-c2560fb5c289}|
+|         87   Microsoft-Windows-Kernel-Network  10              0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|         95   Microsoft-Windows-Kernel-Network  11              0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|         41   Microsoft-Windows-Kernel-Network  12              0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|         40   Microsoft-Windows-Kernel-Network  13              0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|          4   Microsoft-Windows-Kernel-Network  42              0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|          4   Microsoft-Windows-Kernel-Network  43              0               {7dd42a49-5329-4832-8dfd-43d979153a88}|
+|         29   Microsoft-Windows-WMI-Activity  11              0               {1418ef04-b0b4-4623-bf7e-d74ab47bbdaa}|
+|         14   Microsoft-Windows-WMI-Activity  12              0               {1418ef04-b0b4-4623-bf7e-d74ab47bbdaa}|
+|         28   Microsoft-Windows-WMI-Activity  13              0               {1418ef04-b0b4-4623-bf7e-d74ab47bbdaa}|
+|          2   Microsoft-Windows-WMI-Activity  16              0               {1418ef04-b0b4-4623-bf7e-d74ab47bbdaa}|
+|         44   Microsoft-Windows-WMI-Activity  50              0               {1418ef04-b0b4-4623-bf7e-d74ab47bbdaa}|
+|         13   Microsoft-Windows-WMI-Activity  100             0               {1418ef04-b0b4-4623-bf7e-d74ab47bbdaa}|
+|          2   Microsoft-Windows-WMI-Activity  5857            0               {1418ef04-b0b4-4623-bf7e-d74ab47bbdaa}|
+|          1   Microsoft-Windows-WMI-Activity  5858            0               {1418ef04-b0b4-4623-bf7e-d74ab47bbdaa}|
++---------------------------------------------------------------------------------------------------------+

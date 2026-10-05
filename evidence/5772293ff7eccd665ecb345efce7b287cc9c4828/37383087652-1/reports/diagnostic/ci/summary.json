@@ -1,0 +1,60 @@
+{
+  "source_commit": "5772293ff7eccd665ecb345efce7b287cc9c4828",
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "python": "3.12.10",
+  "checks": [
+    {
+      "name": "install",
+      "exit_code": 0,
+      "seconds": 30.59
+    },
+    {
+      "name": "project-install",
+      "exit_code": 0,
+      "seconds": 2.42
+    },
+    {
+      "name": "dependency-check",
+      "exit_code": 0,
+      "seconds": 0.39
+    },
+    {
+      "name": "documented-dependency-patch",
+      "exit_code": 0,
+      "seconds": 0.12
+    },
+    {
+      "name": "lint",
+      "exit_code": 0,
+      "seconds": 0.09
+    },
+    {
+      "name": "tests",
+      "exit_code": 0,
+      "seconds": 63.97
+    },
+    {
+      "name": "audit-environment",
+      "exit_code": 0,
+      "seconds": 4.3
+    },
+    {
+      "name": "audit-install",
+      "exit_code": 0,
+      "seconds": 6.33
+    },
+    {
+      "name": "security-audit",
+      "exit_code": 0,
+      "seconds": 1.69
+    },
+    {
+      "name": "portable-build",
+      "exit_code": 0,
+      "seconds": 142.67
+    }
+  ],
+  "status": "passed",
+  "tests_passed": 150,
+  "independent_fixtures_passed": 18
+}
