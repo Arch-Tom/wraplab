@@ -1,0 +1,23 @@
+{
+  "commit": "fa8750032109507e144537ed498df55faa9ae828",
+  "branch": "work",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "artifacts": [
+    {
+      "path": "artifacts/WrapLab-0.1.0-Linux-x86_64-portable.zip",
+      "bytes": 160846974,
+      "sha256": "8a6b1630254cc1e58369675bf0b8763dca49dbb59b4788809abe41434cb9ac76"
+    },
+    {
+      "path": "artifacts/WrapLab-Corel-Acceptance.zip",
+      "bytes": 119280,
+      "sha256": "2017dd57d1bf55e34e32ed9e6391facbfae3bf973a4a3b8470dc5a796306137b"
+    },
+    {
+      "path": "artifacts/WrapLab-source.bundle",
+      "bytes": 87393,
+      "sha256": "cca93fb327b108842c45e1d32318542de2928a1a1afd7f3e4c3597083d30ab24"
+    }
+  ]
+}

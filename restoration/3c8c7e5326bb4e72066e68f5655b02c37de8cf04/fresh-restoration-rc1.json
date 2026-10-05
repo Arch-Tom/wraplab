@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "recorded_at_utc": "2026-10-05T04:08:33.219940+00:00",
+  "validation_kind": "fresh_remote_clone_and_new_virtual_environment_on_existing_cloud_host",
+  "source": {
+    "remote": "https://github.com/Arch-Tom/wraplab.git",
+    "tag": "v0.1.0-rc1",
+    "tag_object": "1e274e40d23beb7071191a3e9333128e5d6b986d",
+    "commit": "3faf0a66282ae80221ed3c67aa4d9af2184a7ae8",
+    "tree": "9e265441add10149e3f23bed30ec8a2e5e2db718",
+    "path": "/tmp/wraplab-restoration-rc1",
+    "tracked_source_unchanged": true,
+    "working_tree_clean": true
+  },
+  "environment": {
+    "executable": "/tmp/wraplab-restoration-rc1/.venv/bin/python",
+    "prefix": "/tmp/wraplab-restoration-rc1/.venv",
+    "base_prefix": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python",
+    "version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "venv_created_from_documented_setup": true,
+    "fresh_virtual_environment": true,
+    "existing_venv_reused": false,
+    "python_package_cache": "/workspace/.cache/wraplab-pip",
+    "QT_QPA_PLATFORM": "offscreen",
+    "XDG_DATA_HOME": "/tmp/wraplab-restoration-rc1/artifacts/data",
+    "XDG_CACHE_HOME": "/tmp/wraplab-restoration-rc1/artifacts/cache",
+    "native_platform": "Linux"
+  },
+  "commands": [
+    {
+      "command": "git clone https://github.com/Arch-Tom/wraplab.git /tmp/wraplab-restoration-rc1",
+      "exit_code": 0
+    },
+    {
+      "command": "git checkout --detach v0.1.0-rc1",
+      "exit_code": 0
+    },
+    {
+      "command": "PIP_CACHE_DIR=/workspace/.cache/wraplab-pip bash scripts/setup.sh",
+      "exit_code": 0,
+      "log": "/tmp/wraplab-restoration-rc1/artifacts/restoration-logs/setup.log"
+    },
+    {
+      "command": ".venv/bin/python -m pip check",
+      "exit_code": 0,
+      "log": "/tmp/wraplab-restoration-rc1/artifacts/restoration-logs/pip-check.log"
+    },
+    {
+      "command": ".venv/bin/python -m pytest -q",
+      "exit_code": 0,
+      "passed": 147,
+      "duration_seconds": 35.19,
+      "log": "/tmp/wraplab-restoration-rc1/artifacts/restoration-logs/pytest.log"
+    },
+    {
+      "command": ".venv/bin/python -m ruff check src tests scripts",
+      "exit_code": 0,
+      "log": "/tmp/wraplab-restoration-rc1/artifacts/restoration-logs/ruff.log"
+    },
+    {
+      "command": ".venv/bin/python -m wraplab --self-test artifacts/restoration-smoke",
+      "exit_code": 0,
+      "log": "/tmp/wraplab-restoration-rc1/artifacts/restoration-logs/source-self-test.log"
+    },
+    {
+      "command": ".venv/bin/python scripts/build_portable.py --output-root artifacts/fresh-native-build",
+      "exit_code": 0,
+      "log": "/tmp/wraplab-restoration-rc1/artifacts/restoration-logs/build-portable.log"
+    }
+  ],
+  "source_self_test": {
+    "status": "passed",
+    "exports": 12,
+    "report": "/tmp/wraplab-restoration-rc1/artifacts/restoration-smoke/report.json"
+  },
+  "native_build": {
+    "status": "passed",
+    "source_commit": "3faf0a66282ae80221ed3c67aa4d9af2184a7ae8",
+    "extracted_archive_tested": true,
+    "frozen_qt_launch_exports": 12,
+    "restart_verified": true,
+    "read_only_install": "POSIX read-only modes",
+    "denied_export_preserved_existing_file": true,
+    "unicode_and_spaces_verified": true,
+    "long_path_characters": 297,
+    "corel_specimens": 14,
+    "source_vs_packaged": {
+      "status": "passed",
+      "tolerance_mm": 2e-06,
+      "specimens": [
+        {
+          "file": "01-cylinder-front.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 2118,
+          "candidate_nodes": 2118
+        },
+        {
+          "file": "02-frustum-front.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 1866,
+          "candidate_nodes": 1866
+        },
+        {
+          "file": "03-bell-front-experimental.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 1089,
+          "candidate_nodes": 1089
+        },
+        {
+          "file": "04-compound-lettering.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 1048,
+          "candidate_nodes": 1048
+        },
+        {
+          "file": "05-bell-guides-experimental.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 1350,
+          "candidate_nodes": 1350
+        },
+        {
+          "file": "06-bell-uncompensated.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 407,
+          "candidate_nodes": 407
+        },
+        {
+          "file": "07-reverse-frustum-front.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 1866,
+          "candidate_nodes": 1866
+        },
+        {
+          "file": "08-cylinder-full-template.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 8,
+          "candidate_nodes": 8
+        },
+        {
+          "file": "09-frustum-full-template.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 325,
+          "candidate_nodes": 325
+        },
+        {
+          "file": "10-reference-100mm.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 4,
+          "candidate_nodes": 4
+        },
+        {
+          "file": "11-reference-25mm.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 4,
+          "candidate_nodes": 4
+        },
+        {
+          "file": "12-reference-inch.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 4,
+          "candidate_nodes": 4
+        },
+        {
+          "file": "13-hebrew-path-geometry.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 282,
+          "candidate_nodes": 282
+        },
+        {
+          "file": "14-eight-counters.svg",
+          "identical_bytes": true,
+          "max_edge_difference_mm": 0.0,
+          "reference_nodes": 424,
+          "candidate_nodes": 424
+        }
+      ]
+    },
+    "report": "/tmp/wraplab-restoration-rc1/artifacts/fresh-native-build/WrapLab-0.1.0-Linux-validation.json",
+    "validation_directory": "/tmp/wraplab-restoration-rc1/artifacts/fresh-native-build/validation",
+    "archives_and_reports": [
+      {
+        "file": "WrapLab-0.1.0-Linux-x64-portable.zip",
+        "bytes": 160702655,
+        "sha256": "41aa5cedf01b8ccf04c1afca7c8b15c58368d2d2d65cdf4d2874151eb417999a"
+      },
+      {
+        "file": "WrapLab-0.1.0-Linux-Corel-Acceptance.zip",
+        "bytes": 119918,
+        "sha256": "08aee2616e2ca85631d3cd514e20fa8df19fd86e5f59dea0216441c2e751d6a7"
+      },
+      {
+        "file": "WrapLab-0.1.0-Linux-validation.json",
+        "bytes": 11494,
+        "sha256": "33b768c4f5bb7a029dc8c68d97b7a217082c1753d1d0a22e9747f74a0f4e91d8"
+      }
+    ],
+    "archive_hashes_reverified": true
+  },
+  "log_sha256": {
+    "build-portable.log": "b16594c56fce34f67f5f3a1c6834242ed418c4dcc4309f4c1b47a6032dc335db",
+    "pip-check.log": "35bb3d1e4d1d0091788acae77c6d707f1dfb81d2384e34fd54a205f9497ce313",
+    "pytest.log": "9891cfc9e9a75882335d07ea56a66c826d85b7c1668449bcc8e4d82aa0fd750f",
+    "ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "setup.log": "888df25ab6d6985f72209c92b673dc029c712cd7019b843ec6a587dfa628eff5",
+    "source-self-test.log": "f1793905983613adc152110286cff162820d9e98d830567e6032bfff0dbe6622"
+  },
+  "limits": {
+    "new_cloud_task_verified": false,
+    "cloud_environment_publication_verified": false,
+    "native_windows_restoration_verified_by_this_run": false,
+    "coreldraw_2019_verified": false,
+    "physical_vinyl_application_verified": false,
+    "notes": [
+      "This is a fresh GitHub clone, new venv, install, source tests, and actual rebuilt/extracted native Linux package validation on the existing cloud machine.",
+      "It is not a native Windows test, a Corel import test, or a physical bell application test.",
+      "The existing main checkout and earlier artifacts were not changed; only a new JSON evidence report is copied into its artifacts directory.",
+      "pip check printed a disabled default home cache warning and returned success with no broken requirements. Setup used the explicitly requested writable package cache."
+    ]
+  }
+}
