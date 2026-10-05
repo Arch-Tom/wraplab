@@ -61,6 +61,8 @@ def main():
             ],
         )
         run("dependency-check", [sys.executable, "-m", "pip", "check"])
+        if os.name == "nt":
+            run("documented-dependency-patch", [sys.executable, "scripts/patch_build_dependencies.py"])
         run("lint", [sys.executable, "-m", "ruff", "check", "src", "tests", "scripts"])
         run("tests", [sys.executable, "-m", "pytest", "-q", "--junitxml", str(OUT / "tests.xml")])
         cases = ET.parse(OUT / "tests.xml").getroot().findall(".//testcase")

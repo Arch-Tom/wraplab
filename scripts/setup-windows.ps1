@@ -6,4 +6,6 @@ if ($LASTEXITCODE -ne 0) { throw 'Python 3.12 is required.' }
 if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
 & .\.venv\Scripts\python.exe -m pip install --no-deps --no-build-isolation -e .
 if ($LASTEXITCODE -ne 0) { throw 'WrapLab installation failed.' }
+& .\.venv\Scripts\python.exe scripts/patch_build_dependencies.py
+if ($LASTEXITCODE -ne 0) { throw 'Documented Windows dependency patch failed.' }
 Write-Output 'Launch: .\.venv\Scripts\python.exe -m wraplab'

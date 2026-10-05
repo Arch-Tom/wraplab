@@ -64,6 +64,7 @@ writes a diagnostic text log only when an external tester supplies it.
 | Unused Qt TUIO plugin and its QtNetwork/TLS dependencies | Unnecessary bundle content | TUIO source can bind UDP 3333 when activated; mere presence is not activation or a proven trigger. Omitted via narrow build hook/module exclusion |
 | NumPy `_multiarray_tests` native extension | Unnecessary test helper | Never used by WrapLab; excluded, other numerical modules retained |
 | `platform.platform/system/machine` in Windows QA reports | Optional QA; WMI OS/CPU queries and possible shell fallback | Changed to `sys.getwindowsversion/sysconfig`, without altering geometry. No normal GUI use before change |
+| NumPy test-helper `IS_WASM = platform.machine() ...` at import | Unnecessary indirect startup OS/CPU WMI queries | Native service-side trace confirms normal source, RC4 and the first diagnostic GUI query Win32_OperatingSystem and Win32_Processor. The Windows build applies a documented, hash-checked one-line dependency patch to use `sys.platform` for WebAssembly detection. Numerical code and native libraries remain unchanged |
 | CPython socket/ssl/ctypes/WMI/multiprocessing components and crypto DLLs | Suspicious-looking but legitimate library dependencies | Presence is not application use. Retained to avoid fragile trimming or provoking platform shell fallback |
 | NumPy F2PY compiler support and NumPy/SciPy test utility functions | Suspicious-looking but legitimate dependency namespace | Dormant compiler/shell functions exist in third-party code. SciPy's array-api namespace imports `from numpy import *`; PyInstaller documents that removing F2PY breaks NumPy 2 imports. No WrapLab invocation/API; retained rather than breaking geometry dependencies |
 | Missing PE version identity/default icon | Accidental packaging omission | Makes provenance less clear; added honest WrapLab identity and project icon |
@@ -100,6 +101,28 @@ A onefile comparison is not needed to explain this already-onedir release and wo
 introduce an unnecessary second architecture. No onefile candidate is shipped here.
 
 ## Changes and reproducibility
+
+The first diagnostic (`4652a380cb5740d0dcd110b9857c4c7ae17b414c`) removed
+application QA probes but still inherited a NumPy test-helper probe. Deeper service-side
+WMI decoding identified that remaining behavior; this candidate is preserved for comparison,
+not presented as having no WMI. SciPy's NumPy compatibility namespace imports NumPy's
+testing support; NumPy 2.2.6 `numpy/testing/_private/utils.py:92` computes `IS_WASM`
+by calling `platform.machine()`. On Python 3.12/Windows this invokes local WMI OS/CPU
+queries. CPython's platform fallback can spawn a shell if OS querying fails; no such
+child was observed on the permissive native runner.
+
+`scripts/patch_build_dependencies.py` applies exactly one visible build-time source
+substitution, `IS_WASM = sys.platform in ("emscripten", "wasi")`, with an explanatory
+comment. Both predicates are false on the supported Windows x64 interpreter. The patch
+does not change reported hardware/OS identity, numerical routines or native binaries,
+replace runtime APIs, conceal behavior, or configure endpoint security. It is applied
+to the isolated Windows build/development dependency installation before tests; original
+and patched source SHA-256, version and exact lines are recorded in `dependency-patch.json`
+and the packaged build manifest. Unknown versions/source hashes fail rather than being
+patched silently. `setup-windows.ps1`, native CI and standalone builds apply the same patch.
+The source import still contains the complete ordinary NumPy testing namespace.
+The native gate checks WMI clients through service-side UserData, not only the service PID,
+and rejects unexpected WMI queries in hardened source or diagnostic workflows.
 
 Diagnostic: Windows x64, stock PyInstaller 6.12.0, onedir/windowed/no UPX/no strip/no splash,
 no elevation. Explicit version resource (0.1.0 / file 0.1.0.0), application icon, asInvoker

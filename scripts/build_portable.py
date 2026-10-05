@@ -13,6 +13,7 @@ import zipfile
 
 from wraplab.acceptance import build as acceptance_pack
 from release_checks import digest, execute, validate_extracted
+from patch_build_dependencies import apply_patch
 
 ROOT = Path(__file__).resolve().parents[1]
 ACCEPTANCE_FIXTURES = [
@@ -30,6 +31,7 @@ def main():
     )
     parser.add_argument("--diagnostic", action="store_true", help="Build a clearly labelled Windows compatibility candidate; never publishes it")
     args = parser.parse_args()
+    dependency_patch = apply_patch()
     artifacts = (args.output_root or ROOT / "artifacts" / "releases" / platform.system()).resolve()
     artifacts.mkdir(parents=True, exist_ok=True)
     if (artifacts / "SHA256SUMS.txt").exists():
@@ -100,11 +102,13 @@ def main():
         "installer": None, "requested_execution_level": "asInvoker",
         "runtime_shell_launcher": False, "runtime_downloader": False,
         "excluded_modules": ["pytest", "PySide6.QtNetwork", "numpy._core._multiarray_tests"],
+        "dependency_patches": [dependency_patch] if dependency_patch else [],
         "build_hook": "packaging/hooks/hook-PySide6.QtGui.py (omit unused TUIO network touch plugin)",
         "binary_collection": "Stock dependency analysis, with documented module/plugin exclusions",
         "expected_executable": binary.name,
         "primary_executable_sha256": digest(binary),
         "expected_app_child_processes": [], "expected_app_network_connections": [],
+        "expected_startup_wmi_queries": [],
         "expected_writes": ["Qt AppLocalDataLocation/WrapLab/WrapLab: objects.json and Last-session.wraplab", "Operator-selected project/export directories: JSON/SVG and short-lived sibling .wraplab-* atomic-save files"],
         "temporary_native_extraction": False,
         "sentinelone_tested": False,
@@ -135,6 +139,7 @@ def main():
         "WrapLab 0.1.0 — conventional Windows compatibility candidate\n"
         + f"Source commit: {source_sha}\nBuild: onedir, GUI, stock PyInstaller {build_settings['pyinstaller']}, no UPX, no splash\n"
         + f"Platform: {build_settings['platform']} {build_settings['architecture']}; Python {build_settings['python']}; Qt {build_settings['qt']}\n"
+        + "Documented Windows dependency patch: NumPy testing helper detects WebAssembly using sys.platform; numerical code/native binaries unchanged.\n"
         + f"Executable: {binary.name}\nExecutable SHA-256: {digest(binary)}\n"
         + "Expected app child processes: none. Expected app network connections: none.\n"
         + "No elevation requested (asInvoker). No runtime launcher, updater, downloads or temporary DLL/EXE extraction.\n"

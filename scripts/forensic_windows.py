@@ -27,6 +27,22 @@ def save(path, value):
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
 
 
+def event_data(event, ns):
+    data = {d.get("Name", ""): d.text for d in event.findall("e:EventData/e:Data", ns)}
+    for leaf in event.findall("e:UserData//*", ns):
+        if not len(leaf):
+            data[leaf.tag.rsplit("}", 1)[-1]] = leaf.text
+    return data
+
+
+def pid_number(value):
+    try:
+        value = str(value).strip()
+        return int(value, 16 if value.lower().startswith("0x") else 10)
+    except (ValueError, TypeError):
+        return -1
+
+
 class Trace:
     """Ordinary ETW diagnostics on a disposable CI runner; no endpoint settings changed."""
     def __init__(self, output):
@@ -73,7 +89,7 @@ class Trace:
         ns = {"e": "http://schemas.microsoft.com/win/2004/08/events/event"}
         pids = {case["primary_pid"] for case in cases}
         pids.update(r["pid"] for case in cases for r in case.get("process_tree", []))
-        selected, counts = [], {}
+        selected, counts, wmi_queries, new_files = [], {}, [], []
         # First pass finds short-lived children not captured by polling. PID ownership
         # is constrained to the recorded test window; raw trace remains available.
         child_events = []
@@ -84,7 +100,7 @@ class Trace:
             if system is not None:
                 provider = system.find("e:Provider", ns)
                 if provider is not None and provider.get("Name") == "Microsoft-Windows-Kernel-Process":
-                    data = {d.get("Name", ""): d.text for d in event.findall("e:EventData/e:Data", ns)}
+                    data = event_data(event, ns)
                     try:
                         parent = int(data.get("ParentProcessID", "-1"), 0)
                         pid = int(data.get("ProcessID", "-1"), 0)
@@ -100,18 +116,17 @@ class Trace:
             system = event.find("e:System", ns)
             if system is not None:
                 execution = system.find("e:Execution", ns)
-                data = {d.get("Name", ""): d.text for d in event.findall("e:EventData/e:Data", ns)}
+                data = event_data(event, ns)
+                provider = system.find("e:Provider", ns)
+                name = provider.get("Name", "") if provider is not None else "unknown"
                 ids = [execution.get("ProcessID", "-1") if execution is not None else "-1"]
                 ids += [data.get(k, "-1") for k in ["ProcessID", "ProcessId", "PID", "ClientProcessId"]]
-                matches = False
-                for value in ids:
-                    try:
-                        matches |= int(value, 0) in pids
-                    except (ValueError, TypeError):
-                        pass
+                # Network ownership comes from payload PID, not an interrupted
+                # thread's kernel execution context (which can be an app PID).
+                if name == "Microsoft-Windows-Kernel-Network" and "PID" in data:
+                    ids = [data["PID"]]
+                matches = any(pid_number(value) in pids for value in ids)
                 if matches:
-                    provider = system.find("e:Provider", ns)
-                    name = provider.get("Name", "") if provider is not None else "unknown"
                     task = system.find("e:Task", ns)
                     opcode = system.find("e:Opcode", ns)
                     event_id = system.find("e:EventID", ns)
@@ -122,9 +137,19 @@ class Trace:
                            "execution_pid": execution.get("ProcessID") if execution is not None else None, "data": data}
                     selected.append(row)
                     counts[name] = counts.get(name, 0) + 1
+                    if name.endswith("WMI-Activity") and "IWbemServices::ExecQuery" in (data.get("Operation") or ""):
+                        wmi_queries.append(row)
+                    if name.endswith("Kernel-File") and row["event_id"] == "30":
+                        new_files.append(row)
             event.clear()
         save(self.output / "app-etw-events.json", selected)
-        result.update(parsed=True, app_events=len(selected), events_by_provider=counts, additional_child_events=child_events)
+        result.update(parsed=True, app_events=len(selected), events_by_provider=counts, additional_child_events=child_events,
+                      wmi_queries=wmi_queries, new_file_creations=new_files,
+                      owned_network_event_count=counts.get("Microsoft-Windows-Kernel-Network", 0))
+        for case in cases:
+            case["wmi_queries_observed"] = [r["data"]["Operation"] for r in wmi_queries if pid_number(r["data"].get("ClientProcessId")) == case["primary_pid"]]
+        if any("Some events do not match the schema" in r["stdout"] for r in self.records):
+            result["limitations"].append("tracerpt reported schema mismatches; raw ETL is retained and incomplete payloads are not treated as a certificate of absence.")
         if not selected:
             result["limitations"].append("No decoded app events; inspect raw ETL/XML before drawing absence conclusions.")
         return result
@@ -242,7 +267,13 @@ def main():
         raise
     finally:
         summary["etw"] = trace.finish(summary["cases"])
+        if summary["status"] == "passed" and summary["etw"]["parsed"]:
+            failures = [c for c in summary["cases"] if c["mode"] in {"source", "diagnostic"} and c.get("wmi_queries_observed")]
+            if failures or summary["etw"]["owned_network_event_count"] or summary["etw"]["additional_child_events"]:
+                summary.update(status="failed", error="Unexpected WMI/network/child behavior in hardened source or package")
         save(output / "forensic-report.json", summary)
+        if summary["status"] == "failed":
+            raise RuntimeError(summary.get("error", "Native forensic gate failed"))
 
 
 if __name__ == "__main__":
