@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "D:\a\wraplab\wraplab\scripts\patch_build_dependencies.py", line 58, in <module>
+    print(json.dumps(apply_patch(), indent=2))
+                     ^^^^^^^^^^^^^
+  File "D:\a\wraplab\wraplab\scripts\patch_build_dependencies.py", line 30, in apply_patch
+    raise ValueError("NumPy test helper does not match the independently reviewed source hash")
+ValueError: NumPy test helper does not match the independently reviewed source hash

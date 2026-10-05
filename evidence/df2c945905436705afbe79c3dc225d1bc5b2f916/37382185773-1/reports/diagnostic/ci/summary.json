@@ -1,0 +1,29 @@
+{
+  "source_commit": "df2c945905436705afbe79c3dc225d1bc5b2f916",
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "python": "3.12.10",
+  "checks": [
+    {
+      "name": "install",
+      "exit_code": 0,
+      "seconds": 33.2
+    },
+    {
+      "name": "project-install",
+      "exit_code": 0,
+      "seconds": 4.42
+    },
+    {
+      "name": "dependency-check",
+      "exit_code": 0,
+      "seconds": 0.44
+    },
+    {
+      "name": "documented-dependency-patch",
+      "exit_code": 1,
+      "seconds": 0.16
+    }
+  ],
+  "status": "failed",
+  "error": "documented-dependency-patch failed"
+}
