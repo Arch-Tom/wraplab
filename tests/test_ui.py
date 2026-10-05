@@ -5,7 +5,7 @@ import time
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.setdefault("XDG_CACHE_HOME", "/tmp/wraplab-test-cache")
 
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QMessageBox
 import pytest
 
 from wraplab.persistence import save_project
@@ -100,4 +100,28 @@ def test_rapid_changes_cannot_export_stale_preview(app, tmp_path):
     assert text == export_svg(expected, window.project, "artwork", window.project.source_name)
     wait_for_preview(app, window)
     assert window.export_button.isEnabled()
+    window.close()
+
+
+@pytest.mark.parametrize(
+    "choice", [QMessageBox.StandardButton.Cancel, QMessageBox.StandardButton.Discard]
+)
+def test_unwritable_recovery_does_not_trap_exit_or_discard_silently(
+    app, tmp_path, monkeypatch, choice
+):
+    window = MainWindow(tmp_path / "data")
+    window.show()
+    wait_for_preview(app, window)
+    window.dirty = True
+
+    def denied():
+        raise PermissionError("Read-only user-data folder")
+
+    monkeypatch.setattr(window, "_autosave", denied)
+    monkeypatch.setattr(QMessageBox, "warning", lambda *args: choice)
+    closed = window.close()
+    assert closed == (choice == QMessageBox.StandardButton.Discard)
+    assert window.dirty == (choice == QMessageBox.StandardButton.Cancel)
+    window.dirty = False
+    monkeypatch.setattr(window, "_autosave", lambda: None)
     window.close()

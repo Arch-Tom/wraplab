@@ -82,6 +82,8 @@ placement. `--export guides|template|original` selects an alternative output.
 - [Mote research decisions](docs/research-decisions.md)
 - [Bell measurement and dry-run procedure](docs/bell-measurement.md)
 - [Packaging and evidence](docs/packaging.md)
+- [Windows release and operator instructions](docs/windows-release.md)
+- [Fresh source restoration](docs/restoration.md)
 - [Validation record](docs/validation.md)
 
 CorelDRAW 2019 and actual Windows shop behavior require manual validation. Physical application

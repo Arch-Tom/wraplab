@@ -29,6 +29,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QMainWindow,
+    QMessageBox,
     QPushButton,
     QScrollArea,
     QSizePolicy,
@@ -976,8 +977,23 @@ class MainWindow(QMainWindow):
             self._autosave()
         except (ValueError, OSError) as exc:
             self.error("Session could not be saved: " + str(exc))
-            event.ignore()
-            return
+            choice = QMessageBox.warning(
+                self,
+                "Session could not be saved",
+                "The recovery file could not be written. Save the project somewhere else, "
+                "discard unsaved changes, or cancel closing.\n\n" + str(exc),
+                QMessageBox.StandardButton.Save
+                | QMessageBox.StandardButton.Discard
+                | QMessageBox.StandardButton.Cancel,
+                QMessageBox.StandardButton.Cancel,
+            )
+            if choice == QMessageBox.StandardButton.Save:
+                self.choose_save_project()
+            elif choice == QMessageBox.StandardButton.Discard:
+                self.dirty = False
+            if self.dirty:
+                event.ignore()
+                return
         self._timer.stop()
         self._pool.waitForDone()
         event.accept()

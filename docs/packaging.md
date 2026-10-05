@@ -3,19 +3,20 @@
 Install pinned Python 3.12 requirements and run `python scripts/build_portable.py` on the target OS.
 The script runs PyInstaller one-folder packaging, generates acceptance specimens, gathers available
 dependency license notices, launches the **actual executable** through its desktop self-test, and
-creates `artifacts/WrapLab-0.1.0-<OS>-<architecture>-portable.zip`.
+creates `artifacts/releases/<OS>/WrapLab-0.1.0-<OS>-x64-portable.zip`.
+See windows-release.md for the extracted-archive native validation added for the release candidate.
 
 The self-test instantiates the Qt workspace, imports a compound SVG, computes previews, exports
 four modes for each of three objects, checks physical cylinder inverse-projection width and the
-counter, saves/loads projects and presets, and captures the workspace. `Build-validation/report.json`
+counter, saves/loads projects and presets, and captures the workspace. the separately supplied `WrapLab-0.1.0-<OS>-validation.json`
 records platform, frozen/source status, dimensions, node counts and output hashes. Failure preserves
-the process exit status and prevents a validated artifact claim. `--skip-smoke` explicitly omits this
-evidence and should not be used for a release acceptance claim.
+the process exit status and prevents a validated artifact claim. Release packaging requires smoke validation; there is no skip-smoke release option.
 
 Windows executable/ZIP builds require **native Windows**. The Linux development host cannot produce
 or exercise a Windows PyInstaller executable. `.github/workflows/build.yml` defines Python 3.12
 Windows and Ubuntu builds, test runs and artifact uploads. It is configuration only until run.
-No workflow was pushed/dispatched by the local implementation task.
+The initial baseline did not dispatch a native workflow. Release-candidate runs and publication
+are recorded by the workflow and the release-evidence branch, with their exact source commits.
 
 Shop test: unzip the complete portable folder, launch `WrapLab.exe`, disconnect networking and
 repeat import/placement/export. Do not move only the exe without its `_internal` dependencies.

@@ -1,9 +1,10 @@
-name: Test and portable builds
+name: Native tests and release candidate
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
+    tags: ['v0.1.0-rc*']
   pull_request:
 
 permissions:
@@ -12,11 +13,11 @@ permissions:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      QT_QPA_PLATFORM: offscreen
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -24,18 +25,117 @@ jobs:
           python-version: '3.12'
           cache: pip
           cache-dependency-path: requirements.lock
-      - name: Install locked dependencies
-        run: python -m pip install -r requirements.lock
-      - name: Install project
-        run: python -m pip install --no-deps --no-build-isolation -e .
-      - name: Lint
-        run: python -m ruff check src tests scripts
-      - name: Test
-        run: python -m pytest -q
-      - name: Build portable artifact and exercise actual executable
-        run: python scripts/build_portable.py
+      - name: Test, audit, build and execute native extracted package
+        run: python scripts/ci_validate.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validation-${{ runner.os }}
+          path: |
+            artifacts/ci/*
+            artifacts/releases/${{ runner.os }}/validation/*.json
+            artifacts/releases/${{ runner.os }}/validation/*.log
+            artifacts/releases/${{ runner.os }}/validation/Shop test שלום/*.json
+            artifacts/releases/${{ runner.os }}/validation/Shop test שלום/*.svg
+            artifacts/releases/${{ runner.os }}/validation/Shop test שלום/*.png
+            artifacts/releases/${{ runner.os }}/validation/Shop test שלום/failure.txt
+            artifacts/releases/${{ runner.os }}/validation/Corel-Acceptance/*
+            artifacts/releases/${{ runner.os }}/**/failure.txt
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: release-${{ runner.os }}
+          path: |
+            artifacts/releases/${{ runner.os }}/WrapLab-*
+            artifacts/releases/${{ runner.os }}/release-files.json
+            artifacts/releases/${{ runner.os }}/SHA256SUMS.txt
+          if-no-files-found: error
+
+  compare:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install shapely==2.0.7 numpy==2.2.6
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: validation-*
+          path: comparison-inputs
+      - name: Compare Windows and Linux SVG semantics
+        run: >-
+          python scripts/release_checks.py
+          comparison-inputs/validation-Linux/releases/Linux/validation/Corel-Acceptance
+          comparison-inputs/validation-Windows/releases/Windows/validation/Corel-Acceptance
+          comparison-report.json
       - uses: actions/upload-artifact@v4
         with:
-          name: WrapLab-${{ runner.os }}-portable
-          path: artifacts/WrapLab-*-portable.zip
-          if-no-files-found: error
+          name: comparison
+          path: comparison-report.json
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v0.1.0-rc') && github.event_name == 'push'
+    needs: [build, compare]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: release-downloads
+      - uses: actions/download-artifact@v4
+        with:
+          name: comparison
+      - name: Publish verified release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_release.py > publication.log 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: publication
+          path: |
+            publication.json
+            publication.log
+            SHA256SUMS.txt
+            comparison-report.json
+
+  evidence:
+    if: always() && github.event_name != 'pull_request'
+    needs: [build, compare, publish]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          path: evidence-checkout
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: validation-*
+          path: evidence-downloads
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: publication
+          path: evidence-downloads/publication
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: comparison
+          path: evidence-downloads/comparison
+      - name: Record immutable evidence using Git
+        env:
+          JOB_RESULTS: ${{ toJSON(needs) }}
+        shell: bash
+        run: |
+          export SOURCE_TREE=$(git rev-parse 'HEAD^{tree}')
+          python scripts/write_evidence.py
