@@ -29,6 +29,7 @@ jobs:
         run: >-
           python scripts/analyze_native_trace.py trace-input/app-etw-events.json
           reports-input/forensics/forensic-report.json artifacts/trace-analysis.json
+          --xml trace-input/kernel.xml
       - uses: actions/upload-artifact@v4
         with:
           name: trace-analysis
