@@ -1,0 +1,55 @@
+{
+  "source_commit": "9a214b50cdf6d9d27cf8a3cf92bd92bb420181ec",
+  "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+  "python": "3.12.14",
+  "checks": [
+    {
+      "name": "install",
+      "exit_code": 0,
+      "seconds": 14.05
+    },
+    {
+      "name": "project-install",
+      "exit_code": 0,
+      "seconds": 0.97
+    },
+    {
+      "name": "dependency-check",
+      "exit_code": 0,
+      "seconds": 0.26
+    },
+    {
+      "name": "lint",
+      "exit_code": 0,
+      "seconds": 0.03
+    },
+    {
+      "name": "tests",
+      "exit_code": 0,
+      "seconds": 43.68
+    },
+    {
+      "name": "audit-environment",
+      "exit_code": 0,
+      "seconds": 2.32
+    },
+    {
+      "name": "audit-install",
+      "exit_code": 0,
+      "seconds": 4.72
+    },
+    {
+      "name": "security-audit",
+      "exit_code": 0,
+      "seconds": 1.57
+    },
+    {
+      "name": "portable-build",
+      "exit_code": 0,
+      "seconds": 84.75
+    }
+  ],
+  "status": "passed",
+  "tests_passed": 149,
+  "independent_fixtures_passed": 18
+}

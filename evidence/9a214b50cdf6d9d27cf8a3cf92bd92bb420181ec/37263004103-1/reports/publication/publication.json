@@ -1,0 +1,51 @@
+{
+  "status": "published",
+  "source_commit": "9a214b50cdf6d9d27cf8a3cf92bd92bb420181ec",
+  "tag": "v0.1.0-rc4",
+  "release_url": "https://github.com/Arch-Tom/wraplab/releases/tag/v0.1.0-rc4",
+  "assets": [
+    {
+      "name": "comparison-report.json",
+      "bytes": 2631,
+      "url": "https://github.com/Arch-Tom/wraplab/releases/download/v0.1.0-rc4/comparison-report.json"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 630,
+      "url": "https://github.com/Arch-Tom/wraplab/releases/download/v0.1.0-rc4/SHA256SUMS.txt"
+    },
+    {
+      "name": "WrapLab-0.1.0-Linux-Corel-Acceptance.zip",
+      "bytes": 119918,
+      "url": "https://github.com/Arch-Tom/wraplab/releases/download/v0.1.0-rc4/WrapLab-0.1.0-Linux-Corel-Acceptance.zip"
+    },
+    {
+      "name": "WrapLab-0.1.0-Linux-validation.json",
+      "bytes": 11531,
+      "url": "https://github.com/Arch-Tom/wraplab/releases/download/v0.1.0-rc4/WrapLab-0.1.0-Linux-validation.json"
+    },
+    {
+      "name": "WrapLab-0.1.0-Linux-x64-portable.zip",
+      "bytes": 167933002,
+      "url": "https://github.com/Arch-Tom/wraplab/releases/download/v0.1.0-rc4/WrapLab-0.1.0-Linux-x64-portable.zip"
+    },
+    {
+      "name": "WrapLab-0.1.0-Windows-Corel-Acceptance.zip",
+      "bytes": 119925,
+      "url": "https://github.com/Arch-Tom/wraplab/releases/download/v0.1.0-rc4/WrapLab-0.1.0-Windows-Corel-Acceptance.zip"
+    },
+    {
+      "name": "WrapLab-0.1.0-Windows-validation.json",
+      "bytes": 11713,
+      "url": "https://github.com/Arch-Tom/wraplab/releases/download/v0.1.0-rc4/WrapLab-0.1.0-Windows-validation.json"
+    },
+    {
+      "name": "WrapLab-0.1.0-Windows-x64-portable.zip",
+      "bytes": 86183973,
+      "url": "https://github.com/Arch-Tom/wraplab/releases/download/v0.1.0-rc4/WrapLab-0.1.0-Windows-x64-portable.zip"
+    }
+  ],
+  "uploaded_assets_downloaded_and_hash_verified": true,
+  "coreldraw_2019_verified": false,
+  "physical_bell_verified": false
+}

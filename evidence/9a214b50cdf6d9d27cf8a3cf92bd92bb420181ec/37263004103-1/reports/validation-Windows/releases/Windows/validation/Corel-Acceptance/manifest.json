@@ -1,0 +1,247 @@
+{
+  "version": 1,
+  "generator_platform": "Windows",
+  "generator_packaged": true,
+  "corel_verified": false,
+  "physical_vinyl_verified": false,
+  "illustrative_geometry_only": true,
+  "specimens": [
+    {
+      "file": "01-cylinder-front.svg",
+      "width": "51.730383mm",
+      "height": "28.2mm",
+      "mode": "cylinder",
+      "status": "Exact",
+      "physical_model": "front-view-vinyl",
+      "nodes": 2118,
+      "contours_per_path": [
+        2,
+        1,
+        1,
+        2,
+        2,
+        1
+      ],
+      "sha256": "7f30a8ba5c18e4a379681654f1dcb1061b589c6f3efc17bdfba6b772a57b20f9",
+      "warnings": [
+        "Strokes converted to filled outlines for physical-width compensation."
+      ]
+    },
+    {
+      "file": "02-frustum-front.svg",
+      "width": "40.488355mm",
+      "height": "23.417012mm",
+      "mode": "frustum",
+      "status": "Exact",
+      "physical_model": "front-view-vinyl",
+      "nodes": 1866,
+      "contours_per_path": [
+        2,
+        1,
+        1,
+        2,
+        2,
+        1
+      ],
+      "sha256": "2aa7f94e6b0f3d144bf3b478aaed4e1b3fa75fc544999e8feb97e61909fa2ee0",
+      "warnings": [
+        "Strokes converted to filled outlines for physical-width compensation."
+      ]
+    },
+    {
+      "file": "03-bell-front-experimental.svg",
+      "width": "29.32351mm",
+      "height": "12.899253mm",
+      "mode": "measured",
+      "status": "Best-Fit / Experimental",
+      "physical_model": "front-view-vinyl",
+      "nodes": 1089,
+      "contours_per_path": [
+        2,
+        2,
+        3,
+        2
+      ],
+      "sha256": "3b75f6c979aab3f3a617fa46454e360093a0a027f9aaca5cc8b7c1394e849783",
+      "warnings": [
+        "Experimental profile: curvature requires distortion. Test a paper template first.",
+        "Required application strain over carrier: extension up to 0.00%; compression up to 0.86%. No material limit has been validated.",
+        "Carrier assumption: the entire artwork rectangle. Separate letters may behave differently."
+      ]
+    },
+    {
+      "file": "04-compound-lettering.svg",
+      "width": "63.72191mm",
+      "height": "21mm",
+      "mode": "cylinder",
+      "status": "Exact",
+      "physical_model": "front-view-vinyl",
+      "nodes": 1048,
+      "contours_per_path": [
+        2,
+        2,
+        3,
+        2
+      ],
+      "sha256": "2971e6e607c7e5f376c5782a7deb50b53d87ed81eeadd7c0b93028857abaea7e",
+      "warnings": []
+    },
+    {
+      "file": "05-bell-guides-experimental.svg",
+      "width": "134.117154mm",
+      "height": "67.152775mm",
+      "mode": "measured",
+      "status": "Best-Fit / Experimental",
+      "physical_model": "front-view-vinyl",
+      "nodes": 1089,
+      "contours_per_path": [
+        2,
+        2,
+        3,
+        2
+      ],
+      "sha256": "c1b9545ec2066f3a11b71b413da74cb5407b6f966e7590cd189919921f8e1df9",
+      "warnings": [
+        "Experimental profile: curvature requires distortion. Test a paper template first.",
+        "Required application strain over carrier: extension up to 0.00%; compression up to 0.86%. No material limit has been validated.",
+        "Carrier assumption: the entire artwork rectangle. Separate letters may behave differently."
+      ]
+    },
+    {
+      "file": "06-bell-uncompensated.svg",
+      "width": "28.590815mm",
+      "height": "10.5mm",
+      "mode": "measured",
+      "status": "Best-Fit / Experimental",
+      "physical_model": "front-view-vinyl",
+      "nodes": 407,
+      "contours_per_path": [
+        2,
+        2,
+        3,
+        2
+      ],
+      "sha256": "f14864d0aec21eaeb2d14488115ecdcd16896c13e345f2c4a42cb268eace62a6",
+      "warnings": []
+    },
+    {
+      "file": "07-reverse-frustum-front.svg",
+      "width": "40.488355mm",
+      "height": "23.417012mm",
+      "mode": "frustum",
+      "status": "Exact",
+      "physical_model": "front-view-vinyl",
+      "nodes": 1866,
+      "contours_per_path": [
+        2,
+        1,
+        1,
+        2,
+        2,
+        1
+      ],
+      "sha256": "c422d72004fc5f5859c7685b9e9dabebda86dbeaf666154eb3b47c36b9a516fc",
+      "warnings": [
+        "Strokes converted to filled outlines for physical-width compensation."
+      ]
+    },
+    {
+      "file": "08-cylinder-full-template.svg",
+      "width": "251.627412mm",
+      "height": "100.3mm",
+      "mode": "cylinder",
+      "status": "Exact",
+      "physical_model": "surface-template",
+      "nodes": null,
+      "contours_per_path": [],
+      "sha256": "8a6dd09de8c94c67928606fc97c366dadcc799fd796c7a07f3cc1a483c8af7d9",
+      "warnings": []
+    },
+    {
+      "file": "09-frustum-full-template.svg",
+      "width": "275.942171mm",
+      "height": "120.720605mm",
+      "mode": "frustum",
+      "status": "Exact",
+      "physical_model": "surface-template",
+      "nodes": null,
+      "contours_per_path": [],
+      "sha256": "4051c6c9f894a85652f1f85649d94931f5e4ceb26fa6ea55bc4ab83b5362d491",
+      "warnings": []
+    },
+    {
+      "file": "10-reference-100mm.svg",
+      "width": "100mm",
+      "height": "100mm",
+      "mode": "cylinder",
+      "status": "Exact",
+      "physical_model": "surface-template",
+      "nodes": 4,
+      "contours_per_path": [
+        1
+      ],
+      "sha256": "cc5419ea3060ffc1644fb822e21f692a006122769fb099aed076692d5b16a361",
+      "warnings": []
+    },
+    {
+      "file": "11-reference-25mm.svg",
+      "width": "25.4mm",
+      "height": "25.4mm",
+      "mode": "cylinder",
+      "status": "Exact",
+      "physical_model": "surface-template",
+      "nodes": 4,
+      "contours_per_path": [
+        1
+      ],
+      "sha256": "3d3924f89318d0aa69522058fc2813f4bd5e7a4845d7b300a75407284579444b",
+      "warnings": []
+    },
+    {
+      "file": "12-reference-inch.svg",
+      "width": "25.4mm",
+      "height": "25.4mm",
+      "mode": "cylinder",
+      "status": "Exact",
+      "physical_model": "surface-template",
+      "nodes": 4,
+      "contours_per_path": [
+        1
+      ],
+      "sha256": "6600c54a557c8b8566fe6ad94f31bc19165a2b0d74d736bc0129d318e8a0c01a",
+      "warnings": []
+    },
+    {
+      "file": "13-hebrew-path-geometry.svg",
+      "width": "36.447894mm",
+      "height": "12.9mm",
+      "mode": "cylinder",
+      "status": "Exact",
+      "physical_model": "front-view-vinyl",
+      "nodes": 282,
+      "contours_per_path": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "sha256": "3c8654da2887fa78065a4ee9c2bc6cd3b6379c89513a3ad16e543a6d35bee16a",
+      "warnings": []
+    },
+    {
+      "file": "14-eight-counters.svg",
+      "width": "17.567778mm",
+      "height": "28.217902mm",
+      "mode": "frustum",
+      "status": "Exact",
+      "physical_model": "front-view-vinyl",
+      "nodes": 424,
+      "contours_per_path": [
+        3
+      ],
+      "sha256": "fa5f0102f64a6265b75de12c9125192bef1d7411bbb548fa4b2c0804c69d252d",
+      "warnings": []
+    }
+  ]
+}

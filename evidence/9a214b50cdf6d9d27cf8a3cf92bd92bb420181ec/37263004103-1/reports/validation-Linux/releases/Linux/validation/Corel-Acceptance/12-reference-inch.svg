@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25.4mm" height="25.4mm" viewBox="0 0 25.4 25.4">
+  <title>WrapLab — Illustrative cylinder — NOT real measurements</title>
+  <metadata>{"algorithm":"cylinder-development-v1","axial_direction":"down-from-labelled-top","certificate_level":"analytical-exact-surface","coreldraw_2019_verified":false,"development":{"application_strain":0},"display_units":"mm","front_margin":0.95,"mode":"cylinder","page_origin_mm":[-12.699999999999978,87.3],"physical_model":"surface-template","placement":{"height":25.4,"lock_aspect":true,"width":25.4,"x":144.37963267948967,"z":87.3},"profile_name":"Illustrative cylinder — NOT real measurements","reference_height_mm":100.0,"source_name":"reference-inch.svg","status":"Exact","tolerance_mm":0.01,"units":"mm","view_assumption":"surface-wrap","warnings":[],"wrap_degrees":180.0,"wraplab_version":"0.1.0"}</metadata>
+  <g id="Artwork">
+    <path id="Artwork-1" d="M0 0 L25.4 0 L25.4 25.4 L0 25.4 Z" fill="#182b3b" fill-rule="nonzero" stroke="none" />
+  </g>
+</svg>

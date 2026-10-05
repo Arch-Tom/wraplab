@@ -1,0 +1,104 @@
+{
+  "status": "passed",
+  "tolerance_mm": 2e-06,
+  "specimens": [
+    {
+      "file": "01-cylinder-front.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 2118,
+      "candidate_nodes": 2118
+    },
+    {
+      "file": "02-frustum-front.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 1866,
+      "candidate_nodes": 1866
+    },
+    {
+      "file": "03-bell-front-experimental.svg",
+      "identical_bytes": false,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 1089,
+      "candidate_nodes": 1089
+    },
+    {
+      "file": "04-compound-lettering.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 1048,
+      "candidate_nodes": 1048
+    },
+    {
+      "file": "05-bell-guides-experimental.svg",
+      "identical_bytes": false,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 1350,
+      "candidate_nodes": 1350
+    },
+    {
+      "file": "06-bell-uncompensated.svg",
+      "identical_bytes": false,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 407,
+      "candidate_nodes": 407
+    },
+    {
+      "file": "07-reverse-frustum-front.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 1866,
+      "candidate_nodes": 1866
+    },
+    {
+      "file": "08-cylinder-full-template.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 8,
+      "candidate_nodes": 8
+    },
+    {
+      "file": "09-frustum-full-template.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 325,
+      "candidate_nodes": 325
+    },
+    {
+      "file": "10-reference-100mm.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 4,
+      "candidate_nodes": 4
+    },
+    {
+      "file": "11-reference-25mm.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 4,
+      "candidate_nodes": 4
+    },
+    {
+      "file": "12-reference-inch.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 4,
+      "candidate_nodes": 4
+    },
+    {
+      "file": "13-hebrew-path-geometry.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 282,
+      "candidate_nodes": 282
+    },
+    {
+      "file": "14-eight-counters.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 424,
+      "candidate_nodes": 424
+    }
+  ]
+}

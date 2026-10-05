@@ -1,0 +1,6 @@
+51ecaa07736e8af78cf0c4d3c50b32120f2565bbbc6f7cf3029d7820ff4b0dc2  WrapLab-0.1.0-Linux-x64-portable.zip
+afc633a46465de720c47f2e0f5ee61aa025a000005ba5e3b2edb666a8d7eeb1e  WrapLab-0.1.0-Linux-Corel-Acceptance.zip
+fd7d29d21c7c1082d278b7d0bd0e2011d925e23e5f41068631edf7a71122ea42  WrapLab-0.1.0-Linux-validation.json
+5d68abbc7fd8d62ef4c9c45927476c9df47e48af0bfc292ee212cacaa83d7e5b  WrapLab-0.1.0-Windows-x64-portable.zip
+fd3dcd897c200148b9cfbbfdc291fe904dfc3f3cecf51058cc6927fcc11c66ba  WrapLab-0.1.0-Windows-Corel-Acceptance.zip
+7f10171c4b75a164bc75d6108d8c98bb4534b38b478c77640c6ed49497960a07  WrapLab-0.1.0-Windows-validation.json
