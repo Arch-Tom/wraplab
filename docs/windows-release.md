@@ -12,7 +12,8 @@ run the packaged generator, validate the exact extracted archive, test actual Wi
 failure reports, compare Windows/Linux exports, and provide downloadable release evidence.
 Two UI regression tests cover recovery-file write failures: closing now offers Save Elsewhere,
 Discard or Cancel instead of trapping the application. Three release-comparison tests reject changed
-winding, physical units and geometry. The expected suite is 147 tests, with no skipped tests and all
+winding, physical units and geometry. Two atomic-save tests cover prompt permission failure and
+safe temporary-name collision handling. The expected suite is 149 tests, with no skipped tests and all
 18 independent Packet A fixtures retained.
 
 The test-only pytest pin is 9.0.3 (and its Pygments dependency 2.21.0), resolving the audit finding
@@ -24,6 +25,12 @@ RC1 native evidence is preserved under source commit 3faf0a6 on release-evidence
 write permission, preventing executable launch. RC2 uses explicit write/delete rights while retaining
 read/execute access. Ubuntu CI also installs Qt's libegl1 and libopengl0 runtime libraries before
 testing. These are validation-environment corrections; application geometry is unchanged.
+
+RC2 then exposed a Windows atomic-save problem: Python's tempfile.mkstemp can retry ACL denials
+because Windows os.access reports the directory writable. RC3 adds windowed startup diagnostics;
+RC4 creates temporary save files exclusively with bounded name-collision retries and propagates
+permission errors immediately. Existing destinations remain untouched when creation fails; successful
+saves retain flush/fsync/atomic replacement. Geometry and SVG serialization are unchanged.
 
 ## Native release procedure
 

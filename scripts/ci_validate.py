@@ -64,7 +64,7 @@ def main():
         run("lint", [sys.executable, "-m", "ruff", "check", "src", "tests", "scripts"])
         run("tests", [sys.executable, "-m", "pytest", "-q", "--junitxml", str(OUT / "tests.xml")])
         cases = ET.parse(OUT / "tests.xml").getroot().findall(".//testcase")
-        assert len(cases) >= 147 and not any(c.find("skipped") is not None for c in cases)
+        assert len(cases) >= 149 and not any(c.find("skipped") is not None for c in cases)
         independent = sum(
             c.get("name", "").startswith("test_complete_independent_packet_a_corpus[")
             for c in cases

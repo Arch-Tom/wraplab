@@ -7,6 +7,39 @@ from wraplab.domain import Project
 from wraplab.persistence import PresetStore, load_project, save_project
 
 
+def test_denied_atomic_save_fails_promptly_and_preserves_existing_file(tmp_path, monkeypatch):
+    from wraplab import persistence
+
+    target = tmp_path / "existing.svg"
+    target.write_bytes(b"original")
+    attempts = []
+
+    def denied_open(*args):
+        attempts.append(args)
+        raise PermissionError("ACL denies file creation")
+
+    monkeypatch.setattr(persistence.os, "open", denied_open)
+    with pytest.raises(PermissionError, match="ACL denies"):
+        persistence.atomic_write(target, "replacement")
+    assert len(attempts) == 1
+    assert target.read_bytes() == b"original"
+    assert list(tmp_path.iterdir()) == [target]
+
+
+def test_atomic_save_retries_collision_without_modifying_other_file(tmp_path, monkeypatch):
+    from wraplab import persistence
+
+    occupied = tmp_path / ".wraplab-occupied"
+    occupied.write_bytes(b"another save")
+    names = iter(["occupied", "available"])
+    monkeypatch.setattr(persistence.secrets, "token_hex", lambda _: next(names))
+    target = tmp_path / "project.json"
+    persistence.atomic_write(target, "new data\n")
+    assert target.read_bytes() == b"new data\n"
+    assert occupied.read_bytes() == b"another save"
+    assert not (tmp_path / ".wraplab-available").exists()
+
+
 def test_project_and_geometry_only_preset_roundtrip(tmp_path):
     project = Project(source_svg="<svg/>", source_name="customer.svg")
     project.object.mode = "measured"

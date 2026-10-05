@@ -187,6 +187,17 @@ def validate_extracted(extracted, output, source_pack):
     destination = output / "Shop test שלום"
     pack = output / "Corel-Acceptance"
     with read_only_install(extracted, output) as permission_test:
+        for operation in (
+            lambda: denied_target.write_text("must not overwrite", encoding="utf-8"),
+            denied_target.unlink,
+        ):
+            try:
+                operation()
+            except PermissionError:
+                pass
+            else:
+                raise RuntimeError("Read-only install allowed overwrite or deletion")
+        assert denied_target.read_text(encoding="utf-8") == "preserve existing file"
         denied = subprocess.run(
             [
                 str(binary),

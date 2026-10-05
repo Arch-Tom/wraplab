@@ -3,7 +3,7 @@
 import json
 import os
 from pathlib import Path
-import tempfile
+import secrets
 
 from .domain import ObjectSpec, Project
 
@@ -13,7 +13,22 @@ MAX_PROJECT_BYTES = 12_000_000
 def atomic_write(path: Path, text: str):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    fd, temporary = tempfile.mkstemp(prefix=".wraplab-", dir=path.parent)
+    # Windows os.access can report writable despite an ACL denial. tempfile.mkstemp
+    # then retries PermissionError thousands of times. Retry name collisions only;
+    # permission and storage errors must return promptly without touching the target.
+    for _ in range(16):
+        temporary = path.parent / (".wraplab-" + secrets.token_hex(16))
+        try:
+            fd = os.open(
+                temporary,
+                os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0),
+                0o600,
+            )
+        except FileExistsError:
+            continue
+        break
+    else:
+        raise FileExistsError("Could not create a unique temporary save file")
     try:
         with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
             handle.write(text)
