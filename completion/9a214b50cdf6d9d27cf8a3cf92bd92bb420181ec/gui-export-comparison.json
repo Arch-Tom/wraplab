@@ -1,0 +1,157 @@
+{
+  "status": "passed",
+  "tolerance_mm": 2e-06,
+  "specimens": [
+    {
+      "file": "cylinder-artwork.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 104,
+      "candidate_nodes": 104
+    },
+    {
+      "file": "cylinder-guides.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 112,
+      "candidate_nodes": 112
+    },
+    {
+      "file": "cylinder-original.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 8,
+      "candidate_nodes": 8
+    },
+    {
+      "file": "cylinder-template.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 8,
+      "candidate_nodes": 8
+    },
+    {
+      "file": "frustum-artwork.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 120,
+      "candidate_nodes": 120
+    },
+    {
+      "file": "frustum-guides.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 285,
+      "candidate_nodes": 285
+    },
+    {
+      "file": "frustum-original.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 8,
+      "candidate_nodes": 8
+    },
+    {
+      "file": "frustum-template.svg",
+      "identical_bytes": true,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 165,
+      "candidate_nodes": 165
+    },
+    {
+      "file": "measured-artwork.svg",
+      "identical_bytes": false,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 524,
+      "candidate_nodes": 524
+    },
+    {
+      "file": "measured-guides.svg",
+      "identical_bytes": false,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 785,
+      "candidate_nodes": 785
+    },
+    {
+      "file": "measured-original.svg",
+      "identical_bytes": false,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 8,
+      "candidate_nodes": 8
+    },
+    {
+      "file": "measured-template.svg",
+      "identical_bytes": false,
+      "max_edge_difference_mm": 0.0,
+      "reference_nodes": 261,
+      "candidate_nodes": 261
+    }
+  ],
+  "metadata_comparison": {
+    "only_metadata_differs": true,
+    "difference_count": 15,
+    "maximum_absolute_numeric_difference": 1.4210854715202004e-14,
+    "differences": [
+      {
+        "field": ".development.application_strain_max",
+        "absolute_difference": 1.0235037914852613e-16
+      },
+      {
+        "field": ".development.k",
+        "absolute_difference": 1.1102230246251565e-16
+      },
+      {
+        "field": ".development.reference_anchor_y_mm",
+        "absolute_difference": 7.105427357601002e-15
+      },
+      {
+        "field": ".page_origin_mm[1]",
+        "absolute_difference": 1.0658141036401503e-14
+      },
+      {
+        "field": ".development.application_strain_max",
+        "absolute_difference": 1.0235037914852613e-16
+      },
+      {
+        "field": ".development.k",
+        "absolute_difference": 1.1102230246251565e-16
+      },
+      {
+        "field": ".development.reference_anchor_y_mm",
+        "absolute_difference": 7.105427357601002e-15
+      },
+      {
+        "field": ".page_origin_mm[0]",
+        "absolute_difference": 1.4210854715202004e-14
+      },
+      {
+        "field": ".development.application_strain_max",
+        "absolute_difference": 1.0235037914852613e-16
+      },
+      {
+        "field": ".development.k",
+        "absolute_difference": 1.1102230246251565e-16
+      },
+      {
+        "field": ".development.reference_anchor_y_mm",
+        "absolute_difference": 7.105427357601002e-15
+      },
+      {
+        "field": ".development.application_strain_max",
+        "absolute_difference": 1.0235037914852613e-16
+      },
+      {
+        "field": ".development.k",
+        "absolute_difference": 1.1102230246251565e-16
+      },
+      {
+        "field": ".development.reference_anchor_y_mm",
+        "absolute_difference": 7.105427357601002e-15
+      },
+      {
+        "field": ".page_origin_mm[0]",
+        "absolute_difference": 1.4210854715202004e-14
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "specimens": 14,
+  "geometry_and_other_svg_content_identical": true,
+  "metadata_numeric_differences": [
+    {
+      "field": "06-bell-uncompensated.svg.development.application_strain_max",
+      "absolute_difference": 1.6940658945086007e-21
+    },
+    {
+      "field": "05-bell-guides-experimental.svg.development.application_strain_max",
+      "absolute_difference": 1.6940658945086007e-21
+    },
+    {
+      "field": "03-bell-front-experimental.svg.development.application_strain_max",
+      "absolute_difference": 1.6940658945086007e-21
+    }
+  ],
+  "maximum_absolute_numeric_difference": 1.6940658945086007e-21
+}

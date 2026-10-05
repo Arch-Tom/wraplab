@@ -1,0 +1,31 @@
+{
+  "source_commit": "9a214b50cdf6d9d27cf8a3cf92bd92bb420181ec",
+  "tag": "v0.1.0-rc4",
+  "release_url": "https://github.com/Arch-Tom/wraplab/releases/tag/v0.1.0-rc4",
+  "artifacts": [
+    {
+      "file": "WrapLab-0.1.0-Windows-Corel-Acceptance.zip",
+      "bytes": 119925,
+      "sha256": "fd3dcd897c200148b9cfbbfdc291fe904dfc3f3cecf51058cc6927fcc11c66ba",
+      "public_release_download_verified": true
+    },
+    {
+      "file": "WrapLab-0.1.0-Windows-validation.json",
+      "bytes": 11713,
+      "sha256": "7f10171c4b75a164bc75d6108d8c98bb4534b38b478c77640c6ed49497960a07",
+      "public_release_download_verified": true
+    },
+    {
+      "file": "WrapLab-0.1.0-Windows-x64-portable.zip",
+      "bytes": 86183973,
+      "sha256": "5d68abbc7fd8d62ef4c9c45927476c9df47e48af0bfc292ee212cacaa83d7e5b",
+      "public_release_download_verified": true
+    }
+  ],
+  "source_recovery_bundle": {
+    "file": "artifacts/WrapLab-0.1.0-rc4-source.bundle",
+    "bytes": 112444,
+    "sha256": "68c073a80a392cee2df3b5046b3a072590a3ecd2bd678354aabc1d08873b8b85",
+    "git_bundle_verify_passed": true
+  }
+}
