@@ -15,6 +15,10 @@ from wraplab.acceptance import build as acceptance_pack
 from release_checks import digest, execute, validate_extracted
 
 ROOT = Path(__file__).resolve().parents[1]
+ACCEPTANCE_FIXTURES = [
+    "calibration.svg", "lettering.svg", "reference-100mm.svg", "reference-25mm.svg",
+    "reference-inch.svg", "hebrew-paths.svg", "eight.svg",
+]
 
 
 def main():
@@ -24,6 +28,7 @@ def main():
         type=Path,
         help="New release directory; existing completed releases are preserved",
     )
+    parser.add_argument("--diagnostic", action="store_true", help="Build a clearly labelled Windows compatibility candidate; never publishes it")
     args = parser.parse_args()
     artifacts = (args.output_root or ROOT / "artifacts" / "releases" / platform.system()).resolve()
     artifacts.mkdir(parents=True, exist_ok=True)
@@ -32,6 +37,18 @@ def main():
             "This release directory is complete. Choose a new --output-root to preserve it."
         )
     os.environ.setdefault("PYINSTALLER_CONFIG_DIR", str(artifacts / "pyinstaller-cache"))
+    source_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    source_epoch = subprocess.check_output(["git", "show", "-s", "--format=%ct", "HEAD"], cwd=ROOT, text=True).strip()
+    build_environment = dict(os.environ, SOURCE_DATE_EPOCH=source_epoch)
+    resource_arguments = []
+    for fixture in ACCEPTANCE_FIXTURES:
+        resource_arguments += ["--add-data", str(ROOT / "tests/fixtures" / fixture) + os.pathsep + "acceptance-fixtures"]
+    if os.name == "nt":
+        resource_arguments += [
+            "--version-file", str(ROOT / "packaging/windows/version-info.txt"),
+            "--manifest", str(ROOT / "packaging/windows/wraplab.manifest"),
+            "--icon", str(ROOT / "packaging/windows/wraplab.ico"),
+        ]
     subprocess.run(
         [
             sys.executable,
@@ -41,12 +58,16 @@ def main():
             "--clean",
             "--onedir",
             "--windowed",
+            "--noupx",
             "--name",
             "WrapLab",
             "--exclude-module",
             "pytest",
-            "--add-data",
-            str(ROOT / "tests" / "fixtures") + os.pathsep + "acceptance-fixtures",
+            "--exclude-module", "PySide6.QtNetwork",
+            "--exclude-module", "numpy._core._multiarray_tests",
+            "--additional-hooks-dir", str(ROOT / "packaging/hooks"),
+            *resource_arguments,
+            "--add-data", str(ROOT / "packaging/windows/wraplab.ico") + os.pathsep + ".",
             "--add-data",
             str(ROOT / "docs" / "corel-acceptance.md") + os.pathsep + ".",
             "--paths",
@@ -60,12 +81,59 @@ def main():
             str(ROOT / "scripts" / "entrypoint.py"),
         ],
         cwd=ROOT,
+        env=build_environment,
         check=True,
     )
     portable = artifacts / "dist" / "WrapLab"
     source_pack = artifacts / "source-acceptance"
     acceptance_pack(source_pack)
     binary = portable / ("WrapLab.exe" if sys.platform == "win32" else "WrapLab")
+    build_settings = {
+        "version": "0.1.0", "source_commit": source_sha,
+        "source_date_epoch": int(source_epoch), "python": platform.python_version(),
+        "pyinstaller": importlib.metadata.version("PyInstaller"),
+        "qt": importlib.metadata.version("PySide6-Essentials"),
+        "build_type": "onedir", "gui_no_console": True, "upx": False,
+        "strip": False, "custom_bootloader": False, "splash": False,
+        "installer": None, "requested_execution_level": "asInvoker",
+        "runtime_shell_launcher": False, "runtime_downloader": False,
+        "excluded_modules": ["pytest", "PySide6.QtNetwork", "numpy._core._multiarray_tests"],
+        "build_hook": "packaging/hooks/hook-PySide6.QtGui.py (omit unused TUIO network touch plugin)",
+        "binary_collection": "Stock dependency analysis, with documented module/plugin exclusions",
+        "expected_executable": binary.name,
+        "primary_executable_sha256": digest(binary),
+        "expected_app_child_processes": [], "expected_app_network_connections": [],
+        "expected_writes": ["Qt AppLocalDataLocation/WrapLab/WrapLab: objects.json and Last-session.wraplab", "Operator-selected project/export directories: JSON/SVG and short-lived sibling .wraplab-* atomic-save files"],
+        "temporary_native_extraction": False,
+        "sentinelone_tested": False,
+    }
+    if os.name == "nt":
+        from bundle_inventory import write_inventory
+
+        inventory = write_inventory(portable, artifacts / "bundle-inventory.json")
+        primary = next(r for r in inventory["native_files"] if r["path"] == "WrapLab.exe")
+        assert primary["version"]["ProductName"] == "WrapLab"
+        assert primary["version"]["FileVersion"] == "0.1.0.0"
+        assert primary["subsystem"] == 2 and primary["machine"] == "0x8664"
+        assert primary["icon_resource_present"]
+        assert any('level="asInvoker"' in m for m in primary["manifest"])
+        assert not inventory["upx_section_markers"]
+        assert len([r for r in inventory["native_files"] if r["path"].endswith(".exe")]) == 1
+        assert not any("qt6network" in r["path"].lower() or "tuiotouch" in r["path"].lower() or "_multiarray_tests" in r["path"] for r in inventory["native_files"])
+        build_settings["unsigned"] = primary["certificate_table_bytes"] == 0
+        build_settings["native_file_count"] = inventory["native_count"]
+        build_settings["native_bytes"] = inventory["native_bytes"]
+    (portable / "Build-manifest.json").write_text(json.dumps(build_settings, indent=2) + "\n", encoding="utf-8")
+    (portable / "Diagnostic-manifest.txt").write_text(
+        "WrapLab 0.1.0 — conventional Windows compatibility candidate\n"
+        + f"Source commit: {source_sha}\nBuild: onedir, GUI, stock PyInstaller {build_settings['pyinstaller']}, no UPX, no splash\n"
+        + f"Executable: {binary.name}\nExecutable SHA-256: {digest(binary)}\n"
+        + "Expected app child processes: none. Expected app network connections: none.\n"
+        + "No elevation requested (asInvoker). No runtime launcher, updater, downloads or temporary DLL/EXE extraction.\n"
+        + "Writes: local per-user WrapLab preset/recovery JSON; chosen project/SVG paths and short-lived sibling atomic-save data.\n"
+        + "No SentinelOne test has been performed. This manifest identifies the candidate; it is not endpoint approval.\n",
+        encoding="utf-8",
+    )
     execute(
         binary,
         ["--acceptance-pack", portable / "Corel-Acceptance"],
@@ -123,6 +191,8 @@ def main():
         "x64" if platform.machine().lower() in {"amd64", "x86_64"} else platform.machine()
     )
     name = f"WrapLab-0.1.0-{system}-{architecture}-portable"
+    if args.diagnostic:
+        name = f"WrapLab-0.1.0-{system}-{architecture}-onedir-diagnostic"
     archive = Path(
         shutil.make_archive(
             str(artifacts / name), "zip", root_dir=portable.parent, base_dir=portable.name
@@ -147,7 +217,6 @@ def main():
             base_dir=pack.name,
         )
     )
-    source_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     report["source_commit"] = source_sha
     report["source_dirty"] = bool(
         subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip()
@@ -156,7 +225,8 @@ def main():
         ["git", "rev-parse", "HEAD^{tree}"], cwd=ROOT, text=True
     ).strip()
     report["workflow_run_id"] = os.environ.get("GITHUB_RUN_ID")
-    report["unsigned"] = True
+    report["unsigned"] = build_settings.get("unsigned", True)
+    report["build_settings"] = build_settings
     report_file = artifacts / f"WrapLab-0.1.0-{system}-validation.json"
     report_file.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     # Hash the exact archive that was extracted and tested; never repack after validation.

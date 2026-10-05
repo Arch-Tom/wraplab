@@ -64,7 +64,7 @@ def main():
         run("lint", [sys.executable, "-m", "ruff", "check", "src", "tests", "scripts"])
         run("tests", [sys.executable, "-m", "pytest", "-q", "--junitxml", str(OUT / "tests.xml")])
         cases = ET.parse(OUT / "tests.xml").getroot().findall(".//testcase")
-        assert len(cases) >= 149 and not any(c.find("skipped") is not None for c in cases)
+        assert len(cases) >= 150 and not any(c.find("skipped") is not None for c in cases)
         independent = sum(
             c.get("name", "").startswith("test_complete_independent_packet_a_corpus[")
             for c in cases
@@ -92,7 +92,10 @@ def main():
                 str(OUT / "dependency-audit.json"),
             ],
         )
-        run("portable-build", [sys.executable, "scripts/build_portable.py"])
+        build_command = [sys.executable, "scripts/build_portable.py"]
+        if "--diagnostic" in sys.argv[1:]:
+            build_command.append("--diagnostic")
+        run("portable-build", build_command)
         REPORT["status"] = "passed"
         return 0
     except Exception as exc:

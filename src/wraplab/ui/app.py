@@ -15,7 +15,7 @@ from PySide6.QtCore import (
     QTimer,
     Signal,
 )
-from PySide6.QtGui import QAction, QFont
+from PySide6.QtGui import QAction, QFont, QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -1003,6 +1003,10 @@ def launch(argv=None):
     app = QApplication.instance() or QApplication(sys.argv[:1])
     app.setOrganizationName("WrapLab")
     app.setApplicationName("WrapLab")
+    resource_root = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[3]))
+    icon = resource_root / ("wraplab.ico" if getattr(sys, "frozen", False) else "packaging/windows/wraplab.ico")
+    if icon.is_file():
+        app.setWindowIcon(QIcon(str(icon)))
     app.setFont(QFont("Segoe UI", 10))
     app.setStyleSheet(STYLE)
     window = MainWindow()

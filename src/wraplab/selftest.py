@@ -9,6 +9,8 @@ import sys
 import time
 import xml.etree.ElementTree as ET
 
+from .runtime_identity import architecture, os_version, platform_name
+
 
 def run(directory, resume=False):
     from PySide6.QtCore import QStandardPaths, qVersion
@@ -169,10 +171,10 @@ def run(directory, resume=False):
         assert window.grab().save(str(destination / "workspace.png"))
         report = {
             "status": "passed",
-            "platform": platform.system(),
+            "platform": platform_name(),
             "python": platform.python_version(),
-            "os_version": platform.platform(),
-            "architecture": platform.machine(),
+            "os_version": os_version(),
+            "architecture": architecture(),
             "qt_version": qVersion(),
             "qt_platform": app.platformName(),
             "executable": sys.executable,

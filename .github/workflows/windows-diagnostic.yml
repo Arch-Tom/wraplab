@@ -1,0 +1,117 @@
+name: Windows SentinelOne diagnostic (build only)
+on:
+  workflow_dispatch:
+  push:
+    branches: [security/sentinelone-diagnostic]
+permissions:
+  contents: read
+jobs:
+  diagnostic:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.10'
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - name: Complete suite, dependency audit, native build and extracted workflows
+        run: python scripts/ci_validate.py --diagnostic
+      - name: Observe source, preserved RC4 and diagnostic runtime
+        run: python scripts/forensic_windows.py
+      - name: Read native Authenticode signatures (external QA only)
+        if: always()
+        shell: pwsh
+        run: |
+          $candidate = 'artifacts/releases/Windows/Extracted shop install שלום/WrapLab'
+          if (Test-Path -LiteralPath $candidate) {
+            ./scripts/inspect_windows_signatures.ps1 -Bundle $candidate -Output artifacts/ci/candidate-signatures.json
+          }
+          if (Test-Path -LiteralPath artifacts/forensics/baseline/WrapLab) {
+            ./scripts/inspect_windows_signatures.ps1 -Bundle artifacts/forensics/baseline/WrapLab -Output artifacts/ci/baseline-signatures.json
+          }
+      - uses: actions/upload-artifact@v4
+        id: candidate
+        if: success()
+        with:
+          name: WrapLab-Windows-SentinelOne-Diagnostic
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            artifacts/releases/Windows/WrapLab-0.1.0-Windows-x64-onedir-diagnostic.zip
+            artifacts/releases/Windows/SHA256SUMS.txt
+            artifacts/releases/Windows/Extracted shop install שלום/WrapLab/Diagnostic-manifest.txt
+            artifacts/releases/Windows/Extracted shop install שלום/WrapLab/Build-manifest.json
+      - name: Record exact authenticated artifact delivery
+        if: success()
+        shell: python
+        env:
+          ARTIFACT_URL: ${{ steps.candidate.outputs.artifact-url }}
+          ARTIFACT_ID: ${{ steps.candidate.outputs.artifact-id }}
+          ARTIFACT_DIGEST: ${{ steps.candidate.outputs.artifact-digest }}
+        run: |
+          import json, os
+          from pathlib import Path
+          files = json.loads(Path('artifacts/releases/Windows/release-files.json').read_text())
+          Path('artifacts/ci/artifact-delivery.json').write_text(json.dumps({
+            'source_commit': os.environ['GITHUB_SHA'],
+            'url': os.environ['ARTIFACT_URL'], 'id': os.environ['ARTIFACT_ID'],
+            'actions_archive_digest': os.environ['ARTIFACT_DIGEST'],
+            'candidate_zip': files[0], 'retention_days': 30,
+            'public_release_created': False
+          }, indent=2))
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diagnostic-reports
+          if-no-files-found: warn
+          path: |
+            artifacts/ci/*
+            artifacts/releases/Windows/*validation.json
+            artifacts/releases/Windows/release-files.json
+            artifacts/releases/Windows/SHA256SUMS.txt
+            artifacts/releases/Windows/bundle-inventory.*
+            artifacts/releases/Windows/validation/*.log
+            artifacts/releases/Windows/validation/*.json
+            artifacts/forensics/forensic-report.json
+            artifacts/forensics/trace-commands.json
+            artifacts/forensics/trace-summary.txt
+            artifacts/forensics/*-bundle.*
+            artifacts/forensics/*/runtime.json
+            artifacts/forensics/*/process.log
+            artifacts/forensics/*/failure.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diagnostic-raw-traces
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            artifacts/forensics/kernel.etl
+            artifacts/forensics/kernel.xml
+            artifacts/forensics/app-etw-events.json
+  evidence:
+    if: always()
+    needs: diagnostic
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          path: evidence-checkout
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: diagnostic-reports
+          path: evidence-downloads/diagnostic
+      - name: Preserve small immutable evidence; no public release
+        env:
+          JOB_RESULTS: ${{ toJSON(needs) }}
+        shell: bash
+        run: |
+          export SOURCE_TREE=$(git rev-parse 'HEAD^{tree}')
+          python scripts/write_evidence.py

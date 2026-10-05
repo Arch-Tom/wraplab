@@ -5,12 +5,12 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
-import platform
 import sys
 import xml.etree.ElementTree as ET
 
 from .domain import ObjectSpec, Project
 from .persistence import save_project
+from .runtime_identity import platform_name
 from .svg import convert, export_svg, import_svg
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -92,7 +92,7 @@ def build(destination):
         json.dumps(
             {
                 "version": 1,
-                "generator_platform": platform.system(),
+                "generator_platform": platform_name(),
                 "generator_packaged": bool(getattr(sys, "frozen", False)),
                 "corel_verified": False,
                 "physical_vinyl_verified": False,
