@@ -1,0 +1,13 @@
+Obtaining file:///home/runner/work/wraplab/wraplab
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: wraplab
+  Building editable for wraplab (pyproject.toml): started
+  Building editable for wraplab (pyproject.toml): finished with status 'done'
+  Created wheel for wraplab: filename=wraplab-0.1.0-0.editable-py3-none-any.whl size=1590 sha256=6e91d5c05020f0af27ce6c2a0d72f3f1d230a1cf8ad90ea1a1016a421a9b6146
+  Stored in directory: /tmp/pip-ephem-wheel-cache-sp9ofpwy/wheels/91/43/15/6ed062c67f2d5fc836d09f89a1582f9c1b2ffb621286c6141f
+Successfully built wraplab
+Installing collected packages: wraplab
+Successfully installed wraplab-0.1.0

@@ -1,0 +1,34 @@
+{
+  "source_commit": "3faf0a66282ae80221ed3c67aa4d9af2184a7ae8",
+  "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+  "python": "3.12.14",
+  "checks": [
+    {
+      "name": "install",
+      "exit_code": 0,
+      "seconds": 13.5
+    },
+    {
+      "name": "project-install",
+      "exit_code": 0,
+      "seconds": 1.02
+    },
+    {
+      "name": "dependency-check",
+      "exit_code": 0,
+      "seconds": 0.26
+    },
+    {
+      "name": "lint",
+      "exit_code": 0,
+      "seconds": 0.03
+    },
+    {
+      "name": "tests",
+      "exit_code": 2,
+      "seconds": 1.52
+    }
+  ],
+  "status": "failed",
+  "error": "tests failed"
+}

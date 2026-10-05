@@ -1,0 +1,23 @@
+{
+  "source_commit": "3faf0a66282ae80221ed3c67aa4d9af2184a7ae8",
+  "source_tree": "9e265441add10149e3f23bed30ec8a2e5e2db718",
+  "run_id": "37262023880",
+  "run_attempt": "1",
+  "workflow_run_url": "https://github.com/Arch-Tom/wraplab/actions/runs/37262023880",
+  "jobs": {
+    "build": {
+      "result": "failure",
+      "outputs": {}
+    },
+    "compare": {
+      "result": "skipped",
+      "outputs": {}
+    },
+    "publish": {
+      "result": "skipped",
+      "outputs": {}
+    }
+  },
+  "coreldraw_2019_verified": false,
+  "physical_bell_verified": false
+}
