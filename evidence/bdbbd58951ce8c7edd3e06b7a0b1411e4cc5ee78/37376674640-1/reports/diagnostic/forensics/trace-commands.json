@@ -1,0 +1,41 @@
+[
+  {
+    "command": [
+      "logman",
+      "create",
+      "trace",
+      "WrapLabAudit-2404",
+      "-o",
+      "D:\\a\\wraplab\\wraplab\\artifacts\\forensics\\kernel.etl",
+      "-bs",
+      "1024",
+      "-nb",
+      "16",
+      "256",
+      "-p",
+      "Microsoft-Windows-Kernel-Process",
+      "0x70",
+      "5",
+      "-p",
+      "Microsoft-Windows-Kernel-File",
+      "0xffffffffffffffff",
+      "5",
+      "-p",
+      "Microsoft-Windows-Kernel-Network",
+      "0xffffffffffffffff",
+      "5",
+      "-p",
+      "Microsoft-Windows-Kernel-Registry",
+      "0xffffffffffffffff",
+      "5",
+      "-p",
+      "Microsoft-Windows-WMI-Activity",
+      "0xffffffffffffffff",
+      "5",
+      "-ets"
+    ],
+    "exit_code": 2147942487,
+    "stdout": "Argument 'p' has been defined too many times.\nArgument 'p' has been defined too many times.\nArgument 'p' has been defined too many times.\nArgument 'p' has been defined too many times.\n\nError:\nThe parameter is incorrect.\n",
+    "stderr": ""
+  }
+]
