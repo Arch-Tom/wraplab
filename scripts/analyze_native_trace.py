@@ -20,7 +20,7 @@ def resolve_full_trace(xml, cases):
     """Use the whole trace for object lifetimes, not only app-filtered records."""
     ns = {"e": "http://schemas.microsoft.com/win/2004/08/events/event"}
     file_objects, file_keys, registry_keys, threads = {}, {}, {}, {}
-    writes, registry = Counter(), []
+    writes, creates, registry, wmi = Counter(), Counter(), [], []
     network_owners, excluded_file_owners = Counter(), Counter()
     ordered = []
     for _, event in ET.iterparse(xml, events=["end"]):
@@ -36,6 +36,12 @@ def resolve_full_trace(xml, cases):
             ident = number(event_id.text) if event_id is not None else None
             pid = number(execution.get("ProcessID")) if execution is not None else None
             data = {d.get("Name", ""): d.text for d in event.findall("e:EventData/e:Data", ns)}
+            for leaf in event.findall("e:UserData//*", ns):
+                if not len(leaf):
+                    data[leaf.tag.rsplit("}", 1)[-1]] = leaf.text
+            if name.endswith("WMI-Activity"):
+                owners = {k: cases.get(str(number(v))) for k, v in data.items() if k.lower() in {"clientprocessid", "processid", "pid"}}
+                wmi.append({"event_id": ident, "execution_pid": pid, "client_case": owners, "data": data})
             if (name.endswith("Kernel-Network") or
                 name.endswith("Kernel-Process") and ident in {3, 4} or
                 name.endswith("Kernel-File") and ident in {10, 11, 12, 13, 14, 16, 30} or
@@ -60,6 +66,8 @@ def resolve_full_trace(xml, cases):
             if ident == 10 and key:
                 file_keys[key] = path
             owner = threads.get(number(data.get("IssuingThreadId")), pid)
+            if ident == 30 and str(owner) in cases:
+                creates[(cases[str(owner)], path)] += 1
             if ident == 16:
                 if str(owner) in cases:
                     resolved = file_objects.get(obj) or file_keys.get(key)
@@ -85,6 +93,8 @@ def resolve_full_trace(xml, cases):
     return {
         "network_events_owned_by_apps": sum(n for pid, n in network_owners.items() if str(pid) in cases),
         "all_trace_network_owner_counts": {str(k): v for k, v in network_owners.items()},
+        "global_wmi_events": wmi,
+        "new_file_creation_counts": [{"case": c, "path": p, "count": n} for (c, p), n in creates.items()],
         "registry_create_or_mutation_with_resolved_keys": registry,
         "file_write_counts_with_lifetime_mapping": [{"case": c, "path": p, "count": n} for (c, p), n in writes.items()],
         "file_write_events_with_unresolved_paths": sum(n for (c, p), n in writes.items() if p is None),
