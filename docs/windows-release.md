@@ -19,6 +19,12 @@ The test-only pytest pin is 9.0.3 (and its Pygments dependency 2.21.0), resolvin
 PYSEC-2026-1845 / CVE-2025-71176 affecting pytest 8.3.5. Runtime geometry dependencies are unchanged.
 pip check and an isolated pip-audit 2.10.1 scan run in both native jobs. Audit failures block release.
 
+RC1 native evidence is preserved under source commit 3faf0a6 on release-evidence. Windows passed
+147 tests and its dependency audit, but the QA installation ACL denied SYNCHRONIZE through generic
+write permission, preventing executable launch. RC2 uses explicit write/delete rights while retaining
+read/execute access. Ubuntu CI also installs Qt's libegl1 and libopengl0 runtime libraries before
+testing. These are validation-environment corrections; application geometry is unchanged.
+
 ## Native release procedure
 
 1. Install Python 3.12 and use scripts/setup-windows.ps1 (Windows) or scripts/setup.sh (Linux).

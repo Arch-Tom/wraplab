@@ -25,6 +25,11 @@ jobs:
           python-version: '3.12'
           cache: pip
           cache-dependency-path: requirements.lock
+      - name: Install Linux Qt runtime libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libopengl0
       - name: Test, audit, build and execute native extracted package
         run: python scripts/ci_validate.py
       - uses: actions/upload-artifact@v4

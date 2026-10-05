@@ -119,8 +119,10 @@ def read_only_install(root, log_dir):
                 )
             )
             sid = row[-1]
+            # Generic W includes SYNCHRONIZE, also required to open an executable.
+            # Deny only writes/deletion so read and execution remain possible.
             result = subprocess.run(
-                ["icacls", str(root), "/deny", f"*{sid}:(OI)(CI)(W,D,DC)"],
+                ["icacls", str(root), "/deny", f"*{sid}:(OI)(CI)(WD,AD,WEA,WA,DE,DC)"],
                 capture_output=True,
                 text=True,
                 check=True,

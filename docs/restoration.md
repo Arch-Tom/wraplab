@@ -11,6 +11,8 @@ git checkout <release-tag-or-commit>
 On Windows install Python 3.12, run scripts/setup-windows.ps1, then use .venv/Scripts/python.exe.
 On Linux run `bash scripts/setup.sh`, then use .venv/bin/python. Dependencies are pinned in
 requirements.lock. Runtime operation is offline; installation needs the package registry.
+On a minimal Ubuntu host, first install the Qt system libraries with
+`sudo apt-get install libegl1 libopengl0`; these are already present on the validated cloud host.
 
 From that interpreter run:
 
