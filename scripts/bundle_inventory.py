@@ -68,7 +68,7 @@ def pe_details(data):
             e.id == 14 for e in getattr(getattr(pe, "DIRECTORY_ENTRY_RESOURCE", None), "entries", [])
         ),
         "sections": [
-            {"name": s.Name.rstrip(b"\0").decode(errors="replace"), "entropy": round(s.get_entropy(), 3)}
+            {"name": s.Name.rstrip(b"\0").decode(errors="replace"), "entropy": round(s.get_entropy(), 3), "sha256": sha(s.get_data())}
             for s in pe.sections
         ],
         "imports": [x.dll.decode(errors="replace") for x in getattr(pe, "DIRECTORY_ENTRY_IMPORT", [])],
@@ -96,12 +96,20 @@ def inspect_bundle(bundle):
     by_hash = collections.defaultdict(list)
     for row in rows:
         by_hash[row["sha256"]].append(row["path"])
+    python_archive = None
+    if bundle.is_dir() and (bundle / "WrapLab.exe").exists():
+        from PyInstaller.archive.readers import CArchiveReader
+
+        reader = CArchiveReader(str(bundle / "WrapLab.exe"))
+        pyz_name = next(name for name in reader.toc if name.endswith(".pyz"))
+        python_archive = {"carchive_entries": list(reader.toc), "modules": sorted(reader.open_embedded_archive(pyz_name).toc)}
     return {
         "source": str(bundle),
         "archive_sha256": sha(bundle.read_bytes()) if bundle.is_file() else None,
         "native_count": len(rows),
         "native_bytes": sum(r["bytes"] for r in rows),
         "native_files": rows,
+        "python_archive": python_archive,
         "exact_binary_duplicates": [v for v in by_hash.values() if len(v) > 1],
         "other_scripts_or_archives": other,
         "upx_section_markers": [r["path"] for r in rows if any("UPX" in s["name"].upper() for s in r["sections"])],

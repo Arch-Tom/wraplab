@@ -42,16 +42,21 @@ class Trace:
         return result.returncode == 0
 
     def start(self):
-        args = ["logman", "create", "trace", self.name, "-o", str(self.etl), "-bs", "1024", "-nb", "16", "256"]
-        for provider, keywords in [
+        providers = [
             ("Microsoft-Windows-Kernel-Process", "0x70"),
             ("Microsoft-Windows-Kernel-File", "0xffffffffffffffff"),
             ("Microsoft-Windows-Kernel-Network", "0xffffffffffffffff"),
             ("Microsoft-Windows-Kernel-Registry", "0xffffffffffffffff"),
             ("Microsoft-Windows-WMI-Activity", "0xffffffffffffffff"),
-        ]:
-            args += ["-p", provider, keywords, "5"]
-        self.active = self.command([*args, "-ets"])
+        ]
+        # logman accepts -p once. A provider file is its documented multi-provider
+        # interface; preserve it alongside the trace for reproducibility.
+        provider_file = self.output / "trace-providers.txt"
+        provider_file.write_text("".join(f'{name} {keywords} 5\n' for name, keywords in providers), encoding="ascii")
+        self.active = self.command([
+            "logman", "create", "trace", self.name, "-o", str(self.etl),
+            "-bs", "1024", "-nb", "16", "128", "-pf", str(provider_file), "-ets",
+        ])
 
     def finish(self, cases):
         active = self.active
@@ -66,7 +71,8 @@ class Trace:
             result["limitations"].append("ETW unavailable: polling and static source/bundle audit cannot exclude very short events or transient deleted files.")
             return result
         ns = {"e": "http://schemas.microsoft.com/win/2004/08/events/event"}
-        pids = {r["pid"] for case in cases for r in case.get("process_tree", [])}
+        pids = {case["primary_pid"] for case in cases}
+        pids.update(r["pid"] for case in cases for r in case.get("process_tree", []))
         selected, counts = [], {}
         # First pass finds short-lived children not captured by polling. PID ownership
         # is constrained to the recorded test window; raw trace remains available.

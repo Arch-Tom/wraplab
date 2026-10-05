@@ -76,6 +76,7 @@ jobs:
             artifacts/releases/Windows/validation/*.json
             artifacts/forensics/forensic-report.json
             artifacts/forensics/trace-commands.json
+            artifacts/forensics/trace-providers.txt
             artifacts/forensics/trace-summary.txt
             artifacts/forensics/*-bundle.*
             artifacts/forensics/*/runtime.json

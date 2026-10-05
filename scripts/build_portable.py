@@ -93,6 +93,8 @@ def main():
         "source_date_epoch": int(source_epoch), "python": platform.python_version(),
         "pyinstaller": importlib.metadata.version("PyInstaller"),
         "qt": importlib.metadata.version("PySide6-Essentials"),
+        "hooks_contrib": importlib.metadata.version("pyinstaller-hooks-contrib"),
+        "platform": platform.system(), "architecture": "x64" if platform.machine().lower() in {"amd64", "x86_64"} else platform.machine(),
         "build_type": "onedir", "gui_no_console": True, "upx": False,
         "strip": False, "custom_bootloader": False, "splash": False,
         "installer": None, "requested_execution_level": "asInvoker",
@@ -108,7 +110,8 @@ def main():
         "sentinelone_tested": False,
     }
     if os.name == "nt":
-        from bundle_inventory import write_inventory
+        import PyInstaller
+        from bundle_inventory import pe_details, write_inventory
 
         inventory = write_inventory(portable, artifacts / "bundle-inventory.json")
         primary = next(r for r in inventory["native_files"] if r["path"] == "WrapLab.exe")
@@ -120,6 +123,10 @@ def main():
         assert not inventory["upx_section_markers"]
         assert len([r for r in inventory["native_files"] if r["path"].endswith(".exe")]) == 1
         assert not any("qt6network" in r["path"].lower() or "tuiotouch" in r["path"].lower() or "_multiarray_tests" in r["path"] for r in inventory["native_files"])
+        stock = Path(PyInstaller.__file__).parent / "bootloader/Windows-64bit-intel/runw.exe"
+        stock_text = next(s["sha256"] for s in pe_details(stock.read_bytes())["sections"] if s["name"] == ".text")
+        assert stock_text == next(s["sha256"] for s in primary["sections"] if s["name"] == ".text"), "Executable code differs from pinned stock GUI bootloader"
+        build_settings["stock_bootloader_text_sha256"] = stock_text
         build_settings["unsigned"] = primary["certificate_table_bytes"] == 0
         build_settings["native_file_count"] = inventory["native_count"]
         build_settings["native_bytes"] = inventory["native_bytes"]
@@ -127,6 +134,7 @@ def main():
     (portable / "Diagnostic-manifest.txt").write_text(
         "WrapLab 0.1.0 — conventional Windows compatibility candidate\n"
         + f"Source commit: {source_sha}\nBuild: onedir, GUI, stock PyInstaller {build_settings['pyinstaller']}, no UPX, no splash\n"
+        + f"Platform: {build_settings['platform']} {build_settings['architecture']}; Python {build_settings['python']}; Qt {build_settings['qt']}\n"
         + f"Executable: {binary.name}\nExecutable SHA-256: {digest(binary)}\n"
         + "Expected app child processes: none. Expected app network connections: none.\n"
         + "No elevation requested (asInvoker). No runtime launcher, updater, downloads or temporary DLL/EXE extraction.\n"
