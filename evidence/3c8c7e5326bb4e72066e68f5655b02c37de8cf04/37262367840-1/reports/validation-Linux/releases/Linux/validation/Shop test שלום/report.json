@@ -1,0 +1,121 @@
+{
+  "status": "passed",
+  "platform": "Linux",
+  "python": "3.12.14",
+  "os_version": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+  "architecture": "x86_64",
+  "qt_version": "6.8.3",
+  "qt_platform": "offscreen",
+  "executable": "/home/runner/work/wraplab/wraplab/artifacts/releases/Linux/Extracted shop install \u05e9\u05dc\u05d5\u05dd/WrapLab/WrapLab",
+  "standard_user_data": "/home/runner/work/wraplab/wraplab/artifacts/releases/Linux/validation/user data/WrapLab/WrapLab",
+  "isolated_user_data": "/home/runner/work/wraplab/wraplab/artifacts/releases/Linux/validation/user data/WrapLab/WrapLab/Release-validation/b14c31e63c2e",
+  "temporary_directory": "/home/runner/work/wraplab/wraplab/artifacts/releases/Linux/validation/temporary files",
+  "restart_verified": false,
+  "unicode_and_spaces_verified": true,
+  "long_path_characters": 298,
+  "source_preserved": true,
+  "visible_edge_rejected": true,
+  "packaged": true,
+  "physical_model": "front-view-vinyl",
+  "windows_packaged_verified": false,
+  "coreldraw_2019_verified": false,
+  "physical_vinyl_verified": false,
+  "exports": [
+    {
+      "mode": "cylinder",
+      "export": "artwork",
+      "width": "30.751742mm",
+      "height": "12mm",
+      "nodes": 104,
+      "sha256": "ad69d7aa6df130411a0f8625bec06eb4f13938684ea8d1f378f769d4f7b9d8f5"
+    },
+    {
+      "mode": "cylinder",
+      "export": "guides",
+      "width": "125.963706mm",
+      "height": "100.3mm",
+      "nodes": 104,
+      "sha256": "6aaa315ddf2a8cc789756a3ea535518a17e8a05e15f86fb980399d6c758b90d4"
+    },
+    {
+      "mode": "cylinder",
+      "export": "original",
+      "width": "30mm",
+      "height": "12mm",
+      "nodes": 8,
+      "sha256": "01b420322c3c00c64b155d1da6897dc0cb6ebcd9f8af5d6f6812b78b7ca0de13"
+    },
+    {
+      "mode": "cylinder",
+      "export": "template",
+      "width": "125.963706mm",
+      "height": "100.3mm",
+      "nodes": null,
+      "sha256": "336a6f8b94a3ec0178fa4a8c755c5e68a6c2fe522629672c5d168500fc86c1f1"
+    },
+    {
+      "mode": "frustum",
+      "export": "artwork",
+      "width": "30.826369mm",
+      "height": "12.481349mm",
+      "nodes": 120,
+      "sha256": "dc4be6a64d60fc32b9a067dce82d9285923cc84ce2f884bd44dbf540bd4668c5"
+    },
+    {
+      "mode": "frustum",
+      "export": "guides",
+      "width": "140.778954mm",
+      "height": "106.035716mm",
+      "nodes": 120,
+      "sha256": "a795c60545be46d819c268f060eea9818c4afa0c7b073c2bbeff94d9cf5d295a"
+    },
+    {
+      "mode": "frustum",
+      "export": "original",
+      "width": "30mm",
+      "height": "12mm",
+      "nodes": 8,
+      "sha256": "e3856e0be30c8913d3acd6a44e4696076645dd3efea1c0d6443e8ee8bd2e64a3"
+    },
+    {
+      "mode": "frustum",
+      "export": "template",
+      "width": "140.778954mm",
+      "height": "106.035716mm",
+      "nodes": null,
+      "sha256": "46b21a5d5c97326a4ff87c4a6b0e628186c316bbe3f3b2f0efb4c4174c0c6e3b"
+    },
+    {
+      "mode": "measured",
+      "export": "artwork",
+      "width": "31.210327mm",
+      "height": "15.430806mm",
+      "nodes": 524,
+      "sha256": "a98e03d45dd1e024e1df09ec7ce65bd2c50541499cd2096da8f8065b262fccef"
+    },
+    {
+      "mode": "measured",
+      "export": "guides",
+      "width": "134.116967mm",
+      "height": "67.152752mm",
+      "nodes": 524,
+      "sha256": "d13e143e427786fe3d7c9e69366cb22cc4bf804798e186b33ae5eda1235c80b1"
+    },
+    {
+      "mode": "measured",
+      "export": "original",
+      "width": "30mm",
+      "height": "12mm",
+      "nodes": 8,
+      "sha256": "f0c3a44f33a2ef2d4e4bc17051d4e08374bd90761f9eef30a7b8b165499d4502"
+    },
+    {
+      "mode": "measured",
+      "export": "template",
+      "width": "134.116967mm",
+      "height": "67.152752mm",
+      "nodes": null,
+      "sha256": "ff92875b296725869a988a75a1633467a97384d145266f26a5eaefd3aec6b18f"
+    }
+  ]
+}

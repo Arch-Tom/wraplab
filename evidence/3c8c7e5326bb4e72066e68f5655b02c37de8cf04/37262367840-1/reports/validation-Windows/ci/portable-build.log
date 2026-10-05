@@ -1,0 +1,122 @@
+180 INFO: PyInstaller: 6.12.0, contrib hooks: 2025.2
+180 INFO: Python: 3.12.10
+204 INFO: Platform: Windows-2025Server-10.0.26100-SP0
+204 INFO: Python environment: C:\hostedtoolcache\windows\Python\3.12.10\x64
+206 INFO: wrote D:\a\wraplab\wraplab\artifacts\releases\Windows\packaging\WrapLab.spec
+208 INFO: Removing temporary files and cleaning cache in D:\a\wraplab\wraplab\artifacts\releases\Windows\pyinstaller-cache\pyinstaller
+210 INFO: Module search paths (PYTHONPATH):
+['D:\\a\\wraplab\\wraplab',
+ 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python312.zip',
+ 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\DLLs',
+ 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib',
+ 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64',
+ 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages',
+ 'D:\\a\\wraplab\\wraplab\\src',
+ 'D:\\a\\wraplab\\wraplab\\scripts',
+ 'D:\\a\\wraplab\\wraplab\\src']
+511 INFO: Appending 'datas' from .spec
+513 INFO: checking Analysis
+513 INFO: Building Analysis because Analysis-00.toc is non existent
+513 INFO: Running Analysis Analysis-00.toc
+513 INFO: Target bytecode optimization level: 0
+513 INFO: Initializing module dependency graph...
+513 INFO: Initializing module graph hook caches...
+528 INFO: Analyzing modules for base_library.zip ...
+1637 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+3321 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+4413 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+5160 INFO: Caching module dependency graph...
+5195 INFO: Looking for Python shared library...
+5230 INFO: Using Python shared library: C:\hostedtoolcache\windows\Python\3.12.10\x64\python312.dll
+5230 INFO: Analyzing D:\a\wraplab\wraplab\scripts\entrypoint.py
+5310 INFO: Processing standard module hook 'hook-platform.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+5359 INFO: Processing standard module hook 'hook-xml.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+5380 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+5385 INFO: Processing standard module hook 'hook-PySide6.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+5540 INFO: Processing standard module hook 'hook-shiboken6.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+5542 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+6632 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+6854 INFO: Processing standard module hook 'hook-PySide6.QtWidgets.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+7099 INFO: Processing standard module hook 'hook-numpy.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+7952 INFO: Processing standard module hook 'hook-sysconfig.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+8929 INFO: Processing standard module hook 'hook-difflib.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+9181 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+11153 INFO: Processing standard module hook 'hook-scipy.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+11671 INFO: Processing standard module hook 'hook-scipy.special._ufuncs.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+12244 INFO: Processing standard module hook 'hook-scipy.linalg.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+13758 INFO: Processing standard module hook 'hook-scipy.sparse.csgraph.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+14044 INFO: Processing standard module hook 'hook-scipy.spatial.transform.rotation.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+14503 INFO: Processing standard module hook 'hook-scipy.stats._stats.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+15964 INFO: Processing standard module hook 'hook-scipy.special._ellip_harm_2.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+16485 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+16980 INFO: Processing standard module hook 'hook-xml.dom.domreg.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+17608 INFO: Processing standard module hook 'hook-shapely.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+17805 INFO: Processing standard module hook 'hook-PySide6.QtSvg.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+17964 INFO: Processing standard module hook 'hook-PySide6.QtSvgWidgets.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+18123 INFO: Processing module hooks (post-graph stage)...
+18177 WARNING: Hidden import "scipy.special._cdflib" not found!
+18184 INFO: Performing binary vs. data reclassification (134 entries)
+18214 INFO: Looking for ctypes DLLs
+18317 INFO: Analyzing run-time hooks ...
+18320 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+18323 INFO: Including run-time hook 'pyi_rth_pyside6.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+18325 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+18325 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks'
+18327 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+18329 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+18345 INFO: Creating base_library.zip...
+18420 INFO: Looking for dynamic libraries
+19955 INFO: Extra DLL search directories (AddDllDirectory): ['C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\shiboken6', 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\numpy.libs', 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\scipy.libs', 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\shapely.libs']
+19955 INFO: Extra DLL search directories (PATH): ['C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PySide6']
+23526 WARNING: Library not found: could not resolve 'api-ms-win-core-path-l1-1-0.dll', dependency of 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python312.dll'.
+23526 WARNING: Library not found: could not resolve 'api-ms-win-core-winrt-string-l1-1-0.dll', dependency of 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qdirect2d.dll'.
+23526 WARNING: Library not found: could not resolve 'api-ms-win-core-winrt-l1-1-0.dll', dependency of 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qdirect2d.dll'.
+23526 WARNING: Library not found: could not resolve 'api-ms-win-shcore-scaling-l1-1-1.dll', dependency of 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qdirect2d.dll'.
+23526 WARNING: Library not found: could not resolve 'api-ms-win-core-winrt-string-l1-1-0.dll', dependency of 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qwindows.dll'.
+23526 WARNING: Library not found: could not resolve 'api-ms-win-core-winrt-l1-1-0.dll', dependency of 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qwindows.dll'.
+23528 WARNING: Library not found: could not resolve 'api-ms-win-shcore-scaling-l1-1-1.dll', dependency of 'C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\PySide6\\plugins\\platforms\\qwindows.dll'.
+23552 INFO: Warnings written to D:\a\wraplab\wraplab\artifacts\releases\Windows\build\WrapLab\warn-WrapLab.txt
+23635 INFO: Graph cross-reference written to D:\a\wraplab\wraplab\artifacts\releases\Windows\build\WrapLab\xref-WrapLab.html
+23671 INFO: checking PYZ
+23671 INFO: Building PYZ because PYZ-00.toc is non existent
+23671 INFO: Building PYZ (ZlibArchive) D:\a\wraplab\wraplab\artifacts\releases\Windows\build\WrapLab\PYZ-00.pyz
+25103 INFO: Building PYZ (ZlibArchive) D:\a\wraplab\wraplab\artifacts\releases\Windows\build\WrapLab\PYZ-00.pyz completed successfully.
+25137 INFO: checking PKG
+25138 INFO: Building PKG because PKG-00.toc is non existent
+25138 INFO: Building PKG (CArchive) WrapLab.pkg
+25156 INFO: Building PKG (CArchive) WrapLab.pkg completed successfully.
+25156 INFO: Bootloader C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+25156 INFO: checking EXE
+25156 INFO: Building EXE because EXE-00.toc is non existent
+25158 INFO: Building EXE from EXE-00.toc
+25158 INFO: Copying bootloader EXE to D:\a\wraplab\wraplab\artifacts\releases\Windows\build\WrapLab\WrapLab.exe
+25160 INFO: Copying icon to EXE
+25160 INFO: Copying 0 resources to EXE
+25160 INFO: Embedding manifest in EXE
+25164 INFO: Appending PKG archive to EXE
+25170 INFO: Fixing EXE headers
+25247 INFO: Building EXE from EXE-00.toc completed successfully.
+25269 INFO: checking COLLECT
+25269 INFO: Building COLLECT because COLLECT-00.toc is non existent
+25271 INFO: Building COLLECT COLLECT-00.toc
+25679 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+25687 INFO: Build complete! The results are available in: D:\a\wraplab\wraplab\artifacts\releases\Windows\dist
+Created 14 SVG specimens in D:\a\wraplab\wraplab\artifacts\releases\Windows\source-acceptance
+Traceback (most recent call last):
+  File "D:\a\wraplab\wraplab\scripts\build_portable.py", line 175, in <module>
+    main()
+  File "D:\a\wraplab\wraplab\scripts\build_portable.py", line 141, in main
+    report, pack = validate_extracted(extraction / "WrapLab", artifacts / "validation", source_pack)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\wraplab\wraplab\scripts\release_checks.py", line 189, in validate_extracted
+    denied = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py", line 1630, in _communicate
+    raise TimeoutExpired(self.args, orig_timeout)
+subprocess.TimeoutExpired: Command '['D:\\a\\wraplab\\wraplab\\artifacts\\releases\\Windows\\Extracted shop install \u05e9\u05dc\u05d5\u05dd\\WrapLab\\WrapLab.exe', 'convert', 'D:\\a\\wraplab\\wraplab\\artifacts\\releases\\Windows\\Extracted shop install \u05e9\u05dc\u05d5\u05dd\\WrapLab\\_internal\\acceptance-fixtures\\lettering.svg', 'D:\\a\\wraplab\\wraplab\\artifacts\\releases\\Windows\\Extracted shop install \u05e9\u05dc\u05d5\u05dd\\WrapLab\\denied-existing.svg', '--width', '30']' timed out after 60 seconds
