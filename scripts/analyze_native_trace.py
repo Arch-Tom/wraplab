@@ -43,7 +43,7 @@ def resolve_full_trace(xml, cases):
                 ordered.append((created.get("SystemTime", "") if created is not None else "", name, ident, pid, data))
         event.clear()
     ordered.sort(key=lambda row: row[0])
-    for timestamp, name, ident, pid, data in ordered:
+    for _timestamp, name, ident, pid, data in ordered:
         if name.endswith("Kernel-Process"):
             if ident == 3:
                 threads[number(data.get("ThreadID"))] = number(data.get("ProcessID"))
