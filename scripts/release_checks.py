@@ -174,6 +174,7 @@ def validate_extracted(extracted, output, source_pack):
     binary = extracted / ("WrapLab.exe" if os.name == "nt" else "WrapLab")
     env = dict(os.environ)
     env["QT_QPA_PLATFORM"] = "windows" if os.name == "nt" else "offscreen"
+    env["WRAPLAB_QA_LOG"] = str(output / "packaged-diagnostics.log")
     env["XDG_CACHE_HOME"] = str(output / "cache")
     if os.name != "nt":
         env["XDG_DATA_HOME"] = str(output / "user data")
@@ -203,7 +204,7 @@ def validate_extracted(extracted, output, source_pack):
         assert (
             denied.returncode == 2
             and denied_target.read_text(encoding="utf-8") == "preserve existing file"
-        )
+        ), f"Denied-write CLI returned {denied.returncode}; inspect packaged-diagnostics.log"
         execute(binary, ["--self-test", destination], output, env, output / "packaged-launch.log")
         execute(
             binary,
