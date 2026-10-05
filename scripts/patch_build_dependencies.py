@@ -12,7 +12,12 @@ import sys
 
 ORIGINAL = 'IS_WASM = platform.machine() in ["wasm32", "wasm64"]'
 REPLACEMENT = 'IS_WASM = sys.platform in ("emscripten", "wasi")  # WrapLab build: no OS/CPU probe for WebAssembly detection.'
-REVIEWED_ORIGINAL_SHA256 = "52b5a931fb20403e782b8eae8f4d1d015c753db97c2450abd3fc9bee6d6e6644"
+# Reviewed numpy-2.2.6-cp312-cp312-win_amd64.whl (wheel SHA-256
+# c1f9540be57940698ed329904db803cf7a402f3fc200bfe599334c9bd84a40b2).
+# The Windows file uses CRLF; its LF-normalized bytes exactly match the
+# independently reviewed Linux source (52b5a931fb20403e782b8eae8f4d1d015c753db97c2450abd3fc9bee6d6e6644).
+# Check the exact Windows bytes and preserve its line endings during the patch.
+REVIEWED_ORIGINAL_SHA256 = "1d4fb548bcc931af8e9c9b6dadc2e503851c63e141a05eee85cc4b324342b75b"
 
 
 def apply_patch():
