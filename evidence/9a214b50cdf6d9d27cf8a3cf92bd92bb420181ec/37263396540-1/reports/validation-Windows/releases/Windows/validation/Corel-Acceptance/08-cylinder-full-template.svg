@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="251.627412mm" height="100.3mm" viewBox="0 0 251.627412 100.3">
+  <title>WrapLab — Illustrative cylinder — NOT real measurements</title>
+  <metadata>{"algorithm":"cylinder-development-v1","axial_direction":"down-from-labelled-top","certificate_level":"analytical-exact-surface","coreldraw_2019_verified":false,"development":{"application_strain":0},"display_units":"mm","front_margin":0.95,"mode":"cylinder","page_origin_mm":[-125.81370614359173,-0.15],"physical_model":"surface-template","placement":{"height":24.0,"lock_aspect":true,"width":40,"x":105.66370614359172,"z":38.0},"profile_name":"Illustrative cylinder — NOT real measurements","reference_height_mm":50.0,"source_name":"calibration.svg","status":"Exact","tolerance_mm":0.01,"units":"mm","view_assumption":"surface-wrap","warnings":["Guide paths may cut; this group is not automatically noncutting."],"wrap_degrees":360,"wraplab_version":"0.1.0"}</metadata>
+  <g id="Guides">
+    <path id="Guides-1" d="M0.15 0.15 L251.477412 0.15 L251.477412 100.15 L0.15 100.15 Z" fill="none" fill-rule="nonzero" stroke="#4b8295" stroke-width="0.15" />
+    <path id="Guides-2" d="M125.813706 0.15 L125.813706 100.15 M0.15 50.15 L251.477412 50.15" fill="none" fill-rule="nonzero" stroke="#94a3b8" stroke-width="0.1" />
+  </g>
+</svg>

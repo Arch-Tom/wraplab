@@ -1,0 +1,125 @@
+48 INFO: PyInstaller: 6.12.0, contrib hooks: 2025.2
+48 INFO: Python: 3.12.14
+49 INFO: Platform: Linux-6.17.0-1022-azure-x86_64-with-glibc2.39
+49 INFO: Python environment: /opt/hostedtoolcache/Python/3.12.14/x64
+50 INFO: wrote /home/runner/work/wraplab/wraplab/artifacts/releases/Linux/packaging/WrapLab.spec
+227 INFO: UPX is available but is disabled on non-Windows due to known compatibility problems.
+227 INFO: Removing temporary files and cleaning cache in /home/runner/work/wraplab/wraplab/artifacts/releases/Linux/pyinstaller-cache/pyinstaller
+228 INFO: Module search paths (PYTHONPATH):
+['/home/runner/work/wraplab/wraplab',
+ '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python312.zip',
+ '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12',
+ '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/lib-dynload',
+ '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages',
+ '/home/runner/work/wraplab/wraplab/src',
+ '/home/runner/work/wraplab/wraplab/scripts',
+ '/home/runner/work/wraplab/wraplab/src']
+386 INFO: Appending 'datas' from .spec
+386 INFO: checking Analysis
+386 INFO: Building Analysis because Analysis-00.toc is non existent
+386 INFO: Running Analysis Analysis-00.toc
+386 INFO: Target bytecode optimization level: 0
+386 INFO: Initializing module dependency graph...
+387 INFO: Initializing module graph hook caches...
+392 INFO: Analyzing modules for base_library.zip ...
+727 INFO: Processing standard module hook 'hook-encodings.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+3301 INFO: Processing standard module hook 'hook-pickle.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+4177 INFO: Processing standard module hook 'hook-heapq.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+4751 INFO: Caching module dependency graph...
+4778 INFO: Looking for Python shared library...
+4785 INFO: Using Python shared library: /opt/hostedtoolcache/Python/3.12.14/x64/lib/libpython3.12.so.1.0
+4785 INFO: Analyzing /home/runner/work/wraplab/wraplab/scripts/entrypoint.py
+4848 INFO: Processing standard module hook 'hook-platform.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+4889 INFO: Processing standard module hook 'hook-xml.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+4909 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+4915 INFO: Processing standard module hook 'hook-PySide6.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+5019 INFO: Processing standard module hook 'hook-shiboken6.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+5020 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+5263 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+5368 INFO: Processing standard module hook 'hook-PySide6.QtWidgets.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+5514 INFO: Processing standard module hook 'hook-numpy.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+5965 INFO: Processing standard module hook 'hook-sysconfig.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+6828 INFO: Processing standard module hook 'hook-difflib.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+7012 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+8655 INFO: Processing standard module hook 'hook-scipy.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+8980 INFO: Processing standard module hook 'hook-scipy.special._ufuncs.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+9535 INFO: Processing standard module hook 'hook-scipy.linalg.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+10908 INFO: Processing standard module hook 'hook-scipy.sparse.csgraph.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+11148 INFO: Processing standard module hook 'hook-scipy.spatial.transform.rotation.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+11521 INFO: Processing standard module hook 'hook-scipy.stats._stats.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+12811 INFO: Processing standard module hook 'hook-scipy.special._ellip_harm_2.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+13272 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+13830 INFO: Processing standard module hook 'hook-xml.dom.domreg.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+14398 INFO: Processing standard module hook 'hook-shapely.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+14650 INFO: Processing standard module hook 'hook-PySide6.QtSvg.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+14755 INFO: Processing standard module hook 'hook-PySide6.QtSvgWidgets.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+14871 INFO: Processing module hooks (post-graph stage)...
+14886 WARNING: Hidden import "scipy.special._cdflib" not found!
+14931 INFO: Processing standard module hook 'hook-PySide6.QtDBus.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+15042 INFO: Performing binary vs. data reclassification (157 entries)
+15370 INFO: Looking for ctypes DLLs
+15461 INFO: Analyzing run-time hooks ...
+15464 INFO: Including run-time hook 'pyi_rth_inspect.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks/rthooks'
+15466 INFO: Including run-time hook 'pyi_rth_pyside6.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks/rthooks'
+15467 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks/pre_find_module_path'
+15468 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks'
+15470 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks/rthooks'
+15471 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/hooks/rthooks'
+15483 INFO: Creating base_library.zip...
+15514 INFO: Looking for dynamic libraries
+17659 WARNING: Library not found: could not resolve 'libxcb-cursor.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-glx-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-shape.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-glx-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-image.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-glx-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-keysyms.so.1', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-glx-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxkbcommon-x11.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-glx-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-xkb.so.1', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-glx-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-icccm.so.4', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-glx-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-render-util.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-glx-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-cursor.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-egl-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-render-util.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-egl-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-shape.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-egl-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-image.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-egl-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-keysyms.so.1', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-egl-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxkbcommon-x11.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-egl-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-icccm.so.4', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-egl-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-xkb.so.1', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/xcbglintegrations/libqxcb-egl-integration.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-cursor.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/platforms/libqxcb.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-render-util.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/platforms/libqxcb.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-shape.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/platforms/libqxcb.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-image.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/platforms/libqxcb.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-keysyms.so.1', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/platforms/libqxcb.so'.
+17659 WARNING: Library not found: could not resolve 'libxkbcommon-x11.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/platforms/libqxcb.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-icccm.so.4', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/platforms/libqxcb.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-xkb.so.1', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/plugins/platforms/libqxcb.so'.
+17659 WARNING: Library not found: could not resolve 'libxcb-cursor.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/lib/libQt6XcbQpa.so.6'.
+17659 WARNING: Library not found: could not resolve 'libxcb-render-util.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/lib/libQt6XcbQpa.so.6'.
+17659 WARNING: Library not found: could not resolve 'libxcb-shape.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/lib/libQt6XcbQpa.so.6'.
+17659 WARNING: Library not found: could not resolve 'libxcb-image.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/lib/libQt6XcbQpa.so.6'.
+17659 WARNING: Library not found: could not resolve 'libxcb-keysyms.so.1', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/lib/libQt6XcbQpa.so.6'.
+17659 WARNING: Library not found: could not resolve 'libxkbcommon-x11.so.0', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/lib/libQt6XcbQpa.so.6'.
+17659 WARNING: Library not found: could not resolve 'libxcb-icccm.so.4', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/lib/libQt6XcbQpa.so.6'.
+17659 WARNING: Library not found: could not resolve 'libxcb-xkb.so.1', dependency of '/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PySide6/Qt/lib/libQt6XcbQpa.so.6'.
+17693 INFO: Warnings written to /home/runner/work/wraplab/wraplab/artifacts/releases/Linux/build/WrapLab/warn-WrapLab.txt
+17724 INFO: Graph cross-reference written to /home/runner/work/wraplab/wraplab/artifacts/releases/Linux/build/WrapLab/xref-WrapLab.html
+17746 INFO: checking PYZ
+17746 INFO: Building PYZ because PYZ-00.toc is non existent
+17746 INFO: Building PYZ (ZlibArchive) /home/runner/work/wraplab/wraplab/artifacts/releases/Linux/build/WrapLab/PYZ-00.pyz
+18568 INFO: Building PYZ (ZlibArchive) /home/runner/work/wraplab/wraplab/artifacts/releases/Linux/build/WrapLab/PYZ-00.pyz completed successfully.
+18585 INFO: checking PKG
+18585 INFO: Building PKG because PKG-00.toc is non existent
+18585 INFO: Building PKG (CArchive) WrapLab.pkg
+18596 INFO: Building PKG (CArchive) WrapLab.pkg completed successfully.
+18597 INFO: Bootloader /opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/PyInstaller/bootloader/Linux-64bit-intel/run
+18597 INFO: checking EXE
+18597 INFO: Building EXE because EXE-00.toc is non existent
+18597 INFO: Building EXE from EXE-00.toc
+18597 INFO: Copying bootloader EXE to /home/runner/work/wraplab/wraplab/artifacts/releases/Linux/build/WrapLab/WrapLab
+18597 INFO: Appending PKG archive to custom ELF section in EXE
+18664 INFO: Building EXE from EXE-00.toc completed successfully.
+18667 INFO: checking COLLECT
+18667 INFO: Building COLLECT because COLLECT-00.toc is non existent
+18668 INFO: Building COLLECT COLLECT-00.toc
+20802 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+20807 INFO: Build complete! The results are available in: /home/runner/work/wraplab/wraplab/artifacts/releases/Linux/dist
+Created 14 SVG specimens in /home/runner/work/wraplab/wraplab/artifacts/releases/Linux/source-acceptance
+Portable artifact: /home/runner/work/wraplab/wraplab/artifacts/releases/Linux/WrapLab-0.1.0-Linux-x64-portable.zip
