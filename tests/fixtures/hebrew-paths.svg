@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50mm" height="20mm" viewBox="0 0 50 20">
+  <title>Hebrew-like path geometry: source order and asymmetric orientation fixture</title>
+  <desc>Geometric path specimen, not a reference font. Right-to-left layout is already in the paths.</desc>
+  <g id="right" fill="#182b3b">
+    <path d="M37 2L40 2L47 16L47 18L44 18L37 4Z"/>
+    <path d="M44 2H47V8L44 11L42.5 8Z"/>
+    <path d="M37 12L40 9L41.5 12L40 15V18H37Z"/>
+  </g>
+  <path id="middle" fill="#182b3b" d="M20 2H23V13Q25 16 27 13V2H30V13Q32 16 34 13V2H37V14Q34 20 30 17Q25 20 20 15Z"/>
+  <path id="left" fill="#182b3b" d="M3 2H16V18H13V5H3Z"/>
+</svg>

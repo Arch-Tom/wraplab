@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wraplab"
+version = "0.1.0"
+description = "Offline surface-template development and SVG preparation for rotational objects"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "PySide6-Essentials==6.8.3", "svgpathtools==1.7.1", "defusedxml==0.7.1",
+  "numpy==2.2.6", "scipy==1.15.3", "shapely==2.0.7", "svgwrite==1.4.3",
+]
+
+[project.scripts]
+wraplab = "wraplab.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B"]

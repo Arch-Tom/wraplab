@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60mm" height="25mm" viewBox="0 0 60 25">
+  <title>Path lettering: O A B R — counter and curve specimen</title>
+  <g fill="#182b3b" fill-rule="evenodd">
+    <path id="O" d="M2 12.5 C2 0 15 0 15 12.5 C15 25 2 25 2 12.5 Z M5 12.5 C5 21 12 21 12 12.5 C12 4 5 4 5 12.5 Z"/>
+    <path id="A" d="M17 23 L23 2 L29 23 L25 23 L24 18 L21 18 L20 23 Z M21.8 15 L23.2 15 L22.5 9 Z"/>
+    <path id="B" d="M31 2 L37 2 C47 2 46 10 41 12 C47 14 47 23 37 23 L31 23 Z M34 5 L37 5 C42 5 42 10 37 10 L34 10 Z M34 14 L37 14 C43 14 43 20 37 20 L34 20 Z"/>
+    <path id="R" d="M47 2 L52 2 C61 2 61 12 55 14 L59 23 L55 23 L51 15 L50 15 L50 23 L47 23 Z M50 5 L52 5 C57 5 57 11 52 11 L50 11 Z"/>
+  </g>
+</svg>

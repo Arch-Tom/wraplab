@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50mm" height="35mm" viewBox="0 0 100 70">
+  <g transform="translate(3 3)" fill="#243746">
+    <rect x="2" y="2" width="25" height="15" rx="3"/>
+    <ellipse cx="47" cy="12" rx="12" ry="8"/>
+    <polygon points="70,3 87,12 70,20"/>
+    <path d="M2 40 C5 23 20 54 27 32 L27 52 L2 52 Z"/>
+    <path d="M35 32 Q48 20 60 32 T85 32 L85 52 L35 52 Z"/>
+  </g>
+  <polyline points="5,60 20,56 35,62 50,57 70,63 90,58" fill="none" stroke="black" stroke-width="0.5" stroke-linejoin="round"/>
+</svg>
