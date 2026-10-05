@@ -1,0 +1,16 @@
+{
+  "platform": "Linux",
+  "windows_verified": false,
+  "artifacts": [
+    {
+      "file": "WrapLab-0.1.0-Linux-x86_64-portable.zip",
+      "bytes": 160846974,
+      "sha256": "8a6b1630254cc1e58369675bf0b8763dca49dbb59b4788809abe41434cb9ac76"
+    },
+    {
+      "file": "WrapLab-Corel-Acceptance.zip",
+      "bytes": 119280,
+      "sha256": "2017dd57d1bf55e34e32ed9e6391facbfae3bf973a4a3b8470dc5a796306137b"
+    }
+  ]
+}
