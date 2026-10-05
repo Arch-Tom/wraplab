@@ -1,0 +1,59 @@
+name: Review existing Windows diagnostic trace (read only)
+on:
+  push:
+    branches: [security/sentinelone-trace-review]
+permissions:
+  contents: read
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: diagnostic-raw-traces
+          run-id: '37377621474'
+          github-token: ${{ github.token }}
+          path: trace-input
+      - uses: actions/download-artifact@v4
+        with:
+          name: diagnostic-reports
+          run-id: '37377621474'
+          github-token: ${{ github.token }}
+          path: reports-input
+      - name: Decode PID associations and filesystem/registry evidence
+        run: >-
+          python scripts/analyze_native_trace.py trace-input/app-etw-events.json
+          reports-input/forensics/forensic-report.json artifacts/trace-analysis.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trace-analysis
+          path: artifacts/trace-analysis.json
+  evidence:
+    if: always()
+    needs: review
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          path: evidence-checkout
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: trace-analysis
+          path: evidence-downloads/trace-analysis
+      - name: Preserve small review reports with source identity
+        env:
+          JOB_RESULTS: ${{ toJSON(needs) }}
+        shell: bash
+        run: |
+          export SOURCE_TREE=$(git rev-parse 'HEAD^{tree}')
+          python scripts/write_evidence.py
