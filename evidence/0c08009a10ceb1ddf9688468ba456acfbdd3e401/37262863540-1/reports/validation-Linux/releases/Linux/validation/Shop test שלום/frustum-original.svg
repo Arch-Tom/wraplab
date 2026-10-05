@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="30mm" height="12mm" viewBox="0 0 30 12">
+  <title>WrapLab — Self-test frustum (illustrative geometry)</title>
+  <metadata>{"algorithm":"frustum-development-v1","axial_direction":"down-from-labelled-top","certificate_level":"analytical-affine","coreldraw_2019_verified":false,"development":{"application_strain":0},"display_units":"mm","front_margin":0.95,"mode":"uncompensated","page_origin_mm":[0.0,0.0],"physical_model":"front-view-vinyl","placement":{"height":12,"lock_aspect":true,"width":30,"x":0,"z":44.0},"profile_name":"Self-test frustum (illustrative geometry)","reference_height_mm":50.0,"source_name":"self-test-source.svg","status":"Uncompensated","tolerance_mm":0.01,"units":"mm","view_assumption":"upright-object-horizontal-distant-orthographic","warnings":[],"wrap_degrees":180.0,"wraplab_version":"0.1.0"}</metadata>
+  <g id="Artwork">
+    <path id="Artwork-1" d="M0 0 L30 0 L30 12 L0 12 Z M8 4 L22 4 L22 8 L8 8 Z" fill="#000000" fill-rule="evenodd" stroke="none" />
+  </g>
+</svg>

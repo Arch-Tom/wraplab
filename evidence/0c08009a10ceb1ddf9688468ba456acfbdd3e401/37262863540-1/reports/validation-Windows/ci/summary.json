@@ -1,0 +1,56 @@
+{
+  "source_commit": "0c08009a10ceb1ddf9688468ba456acfbdd3e401",
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "python": "3.12.10",
+  "checks": [
+    {
+      "name": "install",
+      "exit_code": 0,
+      "seconds": 31.12
+    },
+    {
+      "name": "project-install",
+      "exit_code": 0,
+      "seconds": 2.47
+    },
+    {
+      "name": "dependency-check",
+      "exit_code": 0,
+      "seconds": 0.38
+    },
+    {
+      "name": "lint",
+      "exit_code": 0,
+      "seconds": 0.08
+    },
+    {
+      "name": "tests",
+      "exit_code": 0,
+      "seconds": 65.75
+    },
+    {
+      "name": "audit-environment",
+      "exit_code": 0,
+      "seconds": 4.19
+    },
+    {
+      "name": "audit-install",
+      "exit_code": 0,
+      "seconds": 7.55
+    },
+    {
+      "name": "security-audit",
+      "exit_code": 0,
+      "seconds": 1.67
+    },
+    {
+      "name": "portable-build",
+      "exit_code": 1,
+      "seconds": 130.11
+    }
+  ],
+  "status": "failed",
+  "tests_passed": 147,
+  "independent_fixtures_passed": 18,
+  "error": "portable-build failed"
+}
