@@ -1,0 +1,13 @@
+{
+  "source_commit": "4652a380cb5740d0dcd110b9857c4c7ae17b414c",
+  "url": "https://github.com/Arch-Tom/wraplab/actions/runs/37377621474/artifacts/11371989662",
+  "id": "11371989662",
+  "actions_archive_digest": "7ebc4efa6967c43954795dcde02cac6d55d32cdf4fe7a90ee1362fb9918e771f",
+  "candidate_zip": {
+    "file": "WrapLab-0.1.0-Windows-x64-onedir-diagnostic.zip",
+    "bytes": 81889830,
+    "sha256": "17f318e172fcf03848b3d78897af3e8dc210aec5899eed02d584ac477ebdc0a7"
+  },
+  "retention_days": 30,
+  "public_release_created": false
+}

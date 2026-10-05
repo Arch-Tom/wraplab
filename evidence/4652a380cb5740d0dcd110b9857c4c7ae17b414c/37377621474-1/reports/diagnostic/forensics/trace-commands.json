@@ -1,0 +1,50 @@
+[
+  {
+    "command": [
+      "logman",
+      "create",
+      "trace",
+      "WrapLabAudit-1408",
+      "-o",
+      "D:\\a\\wraplab\\wraplab\\artifacts\\forensics\\kernel.etl",
+      "-bs",
+      "1024",
+      "-nb",
+      "16",
+      "128",
+      "-pf",
+      "D:\\a\\wraplab\\wraplab\\artifacts\\forensics\\trace-providers.txt",
+      "-ets"
+    ],
+    "exit_code": 0,
+    "stdout": "The command completed successfully.\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "logman",
+      "stop",
+      "WrapLabAudit-1408",
+      "-ets"
+    ],
+    "exit_code": 0,
+    "stdout": "The command completed successfully.\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "tracerpt",
+      "D:\\a\\wraplab\\wraplab\\artifacts\\forensics\\kernel.etl",
+      "-o",
+      "D:\\a\\wraplab\\wraplab\\artifacts\\forensics\\kernel.xml",
+      "-of",
+      "XML",
+      "-summary",
+      "D:\\a\\wraplab\\wraplab\\artifacts\\forensics\\trace-summary.txt",
+      "-y"
+    ],
+    "exit_code": 0,
+    "stdout": "\nInput\n----------------\nFile(s):\n     D:\\a\\wraplab\\wraplab\\artifacts\\forensics\\kernel.etl\n\n0.00%9.09%18.18%27.27%36.36%45.45%54.55%63.64%72.73%81.82%90.91%100.00%\n\nOutput\n----------------\nDumpFile:           D:\\a\\wraplab\\wraplab\\artifacts\\forensics\\kernel.xml\nSummary:            D:\\a\\wraplab\\wraplab\\artifacts\\forensics\\trace-summary.txt\n\nWarning:\nSome events do not match the schema.\nPlease rerun the command with -lr to get less restricted XML dump\nThe command completed successfully.\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    "stderr": ""
+  }
+]

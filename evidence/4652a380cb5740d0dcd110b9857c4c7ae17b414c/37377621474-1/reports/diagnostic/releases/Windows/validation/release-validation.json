@@ -1,0 +1,356 @@
+{
+  "status": "passed",
+  "platform": "Windows",
+  "read_only_install": "Windows deny-write ACL",
+  "denied_export_preserved_existing_file": true,
+  "extracted_archive_tested": true,
+  "executable_sha256": "924d6843122d597ab407e22603686264184c806bf8588ea58b46b07574704b63",
+  "launch": {
+    "status": "passed",
+    "platform": "Windows",
+    "python": "3.12.10",
+    "os_version": "Windows-10.0.26100",
+    "architecture": "amd64",
+    "qt_version": "6.8.3",
+    "qt_platform": "windows",
+    "executable": "D:\\a\\wraplab\\wraplab\\artifacts\\releases\\Windows\\Extracted shop install \u05e9\u05dc\u05d5\u05dd\\WrapLab\\WrapLab.exe",
+    "standard_user_data": "C:\\Users\\runneradmin\\AppData\\Local\\WrapLab\\WrapLab",
+    "isolated_user_data": "C:\\Users\\runneradmin\\AppData\\Local\\WrapLab\\WrapLab\\Release-validation\\d7518650284a",
+    "temporary_directory": "D:\\a\\wraplab\\wraplab\\artifacts\\releases\\Windows\\validation\\temporary files",
+    "restart_verified": false,
+    "unicode_and_spaces_verified": true,
+    "long_path_characters": 316,
+    "source_preserved": true,
+    "visible_edge_rejected": true,
+    "packaged": true,
+    "physical_model": "front-view-vinyl",
+    "windows_packaged_verified": true,
+    "coreldraw_2019_verified": false,
+    "physical_vinyl_verified": false,
+    "exports": [
+      {
+        "mode": "cylinder",
+        "export": "artwork",
+        "width": "30.751742mm",
+        "height": "12mm",
+        "nodes": 104,
+        "sha256": "ad69d7aa6df130411a0f8625bec06eb4f13938684ea8d1f378f769d4f7b9d8f5"
+      },
+      {
+        "mode": "cylinder",
+        "export": "guides",
+        "width": "125.963706mm",
+        "height": "100.3mm",
+        "nodes": 104,
+        "sha256": "6aaa315ddf2a8cc789756a3ea535518a17e8a05e15f86fb980399d6c758b90d4"
+      },
+      {
+        "mode": "cylinder",
+        "export": "original",
+        "width": "30mm",
+        "height": "12mm",
+        "nodes": 8,
+        "sha256": "01b420322c3c00c64b155d1da6897dc0cb6ebcd9f8af5d6f6812b78b7ca0de13"
+      },
+      {
+        "mode": "cylinder",
+        "export": "template",
+        "width": "125.963706mm",
+        "height": "100.3mm",
+        "nodes": null,
+        "sha256": "336a6f8b94a3ec0178fa4a8c755c5e68a6c2fe522629672c5d168500fc86c1f1"
+      },
+      {
+        "mode": "frustum",
+        "export": "artwork",
+        "width": "30.826369mm",
+        "height": "12.481349mm",
+        "nodes": 120,
+        "sha256": "dc4be6a64d60fc32b9a067dce82d9285923cc84ce2f884bd44dbf540bd4668c5"
+      },
+      {
+        "mode": "frustum",
+        "export": "guides",
+        "width": "140.778954mm",
+        "height": "106.035716mm",
+        "nodes": 120,
+        "sha256": "a795c60545be46d819c268f060eea9818c4afa0c7b073c2bbeff94d9cf5d295a"
+      },
+      {
+        "mode": "frustum",
+        "export": "original",
+        "width": "30mm",
+        "height": "12mm",
+        "nodes": 8,
+        "sha256": "e3856e0be30c8913d3acd6a44e4696076645dd3efea1c0d6443e8ee8bd2e64a3"
+      },
+      {
+        "mode": "frustum",
+        "export": "template",
+        "width": "140.778954mm",
+        "height": "106.035716mm",
+        "nodes": null,
+        "sha256": "46b21a5d5c97326a4ff87c4a6b0e628186c316bbe3f3b2f0efb4c4174c0c6e3b"
+      },
+      {
+        "mode": "measured",
+        "export": "artwork",
+        "width": "31.210327mm",
+        "height": "15.430806mm",
+        "nodes": 524,
+        "sha256": "f2e6be7c3d36c51d7e4503a53bfe539b29d08093a90c865c1b8363cc4138d309"
+      },
+      {
+        "mode": "measured",
+        "export": "guides",
+        "width": "134.116967mm",
+        "height": "67.152752mm",
+        "nodes": 524,
+        "sha256": "f4d94bd5568176627fb63d2c7ca96a6466d0f64365c68af6259d5858eaa2e4a2"
+      },
+      {
+        "mode": "measured",
+        "export": "original",
+        "width": "30mm",
+        "height": "12mm",
+        "nodes": 8,
+        "sha256": "8b4b7b2693d48d47d5ed5772f2d5619904f33dce9311e389511c07831f4d5916"
+      },
+      {
+        "mode": "measured",
+        "export": "template",
+        "width": "134.116967mm",
+        "height": "67.152752mm",
+        "nodes": null,
+        "sha256": "a63c4ca7e55d02c3214bbed1a104d214dee5058e05d6e48b90964cb1bf0d0020"
+      }
+    ]
+  },
+  "restart": {
+    "status": "passed",
+    "platform": "Windows",
+    "python": "3.12.10",
+    "os_version": "Windows-10.0.26100",
+    "architecture": "amd64",
+    "qt_version": "6.8.3",
+    "qt_platform": "windows",
+    "executable": "D:\\a\\wraplab\\wraplab\\artifacts\\releases\\Windows\\Extracted shop install \u05e9\u05dc\u05d5\u05dd\\WrapLab\\WrapLab.exe",
+    "standard_user_data": "C:\\Users\\runneradmin\\AppData\\Local\\WrapLab\\WrapLab",
+    "isolated_user_data": "C:\\Users\\runneradmin\\AppData\\Local\\WrapLab\\WrapLab\\Release-validation\\d7518650284a",
+    "temporary_directory": "D:\\a\\wraplab\\wraplab\\artifacts\\releases\\Windows\\validation\\temporary files",
+    "restart_verified": true,
+    "unicode_and_spaces_verified": true,
+    "long_path_characters": 316,
+    "source_preserved": true,
+    "visible_edge_rejected": true,
+    "packaged": true,
+    "physical_model": "front-view-vinyl",
+    "windows_packaged_verified": true,
+    "coreldraw_2019_verified": false,
+    "physical_vinyl_verified": false,
+    "exports": [
+      {
+        "mode": "cylinder",
+        "export": "artwork",
+        "width": "30.751742mm",
+        "height": "12mm",
+        "nodes": 104,
+        "sha256": "ad69d7aa6df130411a0f8625bec06eb4f13938684ea8d1f378f769d4f7b9d8f5"
+      },
+      {
+        "mode": "cylinder",
+        "export": "guides",
+        "width": "125.963706mm",
+        "height": "100.3mm",
+        "nodes": 104,
+        "sha256": "6aaa315ddf2a8cc789756a3ea535518a17e8a05e15f86fb980399d6c758b90d4"
+      },
+      {
+        "mode": "cylinder",
+        "export": "original",
+        "width": "30mm",
+        "height": "12mm",
+        "nodes": 8,
+        "sha256": "01b420322c3c00c64b155d1da6897dc0cb6ebcd9f8af5d6f6812b78b7ca0de13"
+      },
+      {
+        "mode": "cylinder",
+        "export": "template",
+        "width": "125.963706mm",
+        "height": "100.3mm",
+        "nodes": null,
+        "sha256": "336a6f8b94a3ec0178fa4a8c755c5e68a6c2fe522629672c5d168500fc86c1f1"
+      },
+      {
+        "mode": "frustum",
+        "export": "artwork",
+        "width": "30.826369mm",
+        "height": "12.481349mm",
+        "nodes": 120,
+        "sha256": "dc4be6a64d60fc32b9a067dce82d9285923cc84ce2f884bd44dbf540bd4668c5"
+      },
+      {
+        "mode": "frustum",
+        "export": "guides",
+        "width": "140.778954mm",
+        "height": "106.035716mm",
+        "nodes": 120,
+        "sha256": "a795c60545be46d819c268f060eea9818c4afa0c7b073c2bbeff94d9cf5d295a"
+      },
+      {
+        "mode": "frustum",
+        "export": "original",
+        "width": "30mm",
+        "height": "12mm",
+        "nodes": 8,
+        "sha256": "e3856e0be30c8913d3acd6a44e4696076645dd3efea1c0d6443e8ee8bd2e64a3"
+      },
+      {
+        "mode": "frustum",
+        "export": "template",
+        "width": "140.778954mm",
+        "height": "106.035716mm",
+        "nodes": null,
+        "sha256": "46b21a5d5c97326a4ff87c4a6b0e628186c316bbe3f3b2f0efb4c4174c0c6e3b"
+      },
+      {
+        "mode": "measured",
+        "export": "artwork",
+        "width": "31.210327mm",
+        "height": "15.430806mm",
+        "nodes": 524,
+        "sha256": "f2e6be7c3d36c51d7e4503a53bfe539b29d08093a90c865c1b8363cc4138d309"
+      },
+      {
+        "mode": "measured",
+        "export": "guides",
+        "width": "134.116967mm",
+        "height": "67.152752mm",
+        "nodes": 524,
+        "sha256": "f4d94bd5568176627fb63d2c7ca96a6466d0f64365c68af6259d5858eaa2e4a2"
+      },
+      {
+        "mode": "measured",
+        "export": "original",
+        "width": "30mm",
+        "height": "12mm",
+        "nodes": 8,
+        "sha256": "8b4b7b2693d48d47d5ed5772f2d5619904f33dce9311e389511c07831f4d5916"
+      },
+      {
+        "mode": "measured",
+        "export": "template",
+        "width": "134.116967mm",
+        "height": "67.152752mm",
+        "nodes": null,
+        "sha256": "a63c4ca7e55d02c3214bbed1a104d214dee5058e05d6e48b90964cb1bf0d0020"
+      }
+    ]
+  },
+  "source_vs_packaged": {
+    "status": "passed",
+    "tolerance_mm": 2e-06,
+    "specimens": [
+      {
+        "file": "01-cylinder-front.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 2118,
+        "candidate_nodes": 2118
+      },
+      {
+        "file": "02-frustum-front.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 1866,
+        "candidate_nodes": 1866
+      },
+      {
+        "file": "03-bell-front-experimental.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 1089,
+        "candidate_nodes": 1089
+      },
+      {
+        "file": "04-compound-lettering.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 1048,
+        "candidate_nodes": 1048
+      },
+      {
+        "file": "05-bell-guides-experimental.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 1350,
+        "candidate_nodes": 1350
+      },
+      {
+        "file": "06-bell-uncompensated.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 407,
+        "candidate_nodes": 407
+      },
+      {
+        "file": "07-reverse-frustum-front.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 1866,
+        "candidate_nodes": 1866
+      },
+      {
+        "file": "08-cylinder-full-template.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 8,
+        "candidate_nodes": 8
+      },
+      {
+        "file": "09-frustum-full-template.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 325,
+        "candidate_nodes": 325
+      },
+      {
+        "file": "10-reference-100mm.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 4,
+        "candidate_nodes": 4
+      },
+      {
+        "file": "11-reference-25mm.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 4,
+        "candidate_nodes": 4
+      },
+      {
+        "file": "12-reference-inch.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 4,
+        "candidate_nodes": 4
+      },
+      {
+        "file": "13-hebrew-path-geometry.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 282,
+        "candidate_nodes": 282
+      },
+      {
+        "file": "14-eight-counters.svg",
+        "identical_bytes": true,
+        "max_edge_difference_mm": 0.0,
+        "reference_nodes": 424,
+        "candidate_nodes": 424
+      }
+    ]
+  },
+  "coreldraw_2019_verified": false,
+  "physical_bell_verified": false
+}
