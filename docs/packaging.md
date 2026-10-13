@@ -1,10 +1,20 @@
 # Native portable builds
 
+Windows executable packaging and distribution are currently paused while the Norton
+detection remains unresolved. Use [the native Python source workflow](windows-source.md).
+The retained procedure below requires a later approved packaging stage.
+
 Install pinned Python 3.12 requirements and run `python scripts/build_portable.py` on the target OS.
 The script runs PyInstaller one-folder packaging, generates acceptance specimens, gathers available
 dependency license notices, launches the **actual executable** through its desktop self-test, and
 creates `artifacts/releases/<OS>/WrapLab-0.1.0-<OS>-x64-portable.zip`.
 See windows-release.md for the extracted-archive native validation added for the release candidate.
+The retained Windows hardening uses stock windowed onedir/no-UPX packaging, explicit icon/version
+resources and an asInvoker manifest. `--diagnostic` labels the artifact without changing the
+geometry pipeline. CI pins Python 3.12.10 to match the retained native evidence.
+See [the current integration status](integration-status.md) and
+[the supervised handoff](windows-acceptance-pilot.md); historical native evidence does not
+approve a new integration commit or managed workstation.
 
 The self-test instantiates the Qt workspace, imports a compound SVG, computes previews, exports
 four modes for each of three objects, checks physical cylinder inverse-projection width and the

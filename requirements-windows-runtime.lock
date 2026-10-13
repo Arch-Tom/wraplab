@@ -1,0 +1,11 @@
+# Verified Windows x64 wheels for Python 3.12.10; eight runtime packages plus pip.
+# Install with --require-hashes --only-binary=:all:. No packaging/development tools.
+defusedxml==0.7.1 --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61
+numpy==2.2.6 --hash=sha256:c1f9540be57940698ed329904db803cf7a402f3fc200bfe599334c9bd84a40b2
+pip==26.2.1 --hash=sha256:71138adf1f4ca900cdb7d289c21b7494329f2332b6d85f0e1c42108c0384ed3e
+PySide6-Essentials==6.8.3 --hash=sha256:3c0fae5550aff69f2166f46476c36e0ef56ce73d84829eac4559770b0c034b07
+scipy==1.15.3 --hash=sha256:52092bc0472cfd17df49ff17e70624345efece4e1a12b23783a1ac59a1b728ed
+shapely==2.0.7 --hash=sha256:f86e2c0259fe598c4532acfcf638c1f520fa77c1275912bbc958faecbf00b108
+shiboken6==6.8.3 --hash=sha256:bca3a94513ce9242f7d4bbdca902072a1631888e0aa3a8711a52cc5dbe93588f
+svgpathtools==1.7.1 --hash=sha256:3cbb8ba0e8d200f9639034608d9c55b68efbc1bef99ea99559a3e7cb024fb738
+svgwrite==1.4.3 --hash=sha256:bb6b2b5450f1edbfa597d924f9ac2dd099e625562e492021d7dd614f65f8a22d

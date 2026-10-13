@@ -14,12 +14,25 @@ illustrative and must be replaced with real measurements.
 
 ## Run from source
 
-Windows (Python 3.12 installed):
+Windows x64 (Python 3.12.10 installed), directly from source:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/setup-windows.ps1
-.\.venv\Scripts\python.exe -m wraplab
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -I -c "import sys; assert sys.version_info[:3] == (3, 12, 10), sys.version"
+.\.venv\Scripts\python.exe -I -m pip install --require-hashes --only-binary=:all: -r requirements-windows-runtime.lock
+.\.venv\Scripts\python.exe scripts/patch_build_dependencies.py
+.\.venv\Scripts\python.exe -I -m pip check
+.\.venv\Scripts\pythonw.exe -I scripts/run_source.py
 ```
+
+Use a fresh `.venv`; preserve an existing environment before replacing it. These commands
+install the verified Windows runtime wheels and pip, without PyInstaller or development tools.
+The source launcher isolates Python imports, DLL search PATH and Qt plugins to the checkout's
+environment and the installed Python/Windows directories. It writes errors to
+`artifacts/source-run/gui.log`. See [Windows source setup and validation](docs/windows-source.md).
+
+**Windows executable packaging and distribution are paused while the Norton detection remains
+unresolved.** Use Python source; the prior executable has not been restored or approved.
 
 Linux/macOS:
 
@@ -53,6 +66,10 @@ Production output is in explicit **mm** even when the interface displays inches.
 
 ## Validate / build
 
+Development tests use the complete pinned `requirements.lock`; this is separate from the
+runtime-only Windows setup above. Windows packaging is paused; retained build commands describe
+the packaging infrastructure and are not approval to create or distribute another executable.
+
 ```sh
 .venv/bin/python -m pytest -q
 .venv/bin/python -m ruff check src tests scripts
@@ -83,6 +100,8 @@ placement. `--export guides|template|original` selects an alternative output.
 - [Bell measurement and dry-run procedure](docs/bell-measurement.md)
 - [Packaging and evidence](docs/packaging.md)
 - [Windows release and operator instructions](docs/windows-release.md)
+- [Current integration status](docs/integration-status.md)
+- [Supervised Windows/Corel/material acceptance handoff](docs/windows-acceptance-pilot.md)
 - [Fresh source restoration](docs/restoration.md)
 - [Validation record](docs/validation.md)
 
