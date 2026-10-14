@@ -4,6 +4,7 @@ from copy import deepcopy
 from dataclasses import asdict
 from pathlib import Path
 import sys
+import xml.etree.ElementTree as ET
 
 from PySide6.QtCore import (
     QObject,
@@ -15,31 +16,15 @@ from PySide6.QtCore import (
     QTimer,
     Signal,
 )
-from PySide6.QtGui import QAction, QFont, QIcon
+from PySide6.QtGui import QFont, QIcon
 from PySide6.QtWidgets import (
     QApplication,
-    QCheckBox,
-    QComboBox,
-    QDoubleSpinBox,
     QFileDialog,
-    QFormLayout,
-    QFrame,
-    QHBoxLayout,
-    QHeaderView,
     QLabel,
-    QLineEdit,
     QMainWindow,
     QMessageBox,
-    QPushButton,
-    QScrollArea,
     QSizePolicy,
-    QSplitter,
-    QTabWidget,
-    QTableWidget,
     QTableWidgetItem,
-    QToolBar,
-    QVBoxLayout,
-    QWidget,
 )
 
 from .. import __version__
@@ -48,7 +33,7 @@ from ..geometry.units import Unit
 from ..persistence import PresetStore, load_project, save_project
 from ..svg import convert, export_svg, import_svg
 from ..svg.exporter import ideal_front_svg, write_export
-from .views import Canvas, ProfileCanvas
+from .workspace import MeasurementSpinBox, build_workspace
 
 MODES = [
     ("Cylinder — Exact", "cylinder"),
@@ -60,8 +45,19 @@ QMainWindow { background: #f3f6f8; }
 QWidget { font-family: 'Segoe UI', 'DejaVu Sans'; font-size: 13px; color: #203544; }
 QToolBar { background: #192f40; padding: 9px; border: 0; spacing: 10px; }
 QToolBar QLabel { color: white; font-size: 19px; font-weight: 600; padding-right: 16px; }
-QToolButton { color: #e3edf3; padding: 7px 9px; border-radius: 4px; }
-QToolButton:hover { background: #2f4c60; }
+QToolBar QToolButton { color: #e3edf3; padding: 7px 9px; border-radius: 4px; }
+QToolBar QToolButton:hover { background: #2f4c60; }
+QToolBar QToolButton:disabled { color: #8295a0; }
+QToolButton#Disclosure { color: #315367; padding: 5px 0; font-weight: 600; border: 0; }
+QToolButton#Disclosure:disabled { color: #86969f; }
+QLabel#Help { color: #526775; font-size: 12px; }
+QLabel#Section { font-size: 14px; }
+QLabel#WorkspaceTitle { font-size: 16px; font-weight: 600; }
+QLabel#PreviewTitle { font-size: 15px; font-weight: 600; }
+QFrame#PreviewPanel { background: white; border: 1px solid #dbe4e9; border-radius: 6px; }
+QFrame#ExportFooter { background: white; border-top: 1px solid #dbe4e9; }
+QLabel#GuideWarning { color: #916125; }
+QPushButton#Import { background: #e0f3eb; border: 1px solid #bcded1; color: #13775b; font-weight: 600; }
 QFrame#Panel { background: white; border-right: 1px solid #dbe4e9; }
 QLabel#Section { font-weight: 600; color: #527083; padding-top: 12px; }
 QLabel#Badge { background: #e0f3eb; color: #13775b; padding: 7px; border-radius: 4px; font-weight: 600; }
@@ -106,9 +102,10 @@ class JobSignals(QObject):
 
 
 class PreviewJob(QRunnable):
-    def __init__(self, generation, artwork, project):
+    def __init__(self, generation, artwork, project, export_mode="artwork"):
         super().__init__()
         self.generation, self.artwork, self.project = generation, artwork, project
+        self.export_mode = export_mode
         self.signals = JobSignals()
 
     def run(self):
@@ -120,6 +117,10 @@ class PreviewJob(QRunnable):
                 original_text = export_svg(
                     original, self.project, "original", self.project.source_name
                 )
+                if self.export_mode == "original":
+                    text = original_text
+                elif self.export_mode == "template":
+                    text = export_svg(None, self.project, "template")
                 front = (
                     ideal_front_svg(self.artwork, self.project)
                     if self.project.physical_model == "front-view-vinyl"
@@ -127,7 +128,9 @@ class PreviewJob(QRunnable):
                 )
                 payload = (result, text, original_text, front)
             else:
-                payload = (None, export_svg(None, self.project, "template"), None, None)
+                text = (None if self.project.object.mode == "measured" and self.export_mode != "template"
+                        else export_svg(None, self.project, "template"))
+                payload = (None, text, None, None)
             self.signals.finished.emit(self.generation, payload, None)
         except Exception as exc:
             self.signals.finished.emit(self.generation, None, str(exc))
@@ -136,9 +139,14 @@ class PreviewJob(QRunnable):
 class MainWindow(QMainWindow):
     def __init__(self, data_dir: Path | None = None):
         super().__init__()
-        self.setWindowTitle(f"WrapLab {__version__} · Surface templates")
+        self.setWindowTitle(f"WrapLab {__version__} · Simple workflow")
         self.resize(1370, 900)
-        self.setMinimumSize(1050, 700)
+        self.setMinimumSize(980, 650)
+        screen = QApplication.primaryScreen()
+        if screen:
+            available = screen.availableGeometry()
+            self.resize(min(1370, max(980, available.width() - 40)),
+                        min(900, max(650, available.height() - 70)))
         self.setAcceptDrops(True)
         self.project = Project()
         self.artwork = None
@@ -169,259 +177,10 @@ class MainWindow(QMainWindow):
         return Unit(self.project.units)
 
     def _build(self):
-        toolbar = QToolBar()
-        toolbar.setMovable(False)
-        toolbar.addWidget(QLabel("WrapLab"))
-        for title, callback in [
-            ("Import SVG", self.choose_svg),
-            ("Open Project", self.choose_project),
-            ("Save Project", self.choose_save_project),
-        ]:
-            action = QAction(title, self)
-            action.triggered.connect(callback)
-            toolbar.addAction(action)
-        self.addToolBar(toolbar)
-
-        panel = QFrame()
-        panel.setObjectName("Panel")
-        side = QVBoxLayout(panel)
-        side.setContentsMargins(18, 6, 18, 18)
-        side.setSpacing(9)
-        self._section(side, "01  OBJECT & MEASUREMENTS")
-        self.workflow = QComboBox()
-        self.workflow.addItem("Front-view vinyl (level lettering)", "front-view-vinyl")
-        self.workflow.addItem("Surface wrap / template", "surface-template")
-        self.workflow.setToolTip(
-            "Front-view vinyl assumes an upright object viewed horizontally from far away. Surface wrap uses arc-width placement."
-        )
-        self.workflow.currentIndexChanged.connect(self.workflow_changed)
-        side.addWidget(self.workflow)
-        self.mode = QComboBox()
-        for label, value in MODES:
-            self.mode.addItem(label, value)
-        self.mode.setSizeAdjustPolicy(
-            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
-        )
-        self.mode.setMinimumContentsLength(16)
-        self.mode.currentIndexChanged.connect(self.mode_changed)
-        side.addWidget(self.mode)
-        self.badge = QLabel("Exact")
-        self.badge.setObjectName("Badge")
-        self.badge.setToolTip(
-            "Exact refers to surface development for templates, not laser compensation."
-        )
-        side.addWidget(self.badge)
-        self.units = QComboBox()
-        self.units.addItem("Millimeters (mm)", "mm")
-        self.units.addItem("Inches (in)", "in")
-        self.units.currentIndexChanged.connect(self.units_changed)
-        form = QFormLayout()
-        form.addRow("Display units", self.units)
-        self.object_fields = {}
-        self.object_rows = {}
-        for key, label in [
-            ("diameter", "Diameter"),
-            ("bottom_diameter", "Bottom diameter"),
-            ("top_diameter", "Top diameter"),
-            ("height", "Axial height"),
-        ]:
-            spin = self._spin(key, lambda value, k=key: self.object_changed(k, value))
-            field_label = QLabel(label)
-            form.addRow(field_label, spin)
-            self.object_fields[key] = spin
-            self.object_rows[key] = field_label
-        side.addLayout(form)
-
-        self.measurement_panel = QWidget()
-        measured = QVBoxLayout(self.measurement_panel)
-        measured.setContentsMargins(0, 0, 0, 0)
-        self.measurement_type = QComboBox()
-        self.measurement_type.addItem("Measure diameters", "diameter")
-        self.measurement_type.addItem("Measure circumferences", "circumference")
-        self.measurement_type.currentIndexChanged.connect(self.measurement_type_changed)
-        measured.addWidget(self.measurement_type)
-        self.table = QTableWidget(0, 2)
-        self.table.setMinimumHeight(195)
-        self.table.setMaximumHeight(245)
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.table.cellChanged.connect(self.point_changed)
-        measured.addWidget(self.table)
-        row = QHBoxLayout()
-        for title, callback in [
-            ("+ Point", self.add_point),
-            ("Remove", self.remove_point),
-            ("Sort", self.sort_points),
-        ]:
-            button = QPushButton(title)
-            button.clicked.connect(callback)
-            row.addWidget(button)
-        measured.addLayout(row)
-        example = QLabel("Initial points are an example, not measurements of your bell.")
-        example.setWordWrap(True)
-        measured.addWidget(example)
-        side.addWidget(self.measurement_panel)
-        self.surface_summary = QLabel()
-        self.surface_summary.setWordWrap(True)
-        side.addWidget(self.surface_summary)
-
-        self._section(side, "02  ARTWORK & PLACEMENT")
-        self.source_label = QLabel("Drop a path-based SVG here, or use Import SVG.")
-        self.source_label.setWordWrap(True)
-        self.source_label.setObjectName("Notice")
-        side.addWidget(self.source_label)
-        form = QFormLayout()
-        self.placement_fields = {}
-        for key, label in [
-            ("width", "Width"),
-            ("height", "Axial art height"),
-            ("x", "Horizontal position"),
-            ("z", "Artwork top from TOP"),
-        ]:
-            spin = self._spin(key, lambda value, k=key: self.placement_changed(k, value))
-            if key in {"x", "z"}:
-                spin.setRange(-1_000_000, 1_000_000)
-            self.placement_fields[key] = spin
-            form.addRow(label, spin)
-        self.aspect = QCheckBox("Lock aspect ratio")
-        self.aspect.toggled.connect(self.aspect_changed)
-        form.addRow(self.aspect)
-        side.addLayout(form)
-        row = QHBoxLayout()
-        for label, callback in [
-            ("Center", self.center_artwork),
-            ("Reset size", self.reset_artwork),
-        ]:
-            button = QPushButton(label)
-            button.clicked.connect(callback)
-            row.addWidget(button)
-        side.addLayout(row)
-
-        self._section(side, "03  WRAP & EXPORT")
-        form = QFormLayout()
-        self.coverage = self._spin("coverage", self.coverage_changed, unit=False)
-        self.coverage.setRange(0.1, 360)
-        self.coverage.setSuffix(" °")
-        form.addRow("Wrap coverage", self.coverage)
-        self.rotation = self._spin("rotation", self.rotation_changed, unit=False)
-        self.rotation.setRange(-360, 360)
-        self.rotation.setSuffix(" °")
-        form.addRow("Template rotation", self.rotation)
-        self.tolerance = self._spin("tolerance", self.tolerance_changed, unit=False)
-        self.tolerance.setDecimals(3)
-        self.tolerance.setRange(0.001, 0.25)
-        self.tolerance.setSingleStep(0.005)
-        self.tolerance.setSuffix(" mm")
-        self.tolerance.setToolTip(
-            "Maximum target curve deviation for production export; preview uses 0.08 mm."
-        )
-        form.addRow("Curve tolerance", self.tolerance)
-        side.addLayout(form)
-        self.export_mode = QComboBox()
-        for title, mode in [
-            ("Compensated Artwork Only", "artwork"),
-            ("Artwork + Guides", "guides"),
-            ("Reference Surface Template", "template"),
-            ("Uncompensated Comparison", "original"),
-        ]:
-            self.export_mode.addItem(title, mode)
-        self.export_mode.currentIndexChanged.connect(self.refresh)
-        side.addWidget(self.export_mode)
-        self.export_button = QPushButton("Export SVG for Corel")
-        self.export_button.setObjectName("Primary")
-        self.export_button.clicked.connect(self.choose_export)
-        side.addWidget(self.export_button)
-
-        self._section(side, "SAVED OBJECTS")
-        self.preset_combo = QComboBox()
-        self.preset_combo.activated.connect(self.select_preset)
-        side.addWidget(self.preset_combo)
-        row = QHBoxLayout()
-        self.preset_name = QLineEdit()
-        self.preset_name.setPlaceholderText("Object preset name")
-        self.preset_name.editingFinished.connect(self.name_changed)
-        row.addWidget(self.preset_name)
-        button = QPushButton("Save")
-        button.clicked.connect(self.save_preset)
-        row.addWidget(button)
-        side.addLayout(row)
-        self.notes = QLineEdit()
-        self.notes.setPlaceholderText("Measurement notes (optional)")
-        self.notes.editingFinished.connect(self.notes_changed)
-        side.addWidget(self.notes)
-        self.uncertainty = self._spin("uncertainty", self.uncertainty_changed)
-        self.uncertainty.setRange(0, 1_000_000)
-        self.uncertainty.setSpecialValueText("Not recorded")
-        self.uncertainty.setToolTip(
-            "Uncertainty of entered diameters/circumferences; recorded only, not included in material strain estimates."
-        )
-        form = QFormLayout()
-        form.addRow("Measurement ±", self.uncertainty)
-        side.addLayout(form)
-        side.addStretch()
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QFrame.Shape.NoFrame)
-        scroll.setWidget(panel)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll.setMinimumWidth(330)
-        scroll.setMaximumWidth(390)
-
-        work = QWidget()
-        layout = QVBoxLayout(work)
-        layout.setContentsMargins(18, 16, 18, 14)
-        title_row = QHBoxLayout()
-        title_row.addWidget(QLabel("<b>SURFACE WORKSPACE</b>"))
-        title_row.addStretch()
-        fit = QPushButton("Fit views")
-        fit.clicked.connect(self.fit_views)
-        title_row.addWidget(fit)
-        layout.addLayout(title_row)
-        self.notice = NoticeLabel("Surface-template development · Offline · No machine control")
-        self.notice.setWordWrap(True)
-        self.notice.setObjectName("Notice")
-        layout.addWidget(self.notice)
-        split = QSplitter(Qt.Orientation.Horizontal)
-        self.tabs = QTabWidget()
-        self.front_view = Canvas()
-        self.development = Canvas()
-        self.original = Canvas()
-        self.tabs.addTab(self.front_view, "Ideal front view")
-        self.tabs.addTab(self.development, "Flat vinyl pattern")
-        self.tabs.addTab(self.original, "Original artwork")
-        split.addWidget(self.tabs)
-        profile_panel = QWidget()
-        profile_layout = QVBoxLayout(profile_panel)
-        profile_layout.setContentsMargins(12, 0, 0, 0)
-        profile_layout.addWidget(QLabel("<b>OBJECT PROFILE</b>"))
-        self.profile_view = ProfileCanvas()
-        profile_layout.addWidget(self.profile_view)
-        self.profile_label = QLabel(
-            "TOP = height 0\nAxial height ↓ from top\nGreen band = artwork region"
-        )
-        self.profile_label.setWordWrap(True)
-        profile_layout.addWidget(self.profile_label)
-        profile_panel.setMinimumWidth(170)
-        split.addWidget(profile_panel)
-        split.setSizes([640, 220])
-        layout.addWidget(split, 1)
-        self.result_label = QLabel("Import artwork to generate a compensated preview.")
-        layout.addWidget(self.result_label)
-        outer = QSplitter(Qt.Orientation.Horizontal)
-        outer.addWidget(scroll)
-        outer.addWidget(work)
-        outer.setSizes([360, 1010])
-        self.setCentralWidget(outer)
-        self.statusBar().showMessage(
-            "Ready · Wheel to zoom, drag to pan · Exported SVG works independently of WrapLab"
-        )
-
-    def _section(self, layout, title):
-        label = QLabel(title)
-        label.setObjectName("Section")
-        layout.addWidget(label)
+        build_workspace(self, NoticeLabel)
 
     def _spin(self, name, callback, unit=True):
-        spin = QDoubleSpinBox()
+        spin = MeasurementSpinBox()
         spin.setObjectName(name)
         spin.setDecimals(4)
         spin.setRange(0.0001, 1_000_000)
@@ -434,6 +193,79 @@ class MainWindow(QMainWindow):
             spin.setSuffix(" mm")
         spin.valueChanged.connect(callback)
         return spin
+
+    def new_job(self):
+        try:
+            self._autosave()
+        except (ValueError, OSError) as exc:
+            self.error("The current job could not be preserved. Save it before starting another. " + str(exc))
+            return
+        self.project = Project()
+        self.artwork = self.source_path = self.project_path = None
+        self._invalid_cells.clear()
+        self.dirty = False
+        self.source_label.setText("Choose your object, enter its measurements, then import an SVG.")
+        self._load_controls()
+        self.refresh()
+
+    def resume_job(self):
+        try:
+            self.load_file(self.data_dir / "Last-session.wraplab")
+        except (ValueError, OSError) as exc:
+            self.error("The last job could not be opened. Choose Open project to recover another copy. " + str(exc))
+
+    def _sync_presentation(self):
+        imported = bool(self.artwork)
+        editable_support = imported or self.export_mode.currentData() == "template"
+        front = self.project.physical_model == "front-view-vinyl"
+        for spin in self.placement_fields.values():
+            spin.setEnabled(editable_support)
+        for control in [self.aspect, self.center_button]:
+            control.setEnabled(editable_support)
+        self.reset_button.setEnabled(imported)
+        self.original_section.toggle.setEnabled(imported)
+        self.position_section.toggle.setEnabled(editable_support)
+        self.advanced.toggle.setText("Advanced · " + self.workflow.currentText())
+        self.object_preview_stack.setCurrentIndex(0 if imported and front else 1)
+        self.front_caption.setText(
+            "Front-view target · upright object · 2D preview"
+            if imported and front else "Object profile (schematic) · TOP is height 0"
+        )
+        selected_export = self.export_mode.currentData()
+        self.flat_title.setText("Uncompensated Comparison" if selected_export == "original" else
+                                "Full Surface Template" if selected_export == "template" else "Flat Cutting Pattern")
+        self.flat_caption.setText({
+            "artwork": "Compensated artwork · reference lines are not exported",
+            "guides": "Artwork and guides · guide paths may cut",
+            "original": "Uncompensated comparison · no curvature correction",
+            "template": "Full surface template · guide paths may cut",
+        }[selected_export] if imported or selected_export == "template" else
+            "Reference area · import artwork to see the cutting pattern")
+        self.workflow_help.setText(
+            "Match the design you want to see from the front. Width is the visible artwork width."
+            if front else "Wrap around the surface. Width and horizontal position are surface distances."
+        )
+        self.horizontal_label.setText("Horizontal offset" if front else "Distance from seam")
+        self.placement_fields["x"].setToolTip(
+            "Offset from the front center; zero is centered." if front else
+            "Surface distance from the left seam at mid-height; Center places artwork within the wrap."
+        )
+        self.next_step.setText(
+            "Position → Compare previews → Export" if imported else "Measure your object → Import SVG"
+        )
+        mode = self.export_mode.currentData()
+        self.export_warning.setVisible(mode in {"guides", "template"})
+        self.export_button.setText({
+            "artwork": "Export Compensated SVG…", "guides": "Export SVG with Guides…",
+            "template": "Export Surface Template…", "original": "Export Uncompensated SVG…",
+        }[mode])
+        self.actions["Export SVG"].setEnabled(self.export_button.isEnabled())
+        self.actions["Resume last job"].setEnabled((self.data_dir / "Last-session.wraplab").is_file())
+        self.export_summary.setText("SVG in millimeters · artwork only" if imported and mode == "artwork"
+                                    else "Import artwork to begin." if not imported and mode != "template"
+                                    else "SVG in millimeters · " + self.export_mode.currentText())
+        for spin in self.object_fields.values():
+            spin.setStyleSheet("border:1px solid #bc5940;" if spin.value() <= 0 else "")
 
     def _load_controls(self):
         self._loading = True
@@ -493,9 +325,13 @@ class MainWindow(QMainWindow):
             spin.setVisible(visible)
             self.object_rows[key].setVisible(visible)
         self.measurement_panel.setVisible(mode == "measured")
-        self.badge.setText(
-            "Best-Fit / Experimental" if mode == "measured" else "Exact surface development"
-        )
+        self.badge.setText("Best-Fit / Experimental" if mode == "measured" else
+                           "Exact for a cylinder" if mode == "cylinder" else "Exact for a straight taper")
+        self.measurement_help.setText({
+            "cylinder": "Measure diameter across the object and height straight down from its top.",
+            "frustum": "Measure the top and bottom diameters, then the straight vertical height between them.",
+            "measured": "Measure stations down from TOP. Curved surfaces may need stretch or cuts; test material first.",
+        }[mode])
         self.badge.setObjectName("Experimental" if mode == "measured" else "Badge")
         self.badge.setStyleSheet(
             "background:#fff1d7;color:#916125;"
@@ -506,6 +342,7 @@ class MainWindow(QMainWindow):
             self.badge.setToolTip(
                 "A curved rotational surface generally cannot be flattened without distortion. This template is experimental."
             )
+        self._sync_presentation()
 
     def _changed(self):
         if self._loading:
@@ -526,6 +363,11 @@ class MainWindow(QMainWindow):
             self.project.center_artwork()
             self._load_controls()
             self._changed()
+            self.statusBar().showMessage(
+                "Artwork size kept; placement centered for " + self.workflow.currentText().lower()
+                + ". Horizontal placement now uses "
+                + ("front-center offset." if index == 0 else "surface distance from the seam.")
+            )
 
     def units_changed(self, index):
         if self._loading:
@@ -806,6 +648,8 @@ class MainWindow(QMainWindow):
             return
         self._generation += 1
         self.export_button.setEnabled(False)
+        self._sync_presentation()
+        self._set_preview_active(False)
         try:
             self._assert_inputs()
             surface = self.project.validate(False)
@@ -824,7 +668,7 @@ class MainWindow(QMainWindow):
             self.notice.setText(
                 "Calculating preview…"
                 if self.artwork
-                else "Import a path-based SVG. Text must be converted to curves."
+                else "Enter your object's measurements, then import an SVG. Convert live text to curves first."
             )
             self.result_label.setText(
                 "Preview pending"
@@ -840,7 +684,7 @@ class MainWindow(QMainWindow):
         if self._busy:
             return
         self._busy = True
-        self._job = PreviewJob(self._generation, self.artwork, deepcopy(self.project))
+        self._job = PreviewJob(self._generation, self.artwork, deepcopy(self.project), self.export_mode.currentData())
         self._job.signals.finished.connect(self._preview_done)
         self._pool.start(self._job)
 
@@ -861,15 +705,19 @@ class MainWindow(QMainWindow):
             return
         result, text, original_text, front_text = payload
         try:
-            self.development.set_svg(text)
+            if text is None:
+                self.development.set_message("Import SVG to define the curved artwork region.")
+            else:
+                self.development.set_svg(text)
             if original_text:
                 self.original.set_svg(original_text)
-            self.tabs.setTabEnabled(0, self.project.physical_model == "front-view-vinyl")
             if front_text:
                 self.front_view.set_svg(front_text)
             self.export_button.setEnabled(
-                bool(self.artwork) or self.export_mode.currentData() == "template"
+                (bool(self.artwork) or self.export_mode.currentData() == "template") and text is not None
             )
+            self._set_preview_active(True)
+            self._sync_presentation()
             warnings = result.warnings if result else self.project.profile_warnings()
             if self.export_mode.currentData() in {"guides", "template"}:
                 warnings = [
@@ -877,31 +725,42 @@ class MainWindow(QMainWindow):
                     "Guide paths may cut. Remove the Guides group before production cutting.",
                 ]
             assumption = (
-                "Ideal front view: upright object, distant horizontal view. Test actual vinyl before production."
+                "Compare the front-view target with the flat pattern. Test actual vinyl before production."
                 if self.project.physical_model == "front-view-vinyl"
-                else "Surface wrap: horizontal placement is arc distance at mid-height."
+                else "Surface-wrap artwork: dimensions follow the surface. The object profile is a schematic."
             )
             self.notice.setText(
                 assumption
                 + (
                     "\n" + "\n".join(warnings)
                     if warnings
-                    else "\nExact surface development · Production uses finer tolerance than preview."
+                    else ""
                 )
             )
             self.result_label.setText(
                 f"Preview: {result.node_count:,} nodes · 0.08 mm tolerance · Wheel to zoom, drag to pan"
                 if result
+                else "Import SVG to define the curved artwork region." if text is None
                 else "Reference template · Import SVG to add artwork"
             )
         except ValueError as exc:
             self.error(str(exc))
+
+    def _set_preview_active(self, active):
+        for view in [self.front_view, self.development, self.original, self.profile_view]:
+            view.setEnabled(active)
+            for item in view.scene().items():
+                item.setOpacity(1 if active else 0.25)
 
     def error(self, message):
         self.notice.setText(message)
         self.notice.setObjectName("Error")
         self.notice.setStyleSheet("background:#fff0e9;color:#9e4325;padding:8px;")
         self.export_button.setEnabled(False)
+        self.actions["Export SVG"].setEnabled(False)
+        self.export_summary.setText("Export paused. Correct the message above to continue.")
+        self._set_preview_active(False)
+        self.flat_caption.setText("Previous preview · export paused until input is valid")
         self.statusBar().showMessage(message)
 
     def export_to(self, path, mode=None):
@@ -924,6 +783,8 @@ class MainWindow(QMainWindow):
             raise ValueError("Correct the highlighted profile measurement before continuing.")
 
     def choose_export(self):
+        if not self.export_button.isEnabled():
+            return
         stem = Path(self.project.source_name).stem if self.project.source_name else "surface"
         suffix = {
             "artwork": "compensated",
@@ -932,7 +793,7 @@ class MainWindow(QMainWindow):
             "original": "uncompensated",
         }[self.export_mode.currentData()]
         path, _ = QFileDialog.getSaveFileName(
-            self, "Export SVG for Corel", f"{stem}-{suffix}.svg", "SVG files (*.svg)"
+            self, "Export cutting pattern SVG", f"{stem}-{suffix}.svg", "SVG files (*.svg)"
         )
         if path:
             try:
@@ -940,9 +801,13 @@ class MainWindow(QMainWindow):
                 path = Path(path)
                 if path.suffix.lower() != ".svg":
                     path = path.with_suffix(".svg")
-                result, _ = self.export_to(path)
+                result, text = self.export_to(path)
+                svg = ET.fromstring(text)
+                dimensions = f"{float(svg.get('width')[:-2]):.3f} × {float(svg.get('height')[:-2]):.3f} mm"
+                self.export_summary.setText(f"Saved {dimensions}\n{path.name}")
+                self.export_summary.setToolTip(str(path.resolve()))
                 self.statusBar().showMessage(
-                    f"Exported {path.name}"
+                    f"Saved {path.resolve()} · {dimensions}"
                     + (f" · {result.node_count:,} production nodes" if result else "")
                     + " · CorelDRAW verification pending"
                 )

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Synthetic export-style fixture; not one of the owner's missing SVG files. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="40mm" height="20mm" viewBox="0 0 40 20" style="background-color:transparent;fill:#203544;fill-rule:evenodd;stroke:none">
+  <title>Outlined compound counter</title>
+  <path d="M2 2 H38 V18 H2 Z M12 6 H28 V14 H12 Z"/>
+</svg>

@@ -17,6 +17,7 @@ class Canvas(QGraphicsView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.renderer = None
+        self.svg_text = None
         self.item = None
         self.auto_fit = True
 
@@ -29,12 +30,22 @@ class Canvas(QGraphicsView):
         if self.renderer:
             self.renderer.deleteLater()
         self.renderer = renderer
+        self.svg_text = text
         self.item = QGraphicsSvgItem()
         self.item.setSharedRenderer(renderer)
         self.scene().addItem(self.item)
         self.scene().setSceneRect(self.item.boundingRect().adjusted(-5, -5, 5, 5))
         if self.auto_fit:
             self.fit()
+
+    def set_message(self, text):
+        self.scene().clear()
+        if self.renderer:
+            self.renderer.deleteLater()
+        self.renderer = self.item = self.svg_text = None
+        self.scene().addText(text)
+        self.scene().setSceneRect(self.scene().itemsBoundingRect().adjusted(-8, -8, 8, 8))
+        self.fit()
 
     def fit(self):
         self.auto_fit = True

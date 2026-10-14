@@ -1,5 +1,10 @@
 # Source integration status
 
+This document records the preserved source-integration baseline at `30c539a`. The newer,
+local-only `codex/wraplab-simple-workflow` implementation is described in
+[the simple-workflow guide and validation](simple-workflow.md). Its geometry/persistence
+engine remains unchanged; its operator UI and scoped SVG diagnostics have changed.
+
 The dedicated branch is `codex/source-integration`, prepared for
 `https://github.com/Arch-Tom/wraplab.git`. Main and existing releases are unchanged.
 This branch carries source, tests and documentation; Windows executable packaging and

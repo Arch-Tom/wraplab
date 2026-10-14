@@ -21,6 +21,14 @@ XML parsing disables DTD/entity expansion. Solid supported CSS colors are hex, b
 and comma-separated rgb; fancy CSS color/paint syntax is rejected. Safe strictness takes precedence
 over pretending to import every Corel SVG variant.
 
+The parser blocks XML entity declarations and external XML references. A bare SVG DOCTYPE
+does not necessarily fail and is not fetched as a rendering resource. Malformed XML is reported
+with parser-provided line/column; blocked declarations get separate operator guidance without
+printing resource paths or entity values. A transparent root SVG `background-color` can be
+ignored with an explicit note: it contributes no painted geometry. Opaque page backgrounds,
+the same property on rendered elements and other unknown inline properties remain unsupported.
+The Corel-like regression fixture is synthetic; the owner's original failing files remain absent.
+
 ## Nonlinear transformation and quality
 
 Artwork -> canonical page mm -> physical placement -> optional front-view inverse projection ->

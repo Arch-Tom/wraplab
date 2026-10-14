@@ -48,21 +48,30 @@ Use the existing checkout; cloud tasks are already isolated and do not need a wo
 
 1. Prepare the SVG in CorelDRAW 2019. Convert text to curves, expand unsupported effects, and
    export with explicit physical dimensions. Fit the page around artwork, including strokes.
-2. Choose **Front-view vinyl**, an object type, and mm/in display units.
-3. Enter measurements **down from a labelled top**. For measured bells: enter 3–30 height/diameter or height/circumference
+2. Choose **Cylinder**, **Tapered object**, or **Custom curved object**, and mm/in display units.
+3. Enter measurements **down from a labelled top**. A taper needs top diameter, bottom diameter
+   and straight vertical height. For custom curved objects: enter 3–30 height/diameter or height/circumference
    pairs, check the profile, and save the geometry as **Bell — Current Project**.
 4. Import/drop SVG. Set desired front-view width/height, horizontal center offset, and artwork-top
    height. The app conservatively fits oversized artwork on import; inspect these dimensions.
-5. Compare **Ideal front view**, **Flat vinyl pattern**, and **Original artwork**. Wheel zooms;
-   drag pans; Fit views resets zoom. The ideal preview is a viewing target, not physical approval.
+5. Compare **On the Object** and **Flat Cutting Pattern** side by side. **Position artwork**
+   exposes accurate horizontal and top-referenced placement; Center artwork sets both automatically.
+   Wheel zooms; drag pans the preview, not the artwork. Fit views resets zoom. Original artwork
+   is available below the previews. The front target is a 2D viewing model, not physical approval.
 6. Inspect measured-profile warnings and stretch/compression estimates. Test paper/vinyl first.
-7. Export **Compensated Artwork Only** for production, or guides/template/comparison for dry runs.
+7. Use **Export Compensated SVG** for artwork-only output. **Export options** holds guides,
+   full templates and uncompensated comparison; guide paths may cut. **Advanced** holds the
+   alternative Surface-wrap interpretation, coverage, rotation and production tolerance.
 8. Open in CorelDRAW at 100% size. Verify against [the acceptance checklist](docs/corel-acceptance.md).
 
 Source SVG files remain untouched. Projects embed the original SVG; object presets contain geometry
 only. Presets and last-session recovery live in the OS application-data directory, not the repository.
 Use Open Project to recover `Last-session.wraplab`. Exported SVGs need no running WrapLab process.
 Production output is in explicit **mm** even when the interface displays inches.
+
+New job preserves a modified job in the existing recovery file; Resume last job reopens it.
+Common shortcuts: Ctrl+O import, Ctrl+Shift+O open project, Ctrl+S save, Ctrl+E export, Ctrl+N new.
+See [the simple-workflow guide and validation](docs/simple-workflow.md).
 
 ## Validate / build
 

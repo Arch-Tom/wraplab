@@ -3,8 +3,10 @@
 import math
 import re
 from types import MappingProxyType
+from xml.etree.ElementTree import ParseError
 
 from defusedxml import ElementTree as SafeET
+from defusedxml.common import DefusedXmlException, EntitiesForbidden, ExternalReferenceForbidden
 from svgpathtools import parse_path
 
 from ..geometry.units import positive
@@ -152,7 +154,7 @@ def color(value: str, current="black"):
     raise ValueError(f"Unsupported SVG paint {value!r}. Use solid colors; expand gradients first.")
 
 
-def style_for(element, inherited):
+def style_for(element, inherited, is_root=False, warnings=None):
     style = {**inherited, "opacity": "1"}  # opacity is not inherited by the SVG specification
     for key in STYLES:
         if key in element.attrib:
@@ -163,8 +165,19 @@ def style_for(element, inherited):
         if ":" not in declaration:
             raise ValueError("Malformed inline SVG style.")
         key, value = (s.strip() for s in declaration.split(":", 1))
+        if key == "background-color" and is_root and value.lower() == "transparent":
+            if warnings is not None:
+                warnings.append("Ignored a transparent page background; artwork fills and strokes are unchanged.")
+            continue
         if key not in STYLES:
-            raise ValueError(f"Unsupported SVG style {key!r}; simplify the source in Corel.")
+            tag = element.tag.split("}")[-1]
+            advice = (
+                "Only a transparent page background is supported. Remove the background setting, "
+                "or draw it as a filled vector shape if it belongs to the artwork."
+                if key == "background-color" else
+                "Expand this styling into plain vector artwork in your editor and export the SVG again."
+            )
+            raise ValueError(f"Unsupported SVG style {key!r} on <{tag}>. {advice}")
         style[key] = value
     if style["fill-rule"] not in {"nonzero", "evenodd"}:
         raise ValueError("Unsupported SVG fill rule.")
@@ -186,6 +199,16 @@ def style_for(element, inherited):
     }:
         raise ValueError("Unsupported SVG visibility/display value.")
     return style
+
+
+def unsupported_element(tag):
+    advice = {
+        "text": "This SVG contains live text. Convert the text to curves in CorelDRAW and export it again.",
+        "image": "This SVG contains an image element. Replace it with vector paths before importing.",
+        "style": "This SVG contains a stylesheet. Export basic inline fill/stroke styles instead.",
+        "use": "This SVG contains linked/reused artwork. Expand it into independent paths and export again.",
+    }.get(tag, "Convert this element to plain vector paths in your editor and export again.")
+    return f"Unsupported SVG element <{tag}>. {advice}"
 
 
 def primitive_path(tag, element):
@@ -233,7 +256,7 @@ def primitive_path(tag, element):
         if rx == 0 or ry == 0:
             return ""
         return f"M{x - rx} {y} A{rx} {ry} 0 1 0 {x + rx} {y} A{rx} {ry} 0 1 0 {x - rx} {y} Z"
-    raise ValueError(f"Unsupported SVG element <{tag}>. Convert it to paths in Corel first.")
+    raise ValueError(unsupported_element(tag))
 
 
 def parse_subpaths(data, segment_limit=20_000):
@@ -272,8 +295,21 @@ def import_svg(text: str) -> Artwork:
         raise ValueError("SVG exceeds the 10 MB import limit.")
     try:
         root = SafeET.fromstring(text)
+    except EntitiesForbidden as exc:
+        raise ValueError("This SVG contains XML entity declarations, which cannot be imported. "
+                         "Export a plain SVG without entity declarations; artwork was not changed.") from exc
+    except ExternalReferenceForbidden as exc:
+        raise ValueError("This SVG requests an external XML resource, which cannot be imported. "
+                         "Export a self-contained SVG without external XML references.") from exc
+    except DefusedXmlException as exc:
+        raise ValueError("This SVG contains a blocked XML construct. "
+                         "Export a plain, self-contained SVG without XML declarations that load resources.") from exc
+    except ParseError as exc:
+        line, column = exc.position
+        raise ValueError(f"This SVG has malformed XML at line {line}, column {column + 1}. "
+                         "Export it again as SVG, or repair the XML at that location.") from exc
     except Exception as exc:
-        raise ValueError("Invalid or unsafe SVG XML (DTD/entities are unsupported).") from exc
+        raise ValueError("This SVG could not be parsed. Export it again as a plain SVG.") from exc
     if root.tag not in {"svg", f"{{{SVG_NS}}}svg"}:
         raise ValueError("The file must contain an SVG root element.")
     if len(list(root.iter())) > 20_000:
@@ -352,10 +388,12 @@ def import_svg(text: str) -> Artwork:
         for key, value in element.attrib.items():
             local = key.split("}")[-1]
             if local in unsupported_attrs and value.strip() not in {"none", ""}:
+                if local == "href" and tag in {"image", "use"}:
+                    raise ValueError(unsupported_element(tag))
                 raise ValueError(f"Unsupported SVG {local}; expand it to plain paths in Corel.")
             if local.lower().startswith("on"):
                 raise ValueError("Active/scripted SVG content is unsupported.")
-        style = style_for(element, inherited)
+        style = style_for(element, inherited, is_root, warnings)
         if style["display"] == "none":
             return
         transform = transform @ parse_transform(element.get("transform", ""))
