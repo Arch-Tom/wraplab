@@ -536,7 +536,8 @@ class MainWindow(QMainWindow):
         surface = self.project.validate(False)
         available = self.project.wrap_width()
         if self.project.physical_model == "front-view-vinyl":
-            radii = [surface.radius(surface.height * i / 100) for i in range(101)]
+            zs = [surface.height * (i / 100) for i in range(100)] + [surface.height]
+            radii = [surface.radius(z) for z in zs]
             import math
 
             limit = min(

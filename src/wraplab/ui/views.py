@@ -72,7 +72,8 @@ class ProfileCanvas(Canvas):
     def set_surface(self, surface, points, placement, show_artwork=True):
         self.scene().clear()
         path = QPainterPath()
-        zs = [surface.height * i / 160 for i in range(161)]
+        # Preserve the exact endpoint: height * steps / steps can exceed height by one ULP.
+        zs = [surface.height * (i / 160) for i in range(160)] + [surface.height]
         path.moveTo(-surface.radius(0), 0)
         for z in zs:
             path.lineTo(-surface.radius(z), z)
@@ -85,11 +86,12 @@ class ProfileCanvas(Canvas):
             if 0 <= bottom <= top <= surface.height:
                 region = QPainterPath()
                 region.moveTo(-surface.radius(bottom), bottom)
-                for i in range(81):
-                    z = bottom + (top - bottom) * i / 80
+                region_zs = [bottom] + [
+                    bottom + (top - bottom) * (i / 80) for i in range(1, 80)
+                ] + [top]
+                for z in region_zs:
                     region.lineTo(-surface.radius(z), z)
-                for i in range(80, -1, -1):
-                    z = bottom + (top - bottom) * i / 80
+                for z in reversed(region_zs):
                     region.lineTo(surface.radius(z), z)
                 region.closeSubpath()
                 self.scene().addPath(region, QPen(QColor("#138b72"), 0.25), QColor("#91d3bd"))

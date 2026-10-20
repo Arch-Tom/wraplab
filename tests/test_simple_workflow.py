@@ -292,3 +292,31 @@ def test_empty_curved_object_prompts_for_artwork_and_keeps_template_support_cont
     assert not window.reset_button.isEnabled()
     assert window.export_button.isEnabled()
     assert window.export_to(tmp_path / "curved-template.svg")[0] is None
+
+
+@pytest.mark.parametrize("physical_model", ["front-view-vinyl", "surface-template"])
+@pytest.mark.parametrize("height_in", [8.5, 1.75])
+def test_inch_measured_profile_preview_and_export_survive_endpoint_roundoff(window, tmp_path, physical_model, height_in):
+    # Synthetic profile and repository fixture; no customer artwork or measurements.
+    window.project.object.mode = "measured"
+    profile_height = height_in * 25.4
+    window.project.object.points = [(0, 60), (profile_height / 2, 100), (profile_height, 160)]
+    window.project.units = "in"
+    window.project.physical_model = physical_model
+    window.import_file(LETTERING)
+    window.project.placement.width = 40
+    window.project.placement.height = min(2 * 25.4, profile_height / 2)
+    window.project.center_artwork()
+    window._load_controls()
+    window._changed()
+    settle(window)
+    assert window.project.placement.z == pytest.approx((profile_height - window.project.placement.height) / 2)
+    assert window.notice.objectName() != "Error", window.notice.text()
+    assert window.export_button.isEnabled()
+    result, text = window.export_to(tmp_path / "synthetic-inch-profile.svg", "artwork")
+    assert result.node_count > 20
+    assert physical_model in text
+    # Actual out-of-profile artwork must still fail rather than being clamped.
+    window.project.placement.z = -1
+    with pytest.raises(ValueError, match="outside the object height"):
+        window.export_to(tmp_path / "invalid-placement.svg", "artwork")

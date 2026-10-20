@@ -1,9 +1,14 @@
 # Source integration status
 
 This document records the preserved source-integration baseline at `30c539a`. The newer,
-local-only `codex/wraplab-simple-workflow` implementation is described in
+published `codex/wraplab-simple-workflow` implementation at `f3104d3` is described in
 [the simple-workflow guide and validation](simple-workflow.md). Its geometry/persistence
 engine remains unchanged; its operator UI and scoped SVG diagnostics have changed.
+
+The `fix/import-profile-preview` branch carries the subsequent reviewed importer repair
+and bounded profile-preview endpoint sampling correction. See the
+[source repair update guide](source-repairs-update.md) before updating an existing home
+or work installation; it preserves work-only changes and the previous source runtime.
 
 The dedicated branch is `codex/source-integration`, prepared for
 `https://github.com/Arch-Tom/wraplab.git`. Main and existing releases are unchanged.

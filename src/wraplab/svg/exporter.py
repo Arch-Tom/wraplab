@@ -246,14 +246,10 @@ def ideal_front_svg(artwork, project, preview=True):
 
     original = convert(artwork, project, preview=preview, original=True)
     surface = project.validate()
-    outline = [
-        complex(-surface.radius(surface.height * i / 160), surface.height * i / 160)
-        for i in range(161)
-    ]
-    outline += [
-        complex(surface.radius(surface.height * i / 160), surface.height * i / 160)
-        for i in range(160, -1, -1)
-    ]
+    # Match the profile canvas: a reconstructed endpoint can exceed measured height.
+    zs = [surface.height * (i / 160) for i in range(160)] + [surface.height]
+    outline = [complex(-surface.radius(z), z) for z in zs]
+    outline += [complex(surface.radius(z), z) for z in reversed(zs)]
     silhouette = VectorPath([Contour(outline)], "#e2ebef")
     shift = complex(project.placement.x - project.placement.width / 2, project.placement.z)
     paths = [silhouette]
