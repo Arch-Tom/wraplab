@@ -21,9 +21,26 @@ def signed_area(points):
     )
 
 
+def closure_samples(points):
+    """Ignore only a round-off duplicate terminal vertex for topology checks.
+
+    Four coordinate ULPs, capped at 1e-10 mm, cannot be a general simplification
+    tolerance. Interior vertices and the actual source/export point lists are untouched.
+    """
+    if len(points) < 2:
+        return points
+    first, last = points[0], points[-1]
+    bound = min(1e-10, 4 * max(math.ulp(v) for v in
+                              (first.real, first.imag, last.real, last.imag)))
+    if 0 < abs(last - first) <= bound:
+        return points[:-1]
+    return points
+
+
 def validate_contours(before, after, name):
     source_polys, result_polys = [], []
     for source, target in zip(before, after, strict=True):
+        source, target = closure_samples(source), closure_samples(target)
         if len(source) < 3 or len(target) < 3:
             raise ValueError(f"{name}: degenerate closed contour.")
         for points, polygons in [(source, source_polys), (target, result_polys)]:

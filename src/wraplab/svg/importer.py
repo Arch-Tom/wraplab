@@ -3,7 +3,7 @@
 import math
 import re
 from types import MappingProxyType
-from xml.etree.ElementTree import ParseError
+from xml.etree.ElementTree import Element, ParseError
 
 from defusedxml import ElementTree as SafeET
 from defusedxml.common import DefusedXmlException, EntitiesForbidden, ExternalReferenceForbidden
@@ -46,6 +46,14 @@ DEFAULT_STYLE = {
     "visibility": "visible",
     "color": "#000000",
 }
+RENDERING_HINTS = {
+    "shape-rendering": {"auto", "optimizeSpeed", "crispEdges", "geometricPrecision", "inherit"},
+    "text-rendering": {"auto", "optimizeSpeed", "optimizeLegibility", "geometricPrecision", "inherit"},
+    "image-rendering": {"auto", "optimizeSpeed", "optimizeQuality", "inherit"},
+}
+# Equal-specificity single-class selectors only; no compositing, layout, or resources.
+CLASS_PROPERTIES = STYLES - {"opacity", "display", "visibility"}
+CLASS_NAME = r"[A-Za-z_][A-Za-z0-9_-]*"
 NAMED_COLORS = {
     "black",
     "white",
@@ -154,17 +162,43 @@ def color(value: str, current="black"):
     raise ValueError(f"Unsupported SVG paint {value!r}. Use solid colors; expand gradients first.")
 
 
-def style_for(element, inherited, is_root=False, warnings=None):
-    style = {**inherited, "opacity": "1"}  # opacity is not inherited by the SVG specification
-    for key in STYLES:
-        if key in element.attrib:
-            style[key] = element.attrib[key]
-    for declaration in element.get("style", "").split(";"):
+def declarations(text):
+    """Parse the deliberately small declaration subset, never a general CSS engine."""
+    result = []
+    for declaration in text.split(";"):
         if not declaration.strip():
             continue
         if ":" not in declaration:
             raise ValueError("Malformed inline SVG style.")
         key, value = (s.strip() for s in declaration.split(":", 1))
+        if not re.fullmatch(r"[A-Za-z-]+", key) or not value or any(c in value for c in "!@\\{}"):
+            raise ValueError("Malformed or unsupported SVG style declaration.")
+        result.append((key.lower(), value))
+    return result
+
+
+def style_for(element, inherited, is_root=False, warnings=None, class_styles=None):
+    style = {**inherited, "opacity": "1"}  # opacity is not inherited by the SVG specification
+    for key in STYLES:
+        if key in element.attrib:
+            style[key] = element.attrib[key]
+    # Presentation attributes < class declarations in stylesheet order < inline style.
+    if class_styles:
+        style.update(class_styles)
+    extra = [(k, element.attrib[k]) for k in (*RENDERING_HINTS, "clip-rule") if k in element.attrib]
+    for key, value in [*extra, *declarations(element.get("style", ""))]:
+        if key in RENDERING_HINTS:
+            if value not in RENDERING_HINTS[key]:
+                raise ValueError(f"Unsupported SVG rendering hint {key!r} value.")
+            note = "SVG rendering hints do not change vector geometry; WrapLab controls curve tolerance."
+            if warnings is not None and note not in warnings:
+                warnings.append(note)
+            continue
+        if key == "clip-rule":
+            if value not in {"nonzero", "evenodd", "inherit"}:
+                raise ValueError("Unsupported SVG clip rule.")
+            # No actual clip-path is accepted below; this rule cannot affect painted paths.
+            continue
         if key == "background-color" and is_root and value.lower() == "transparent":
             if warnings is not None:
                 warnings.append("Ignored a transparent page background; artwork fills and strokes are unchanged.")
@@ -179,10 +213,16 @@ def style_for(element, inherited, is_root=False, warnings=None):
             )
             raise ValueError(f"Unsupported SVG style {key!r} on <{tag}>. {advice}")
         style[key] = value
+    for key, value in style.items():
+        if value == "inherit":
+            style[key] = inherited.get(key, DEFAULT_STYLE[key])
     if style["fill-rule"] not in {"nonzero", "evenodd"}:
         raise ValueError("Unsupported SVG fill rule.")
-    for key in ["fill", "stroke", "color"]:
-        style[key] = color(style[key], style.get("color", "black"))
+    # currentColor on color itself means the parent's computed color, not black.
+    # Resolve it before paints that refer to this element's computed color.
+    style["color"] = color(style["color"], inherited.get("color", DEFAULT_STYLE["color"]))
+    for key in ["fill", "stroke"]:
+        style[key] = color(style[key], style["color"])
     for key in ["opacity", "fill-opacity", "stroke-opacity"]:
         value = float(style[key])
         if not math.isfinite(value) or not 0 <= value <= 1:
@@ -199,6 +239,82 @@ def style_for(element, inherited, is_root=False, warnings=None):
     }:
         raise ValueError("Unsupported SVG visibility/display value.")
     return style
+
+
+def stylesheet_blocks(text):
+    """Walk comments and flat rule blocks forwards; malformed input never restarts a scan."""
+    parts = []
+    cursor = 0
+    while True:
+        opening = text.find("/*", cursor)
+        if opening == -1:
+            parts.append(text[cursor:])
+            break
+        closing = text.find("*/", opening + 2)
+        if closing == -1:
+            raise ValueError(unsupported_element("style"))
+        parts.extend((text[cursor:opening], " "))
+        cursor = closing + 2
+    text = "".join(parts)
+    cursor = 0
+    while cursor < len(text):
+        while cursor < len(text) and text[cursor].isspace():
+            cursor += 1
+        if cursor == len(text):
+            return
+        opening = text.find("{", cursor)
+        if opening == -1:
+            raise ValueError(unsupported_element("style"))
+        selectors = text[cursor:opening]
+        if not selectors.strip() or "}" in selectors:
+            raise ValueError(unsupported_element("style"))
+        closing = text.find("}", opening + 1)
+        if closing == -1:
+            raise ValueError(unsupported_element("style"))
+        body = text[opening + 1:closing]
+        if "{" in body:
+            raise ValueError(unsupported_element("style"))
+        yield selectors, body
+        cursor = closing + 1
+
+
+def class_rules(root):
+    """Resolve bounded internal solid-paint rules; external/complex CSS stays rejected."""
+    rules = []
+    for element in root.iter():
+        if element.tag.split("}")[-1] != "style":
+            continue
+        if element.tag not in {"style", f"{{{SVG_NS}}}style"} or list(element):
+            raise ValueError(unsupported_element("style"))
+        allowed_attributes = {"type", "id", "media", "{http://www.w3.org/XML/1998/namespace}space"}
+        if (set(element.attrib) - allowed_attributes
+                or element.get("type", "text/css") != "text/css"
+                or element.get("media", "all") not in {"", "all"}):
+            raise ValueError(unsupported_element("style"))
+        text = element.text or ""
+        if len(text) > 1_000_000:
+            raise ValueError("SVG stylesheet exceeds the supported size limit.")
+        for selectors, body in stylesheet_blocks(text):
+            names = []
+            for selector in selectors.split(","):
+                match = re.fullmatch(rf"\s*\.({CLASS_NAME})\s*", selector)
+                if not match:
+                    raise ValueError(unsupported_element("style"))
+                names.append(match[1])
+            values = {}
+            for key, value in declarations(body):
+                if key not in CLASS_PROPERTIES:
+                    raise ValueError(unsupported_element("style"))
+                # Validate even unused/overridden rules so resources are never hidden in CSS.
+                probe = Element("path", {"style": f"{key}:{value}"})
+                style_for(probe, DEFAULT_STYLE)
+                if key == "stroke-width" and value != "inherit" and length(value) < 0:
+                    raise ValueError("SVG stroke width cannot be negative.")
+                values[key] = value
+            rules.append((frozenset(names), values))
+            if len(rules) > 1024:
+                raise ValueError("SVG stylesheet exceeds the supported rule limit.")
+    return rules
 
 
 def unsupported_element(tag):
@@ -325,6 +441,8 @@ def import_svg(text: str) -> Artwork:
             raise ValueError("SVG group nesting exceeds 64 levels.")
         stack.extend((child, depth + 1) for child in element)
     warnings = []
+    rules = class_rules(root)
+    known_classes = set().union(*(names for names, _ in rules)) if rules else set()
     if "width" not in root.attrib or "height" not in root.attrib:
         raise ValueError("SVG needs explicit width and height. Export at physical size from Corel.")
     width, height = length(root.get("width"), True), length(root.get("height"), True)
@@ -367,7 +485,6 @@ def import_svg(text: str) -> Artwork:
         "stroke-dasharray",
         "stroke-dashoffset",
         "href",
-        "class",
         "paint-order",
         "mix-blend-mode",
         "isolation",
@@ -385,15 +502,28 @@ def import_svg(text: str) -> Artwork:
         # Definitions are allowed only as unused containers: references are rejected below.
         if tag == "defs":
             return
+        if tag == "style":
+            return  # Already parsed and fully validated by class_rules.
         for key, value in element.attrib.items():
             local = key.split("}")[-1]
+            if local == "class" and key != "class":
+                raise ValueError("Unsupported namespaced SVG class.")
             if local in unsupported_attrs and value.strip() not in {"none", ""}:
                 if local == "href" and tag in {"image", "use"}:
                     raise ValueError(unsupported_element(tag))
                 raise ValueError(f"Unsupported SVG {local}; expand it to plain paths in Corel.")
             if local.lower().startswith("on"):
                 raise ValueError("Active/scripted SVG content is unsupported.")
-        style = style_for(element, inherited, is_root, warnings)
+        classes = set(element.get("class", "").split())
+        if classes == {"none"} and "none" not in known_classes:
+            classes.clear()
+        if classes - known_classes:
+            raise ValueError("Unsupported SVG class; export basic inline fill/stroke styles instead.")
+        class_styles = {}
+        for names, values in rules:
+            if classes & names:
+                class_styles.update(values)
+        style = style_for(element, inherited, is_root, warnings, class_styles)
         if style["display"] == "none":
             return
         transform = transform @ parse_transform(element.get("transform", ""))

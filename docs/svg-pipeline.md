@@ -14,7 +14,7 @@ compose in SVG order and normalize before placement. Reflecting/nonuniform affin
 supported. Curves retain their analytical form until adaptive sampling.
 
 Convert live text to curves. Reject raster images, fonts/text, use/references, scripts/events,
-CSS classes/style sheets, gradients/pattern paints, external resources, clipping/masks/filters,
+complex or external CSS, gradients/pattern paints, external resources, clipping/masks/filters,
 markers, dashes, non-scaling strokes, nested viewports, slice clipping and group opacity.
 Unused defs and editor metadata can be ignored because all rendering references are rejected.
 XML parsing disables DTD/entity expansion. Solid supported CSS colors are hex, basic named colors,
@@ -27,7 +27,17 @@ with parser-provided line/column; blocked declarations get separate operator gui
 printing resource paths or entity values. A transparent root SVG `background-color` can be
 ignored with an explicit note: it contributes no painted geometry. Opaque page backgrounds,
 the same property on rendered elements and other unknown inline properties remain unsupported.
-The Corel-like regression fixture is synthetic; the owner's original failing files remain absent.
+Internal CSS supports only simple single-class selectors (including comma-separated lists) and
+the existing solid fill/stroke properties. Presentation attributes are overridden by matching
+class rules in stylesheet order, then by inline declarations; explicit inherit uses the parent
+computed style. Unresolved classes, conditional rules, complex selectors, important declarations,
+resource paints and unsupported properties are rejected, including in unused rules.
+
+Known shape/text/image rendering hint values are validated and ignored with a note: WrapLab's
+own physical curve tolerance controls sampling. A valid clip-rule has no painted effect without
+clipping; actual clip-path references remain unsupported. Fill-rule is retained and resolved
+independently, including class rules overriding an inherited evenodd value with nonzero.
+Corel compatibility regressions are synthetic; real job artwork is tested locally, not committed.
 
 ## Nonlinear transformation and quality
 
@@ -64,6 +74,11 @@ compound contours, inverted winding or changed nesting. Open fill contours close
 open strokes retain caps during outlining. Overlaps between distinct painted shapes are permitted.
 Self-intersecting source fills and touching compound counters are a deliberately unsupported subset.
 Shared endpoints are evaluated deterministically; filled/stroked outline geometry is finite.
+Topology checks ignore a terminal closure sample only when it differs from the first by at most
+four coordinate floating-point ULPs, capped at 1e-10 mm. Interior vertices and source/export point
+lists remain untouched. Genuine self-crossings, compound intersections/touches, negligible area,
+winding inversion and counter changes still stop export. Valid SVG with intersecting compound
+fills can therefore remain unsupported for cutting, even after successful style-aware import.
 
 ## Export
 
