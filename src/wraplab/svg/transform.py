@@ -4,6 +4,7 @@ import math
 import time
 
 from shapely.geometry import LineString, LinearRing, Polygon
+from shapely.ops import unary_union
 from svgpathtools import Line
 
 from .adaptive import MAX_NODES, certificate, curve_breakpoints, flatten
@@ -159,6 +160,7 @@ def convert_artwork(artwork, mapper, tolerance, placement_scale=1.0):
             joins = {"round": 1, "miter": 2, "bevel": 3}
             angle = math.acos(max(-1, 1 - min(local_tol / (width / 2), 1)))
             quads = max(8, min(2048, math.ceil(math.pi / (4 * max(angle, 1e-8)))))
+            outlines = []
             for sub in shape.subpaths:
                 points = []
                 for segment in sub.segments:
@@ -184,28 +186,38 @@ def convert_artwork(artwork, mapper, tolerance, placement_scale=1.0):
                     join_style=joins[style["stroke-linejoin"]],
                     mitre_limit=float(style["stroke-miterlimit"]),
                 )
-                polygons = [geometry] if geometry.geom_type == "Polygon" else list(geometry.geoms)
-                for polygon in polygons:
-                    for ring in [polygon.exterior, *polygon.interiors]:
-                        local = [complex(x, y) for x, y in ring.coords][:-1]
-                        source = [within_canvas(shape.transform(p)) for p in local]
-                        target = []
-                        for a, b in zip(source, source[1:] + source[:1], strict=False):
-                            cuts = [
-                                (y - a.imag) / (b.imag - a.imag)
-                                for y in getattr(mapper, "profile_y", [])
-                                if abs(b.imag - a.imag) > 1e-12
-                            ]
-                            target.extend(
-                                flatten(
-                                    lambda t, a=a, b=b: mapped(a + (b - a) * t),
-                                    tolerance,
-                                    breakpoints=cuts,
-                                    error_bound=certificate(Line(a, b), Affine(), mapper),
-                                )[:-1]
-                            )
-                        outline_before.append(source)
-                        outline_after.append(target)
+                outlines.append(geometry)
+            # Subpaths have independent caps/joins, but their painted stroke regions
+            # may overlap (notably an open continuation after Z). Union those regions
+            # before topology validation; preserve disjoint outlines and their order.
+            if any(a.intersects(b) for i, a in enumerate(outlines) for b in outlines[:i]):
+                geometry = unary_union(outlines)
+                polygons = ([geometry] if geometry.geom_type == "Polygon"
+                            else list(geometry.geoms))
+            else:
+                polygons = [p for g in outlines for p in
+                            ([g] if g.geom_type == "Polygon" else g.geoms)]
+            for polygon in polygons:
+                for ring in [polygon.exterior, *polygon.interiors]:
+                    local = [complex(x, y) for x, y in ring.coords][:-1]
+                    source = [within_canvas(shape.transform(p)) for p in local]
+                    target = []
+                    for a, b in zip(source, source[1:] + source[:1], strict=False):
+                        cuts = [
+                            (y - a.imag) / (b.imag - a.imag)
+                            for y in getattr(mapper, "profile_y", [])
+                            if abs(b.imag - a.imag) > 1e-12
+                        ]
+                        target.extend(
+                            flatten(
+                                lambda t, a=a, b=b: mapped(a + (b - a) * t),
+                                tolerance,
+                                breakpoints=cuts,
+                                error_bound=certificate(Line(a, b), Affine(), mapper),
+                            )[:-1]
+                        )
+                    outline_before.append(source)
+                    outline_after.append(target)
             validate_contours(outline_before, outline_after, f"{shape.name} stroke")
             paths.append(
                 VectorPath(

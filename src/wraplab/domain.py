@@ -154,7 +154,10 @@ class Project:
         )
 
         def mapping(point: complex) -> complex:
-            z = p.z + p.height * point.imag / canvas_height
+            # Retain intended frame endpoints; multiplication before division can
+            # reconstruct the bottom one ULP beyond the strictly checked surface.
+            z = (p.z if point.imag == 0 else p.z + p.height if point.imag == canvas_height
+                 else p.z + p.height * point.imag / canvas_height)
             if self.physical_model == "front-view-vinyl":
                 x_front = p.x + p.width * (point.real / canvas_width - 0.5)
                 ratio = x_front / surface.radius(z)

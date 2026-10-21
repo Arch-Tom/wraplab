@@ -384,13 +384,27 @@ def parse_subpaths(data, segment_limit=20_000):
         raise ValueError("SVG path must begin with a move command.")
     if len(NUM_RE.findall(data)) > segment_limit * 8:
         raise ValueError("SVG path exceeds the coordinate complexity limit.")
-    chunks = re.split(r"(?=[Mm])", data)
+    # A closepath ends a stroked contour even when the next command is not M.
+    # Keep svgpathtools for command/curve parsing; only manage subpath boundaries.
+    chunks = re.split(r"(?=[Mm])|(?<=[Zz])", data)
     current = 0j
     result = []
     for chunk in chunks:
         if not chunk.strip():
             continue
         try:
+            chunk = chunk.strip()
+            if chunk[0] in "Mm":
+                move = NUM_RE.findall(chunk[1:])
+                if len(move) < 2:
+                    raise ValueError("Incomplete SVG moveto.")
+                start = complex(float(move[0]), float(move[1]))
+                if chunk[0] == "m":
+                    start += current
+            else:
+                # SVG 2: after Z the current point is the closed subpath's start.
+                start = current
+                chunk = f"M{current.real!r} {current.imag!r} " + chunk
             path = parse_path(chunk, current_pos=current)
         except (ValueError, IndexError, AssertionError, ZeroDivisionError) as exc:
             raise ValueError("Malformed SVG path; repair it in the source editor.") from exc
@@ -399,6 +413,9 @@ def parse_subpaths(data, segment_limit=20_000):
         if path:
             current = path[-1].end
             result.append(Subpath(tuple(path), bool(re.search(r"[Zz]", chunk))))
+        else:
+            # A movement changes the current point even if it draws no segments.
+            current = start
         if len(result) > 256:
             raise ValueError(
                 "One compound path may contain at most 256 contours; split large text groups."

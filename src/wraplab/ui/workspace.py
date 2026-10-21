@@ -189,7 +189,7 @@ def build_workspace(window, notice_type):
     position = form()
     w.placement_fields = {}
     for key, label in [
-        ("width", "Artwork width"), ("height", "Artwork height"),
+        ("width", "Page target width"), ("height", "Page target height"),
         ("x", "Horizontal offset"), ("z", "Distance from top"),
     ]:
         spin = w._spin(key, lambda value, k=key: w.placement_changed(k, value))
@@ -204,6 +204,7 @@ def build_workspace(window, notice_type):
         (position if key in {"x", "z"} else artwork).addRow(field_label, spin)
         if key == "x":
             w.horizontal_label = field_label
+    artwork.addRow(note("Target dimensions include blank SVG page margins. Flat cutting size may differ."))
     w.aspect = QCheckBox("Keep proportions")
     w.aspect.toggled.connect(w.aspect_changed)
     artwork.addRow(w.aspect)

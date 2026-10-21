@@ -242,7 +242,7 @@ class MainWindow(QMainWindow):
         }[selected_export] if imported or selected_export == "template" else
             "Reference area · import artwork to see the cutting pattern")
         self.workflow_help.setText(
-            "Match the design you want to see from the front. Width is the visible artwork width."
+            "Match the source page you want to see from the front. Width includes blank page margins."
             if front else "Wrap around the surface. Width and horizontal position are surface distances."
         )
         self.horizontal_label.setText("Horizontal offset" if front else "Distance from seam")
@@ -805,7 +805,7 @@ class MainWindow(QMainWindow):
                 result, text = self.export_to(path)
                 svg = ET.fromstring(text)
                 dimensions = f"{float(svg.get('width')[:-2]):.3f} × {float(svg.get('height')[:-2]):.3f} mm"
-                self.export_summary.setText(f"Saved {dimensions}\n{path.name}")
+                self.export_summary.setText(f"Saved flat pattern: {dimensions}\n{path.name}")
                 self.export_summary.setToolTip(str(path.resolve()))
                 self.statusBar().showMessage(
                     f"Saved {path.resolve()} · {dimensions}"

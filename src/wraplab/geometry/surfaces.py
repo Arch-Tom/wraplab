@@ -118,6 +118,10 @@ class MeasuredProfile:
         zs = [p[0] for p in self.points]
         if abs(zs[0]) > 1e-10:
             raise ValueError("The first measured height must be zero (the labelled top).")
+        # Match the existing acceptance threshold with a domain that includes 0.
+        # Raw operator measurements remain in ObjectSpec; only this surface is canonical.
+        self.points = ((0.0, self.points[0][1]), *self.points[1:])
+        zs[0] = 0.0
         if any(b - a < 1e-5 for a, b in zip(zs, zs[1:], strict=False)):
             raise ValueError("Heights must increase without duplicates; sort the table if needed.")
         self.height = positive(zs[-1], "Profile height")
