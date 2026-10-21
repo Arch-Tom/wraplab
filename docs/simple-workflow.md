@@ -1,5 +1,12 @@
 # WrapLab simple operator workflow
 
+The historical validation below describes the original simple-workflow release.
+The current [correctness/framing pass](correctness-framing-validation.md) adds an
+explicit Visible artwork / Original SVG page choice, separate target/flat dimensions,
+and version-2 framing persistence. Old projects retain page-based geometry. New jobs
+prefer visible bounds. The page-based example below selects Original SVG page to
+retain its documented dimensions.
+
 This implementation is on `codex/wraplab-simple-workflow`, based on verified source integration
 `30c539a55410d7015df0360616f3fe8d3521266b`. Main/RC4 and the integration reference are unchanged.
 The unavailable historical UX commit was not recovered or reconstructed.
@@ -48,6 +55,7 @@ The unchanged isolated launcher is:
 
 1. Select Cylinder, millimeters, diameter 70 mm and object height 120 mm.
 2. Import `tests/fixtures/lettering.svg`, the outlined 60 x 25 mm O/A/B/R example.
+   Select **Original SVG page** under **Size and position by** for this reference example.
 3. Set artwork width to 40 mm, leave Keep proportions checked and press Center artwork.
    Height becomes approximately 16.6667 mm; top placement becomes approximately 51.6667 mm.
 4. Compare the two previews. Use Position artwork for precise adjustments. Advanced keeps the

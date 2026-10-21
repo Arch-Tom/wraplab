@@ -185,9 +185,21 @@ def build_workspace(window, notice_type):
     side.addWidget(w.import_button)
     w.source_label = note("Choose your object, enter its measurements, then import an SVG.")
     side.addWidget(w.source_label)
+    w.artwork_frame = ChoiceBox()
+    w.artwork_frame.addItem('Visible artwork', 'visible')
+    w.artwork_frame.addItem('Original SVG page', 'page')
+    w.artwork_frame.setAccessibleName('Size and position by')
+    w.artwork_frame.setToolTip('Switching keeps target height and placement anchors. '
+                               'With proportions locked, width follows the selected frame.')
+    w.artwork_frame.currentIndexChanged.connect(w.frame_changed)
+    frame_choice = form()
+    frame_choice.addRow('Size and position by', w.artwork_frame)
+    side.addLayout(frame_choice)
+    w.frame_help = note('')
+    side.addWidget(w.frame_help)
     artwork = form()
     position = form()
-    w.placement_fields = {}
+    w.placement_fields, w.placement_labels = {}, {}
     for key, label in [
         ("width", "Page target width"), ("height", "Page target height"),
         ("x", "Horizontal offset"), ("z", "Distance from top"),
@@ -196,15 +208,15 @@ def build_workspace(window, notice_type):
         if key in {"x", "z"}:
             spin.setRange(-1_000_000, 1_000_000)
         spin.setAccessibleName(label)
-        spin.setToolTip("Measured straight down from the labelled TOP to the artwork's top edge." if key == "z"
+        spin.setToolTip("Measured straight down from the labelled TOP to the selected sizing frame's top edge." if key == "z"
                         else "Changes physical placement; preview dragging only pans the view.")
         w.placement_fields[key] = spin
         field_label = QLabel(label)
+        w.placement_labels[key] = field_label
         field_label.setBuddy(spin)
         (position if key in {"x", "z"} else artwork).addRow(field_label, spin)
         if key == "x":
             w.horizontal_label = field_label
-    artwork.addRow(note("Target dimensions include blank SVG page margins. Flat cutting size may differ."))
     w.aspect = QCheckBox("Keep proportions")
     w.aspect.toggled.connect(w.aspect_changed)
     artwork.addRow(w.aspect)
@@ -360,6 +372,9 @@ def build_workspace(window, notice_type):
         column.addWidget(view, 1)
         caption_label = note(caption)
         column.addWidget(caption_label)
+        if title == 'Flat Cutting Pattern':
+            w.flat_dimensions = note('')
+            column.addWidget(w.flat_dimensions)
         setattr(w, caption_name, caption_label)
         w.preview_splitter.addWidget(frame)
     w.preview_splitter.setSizes([500, 500])

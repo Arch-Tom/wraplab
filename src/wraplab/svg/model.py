@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import cached_property
 from typing import Any, Mapping
 
 
@@ -47,12 +48,40 @@ class Shape:
 
 
 @dataclass(frozen=True)
+class Frame:
+    left: float
+    top: float
+    width: float
+    height: float
+    accuracy_mm: float = 0.0
+    outline_tolerance_mm: float | None = None
+
+
+@dataclass(frozen=True)
 class Artwork:
     width_mm: float
     height_mm: float
     shapes: tuple[Shape, ...]
     source: str
     warnings: tuple[str, ...] = ()
+
+    @property
+    def page_frame(self):
+        return Frame(0, 0, self.width_mm, self.height_mm)
+
+    @cached_property
+    def bounds_result(self):
+        from .framing import visible_bounds
+
+        return visible_bounds(self)
+
+    @property
+    def visible_frame(self):
+        result = self.bounds_result
+        if result.frame is None:
+            raise ValueError('Visible artwork bounds unavailable: ' + result.error
+                             + ' Use original-page framing or simplify the SVG in your editor.')
+        return result.frame
 
 
 @dataclass

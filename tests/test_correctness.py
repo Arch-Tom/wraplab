@@ -52,6 +52,12 @@ def test_closepath_starts_an_independent_open_stroke():
     assert actual.symmetric_difference(square.union(diagonal)).area < 1e-10
 
 
+@pytest.mark.parametrize('data', ['M1 1Z 2 2', 'M1 1L2 1L2 2Z 3 3'])
+def test_closepath_requires_an_explicit_following_command(data):
+    with pytest.raises(ValueError, match='Malformed SVG path'):
+        parse_subpaths(data)
+
+
 @pytest.mark.parametrize("mode", ["cylinder", "frustum", "measured"])
 def test_exact_source_frame_endpoint_maps_to_exact_physical_endpoint(mode):
     h = 8.5 * 25.4

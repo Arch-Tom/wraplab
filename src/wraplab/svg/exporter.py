@@ -18,28 +18,43 @@ ET.register_namespace("", SVG_NS)
 
 def convert(artwork, project, preview=False, original=False):
     project.validate()
+    frame = project.source_frame(artwork)
     tolerance = max(0.08, project.export_tolerance_mm) if preview else project.export_tolerance_mm
     scale = max(
-        project.placement.width / artwork.width_mm, project.placement.height / artwork.height_mm
+        project.placement.width / frame.width, project.placement.height / frame.height
     )
+    if frame.accuracy_mm * scale > project.export_tolerance_mm / 4:
+        raise ValueError('Visible stroke bounds are too approximate at this target size. '
+                         'Reduce the target size or use original-page framing.')
     mapper = (
         (
             lambda p: complex(
-                p.real * project.placement.width / artwork.width_mm,
-                p.imag * project.placement.height / artwork.height_mm,
+                p.real * project.placement.width / frame.width,
+                p.imag * project.placement.height / frame.height,
             )
         )
         if original
-        else project.mapper(artwork.width_mm, artwork.height_mm)
+        else project.mapper(frame.width, frame.height)
     )
     if original:
         mapper.derivative_bounds = (1, 0)
         mapper.placement_affine = (
-            project.placement.width / artwork.width_mm,
-            project.placement.height / artwork.height_mm,
+            project.placement.width / frame.width,
+            project.placement.height / frame.height,
         )
+    if project.artwork_frame == 'visible':
+        base_mapper = mapper
+
+        def mapper(point):
+            return base_mapper(point - complex(frame.left, frame.top))
+
+        # Derivatives are unaffected by translation; knot crossings are in page mm.
+        mapper.derivative_bounds = base_mapper.derivative_bounds
+        mapper.placement_affine = base_mapper.placement_affine
+        mapper.profile_y = [y + frame.top for y in getattr(base_mapper, 'profile_y', [])]
     amplification = 1 if original else project.mapping_scale_bound()
-    conversion = convert_artwork(artwork, mapper, tolerance, scale * amplification)
+    conversion = convert_artwork(artwork, mapper, tolerance, scale * amplification,
+                                 outline_tolerance=frame.outline_tolerance_mm)
     if not original:
         conversion.warnings += project.profile_warnings()
     return conversion
@@ -125,6 +140,7 @@ def export_svg(conversion, project, mode="artwork", source_name=""):
         guides(project, project.export_tolerance_mm) if mode in {"guides", "template"} else []
     )
     all_paths = artwork + guide_paths
+    art_points = [p for path in artwork for c in path.contours for p in c.points]
     points = [v for path in all_paths for c in path.contours for v in c.points]
     if not points:
         raise ValueError("Nothing to export.")
@@ -163,6 +179,13 @@ def export_svg(conversion, project, mode="artwork", source_name=""):
             "wrap_degrees": project.wrap_degrees,
             "reference_height_mm": surface.height / 2,
             "placement": vars(project.placement),
+            "artwork_frame": project.artwork_frame,
+            "target_frame_dimensions_mm": [project.placement.width, project.placement.height],
+            "flat_artwork_dimensions_mm": (
+                [max(p.real for p in art_points) - min(p.real for p in art_points),
+                 max(p.imag for p in art_points) - min(p.imag for p in art_points)]
+                if art_points else None
+            ),
             "axial_direction": "down-from-labelled-top",
             "front_margin": project.front_margin,
             "view_assumption": "upright-object-horizontal-distant-orthographic"

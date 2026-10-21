@@ -7,16 +7,19 @@ Frustum top diameter is r(0)*2; bottom diameter is r(H)*2. Measurement zero is a
 ## Two explicit placement models
 
 **Front-view vinyl** (default, Mote Packet 0): upright rotational surface viewed horizontally from
-far enough away for orthographic projection. Desired SVG-page `(x,y)` is scaled to front-view mm:
+far enough away for orthographic projection. Canonical page `(x,y)` is expressed
+relative to the selected source frame `(left,top,frame_width,frame_height)`, then scaled:
 
 ```
-x_front = center_offset + width * (x/page_width - 1/2)
-z = artwork_top + height * y/page_height
+x_front = center_offset + width * ((x-left)/frame_width - 1/2)
+z = frame_top_on_object + height * (y-top)/frame_height
 theta = asin(x_front / r(z))
 ```
 
 Use the visible front branch. Require `abs(x_front)/r(z) < 0.95` (persisted margin); never clamp.
-Coverage also bounds theta. The entire placed page rectangle is checked conservatively at its
+Coverage also bounds theta. Legacy projects select the original page (left=top=0).
+Exact frame endpoints retain the stored physical endpoints during floating-point mapping.
+The entire placed selected frame rectangle is checked conservatively at its
 minimum radius; every adaptive point is checked again. Constant front y gives constant axial z.
 Projecting back by `r(z)*sin(theta)` reproduces desired x. The ideal front preview is this **target**;
 it does not simulate tape/strain/application behavior. Rotation rotates the resulting flat sheet,
@@ -60,7 +63,7 @@ it interpolates measurement noise rather than removing it. Axial stations are no
 Split quadrature at the PCHIP knots, integrating q=sqrt(1+r_z²) and q/r themselves.
 
 For reference z* at the middle of the placed support band, r*=r(z*), define
-u(z)=integral_z*^z(q/r dz). Fit one constant for the entire carrier rectangle:
+u(z)=integral_z*^z(q/r dz). Fit one constant for the selected rectangular support:
 
 ```
 k = integral(w*u*log(r/r*)*q dz) / integral(w*u*u*q dz)

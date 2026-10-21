@@ -47,13 +47,16 @@ Use the existing checkout; cloud tasks are already isolated and do not need a wo
 ## Shop workflow
 
 1. Prepare the SVG in CorelDRAW 2019. Convert text to curves, expand unsupported effects, and
-   export with explicit physical dimensions. Fit the page around artwork, including strokes.
+   export with explicit physical dimensions. Keep intentional margins when you need page framing.
 2. Choose **Cylinder**, **Tapered object**, or **Custom curved object**, and mm/in display units.
 3. Enter measurements **down from a labelled top**. A taper needs top diameter, bottom diameter
    and straight vertical height. For custom curved objects: enter 3–30 height/diameter or height/circumference
    pairs, check the profile, and save the geometry as **Bell — Current Project**.
-4. Import/drop SVG. Set desired front-view width/height, horizontal center offset, and artwork-top
-   height. The app conservatively fits oversized artwork on import; inspect these dimensions.
+4. Import/drop SVG. Choose **Visible artwork** (new-job default when bounds are available) or
+   **Original SVG page** under **Size and position by**. Page framing includes blank margins.
+   Set the selected frame's front-view target width/height, horizontal center offset, and top
+   height. Import conservatively fits that frame to the object; inspect these dimensions.
+   Existing projects retain original-page framing and saved placement.
 5. Compare **On the Object** and **Flat Cutting Pattern** side by side. **Position artwork**
    exposes accurate horizontal and top-referenced placement; Center artwork sets both automatically.
    Wheel zooms; drag pans the preview, not the artwork. Fit views resets zoom. Original artwork
@@ -99,7 +102,14 @@ Headless conversion (same pipeline):
 ```
 
 `--project saved.wraplab` reuses geometry/placement. `--workflow surface-template` selects arc-width
-placement. `--export guides|template|original` selects an alternative output.
+placement. New CLI conversions default to visible-artwork framing; `--frame page` includes source
+page margins. Saved projects retain their frame unless `--frame` explicitly overrides it.
+`--export guides|template|original` selects an alternative output.
+
+Target frame size describes the intended on-object design (or page). The flat cutting dimensions
+are shown separately and may differ after compensation; output is not resized back to the target.
+Version-1 projects open with unchanged page-based geometry. Saving writes explicit version-2
+framing; keep originals if an older WrapLab installation must still open them.
 
 ## Evidence and boundaries
 
@@ -113,6 +123,7 @@ placement. `--export guides|template|original` selects an alternative output.
 - [Supervised Windows/Corel/material acceptance handoff](docs/windows-acceptance-pilot.md)
 - [Fresh source restoration](docs/restoration.md)
 - [Validation record](docs/validation.md)
+- [Correctness/framing changes and compatibility validation](docs/correctness-framing-validation.md)
 
 CorelDRAW 2019 and actual Windows shop behavior require manual validation. Physical application
 is unverified. Curved profiles use a continuous conformal fit over the support region with separate

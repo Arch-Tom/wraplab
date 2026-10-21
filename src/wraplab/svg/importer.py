@@ -403,6 +403,10 @@ def parse_subpaths(data, segment_limit=20_000):
                     start += current
             else:
                 # SVG 2: after Z the current point is the closed subpath's start.
+                # Z has no implicit numeric continuation. Require a new command
+                # before adding the internal moveto used to retain that point.
+                if chunk[0] not in 'LlHhVvCcSsQqTtAaZz':
+                    raise ValueError('Expected an explicit command after closepath.')
                 start = current
                 chunk = f"M{current.real!r} {current.imag!r} " + chunk
             path = parse_path(chunk, current_pos=current)

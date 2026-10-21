@@ -64,6 +64,8 @@ def test_cylinder_job_preserves_reference_engine_output_units_and_counters(windo
     window.object_fields["diameter"].setValue(70)
     window.object_fields["height"].setValue(120)
     window.import_file(LETTERING)
+    # This pre-framing reference explicitly exercises the original page contract.
+    window.artwork_frame.setCurrentIndex(window.artwork_frame.findData('page'))
     window.placement_fields["width"].setValue(40)
     window.center_artwork()
     settle(window)

@@ -113,15 +113,19 @@ class Project:
     export_tolerance_mm: float = 0.01
     source_svg: str | None = None
     source_name: str = ""
-    schema_version: int = 1
+    schema_version: int = 2
     physical_model: str = "front-view-vinyl"
     front_margin: float = 0.95
+    # Preserve the programmatic API's original meaning. Operator entry points
+    # (new GUI jobs and CLI conversions) explicitly prefer visible framing.
+    artwork_frame: str = "page"
 
     def validate(self, artwork: bool = True):
-        if self.schema_version != 1 or self.physical_model not in {
+        if (self.schema_version != 2 or self.artwork_frame not in {"page", "visible"}
+                or self.physical_model not in {
             "surface-template",
             "front-view-vinyl",
-        }:
+        }):
             raise ValueError("Unsupported project version or physical model.")
         Unit(self.units)
         surface = self.object.surface()
@@ -137,6 +141,10 @@ class Project:
                 surface, self.wrap_degrees, self.physical_model, self.front_margin
             )
         return surface
+
+    def source_frame(self, artwork):
+        self.validate(False)
+        return artwork.visible_frame if self.artwork_frame == 'visible' else artwork.page_frame
 
     def wrap_width(self):
         surface = self.validate(False)
@@ -244,10 +252,10 @@ class Project:
         development = self.development(surface)
         low, high = development.strain_extrema()
         warnings.append(
-            f"Required application strain over carrier: extension up to {max(0, high):.2%}; compression up to {max(0, -low):.2%}. No material limit has been validated."
+            f"Required application strain over support: extension up to {max(0, high):.2%}; compression up to {max(0, -low):.2%}. No material limit has been validated."
         )
         warnings.append(
-            "Carrier assumption: the entire artwork rectangle. Separate letters may behave differently."
+            "Support assumption: the selected sizing rectangle. Carrier/transfer tape is not modeled; separate letters may behave differently."
         )
         return warnings
 
@@ -256,10 +264,17 @@ class Project:
 
     @classmethod
     def from_dict(cls, data):
-        if not isinstance(data, dict) or data.get("schema_version") != 1:
+        if not isinstance(data, dict) or data.get("schema_version") not in {1, 2}:
             raise ValueError("Unsupported WrapLab project format.")
         try:
             values = dict(data)
+            if values['schema_version'] == 1:
+                if values.get('artwork_frame', 'page') != 'page':
+                    raise ValueError('Version 1 projects must retain original-page framing.')
+                values['artwork_frame'] = 'page'
+                values['schema_version'] = 2
+            elif 'artwork_frame' not in values:
+                raise ValueError('Version 2 projects require an explicit artwork frame.')
             values["object"] = ObjectSpec(**values["object"])
             values["placement"] = Placement(**values["placement"])
             project = cls(**values)

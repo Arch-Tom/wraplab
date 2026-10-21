@@ -3,8 +3,10 @@
 ## Accepted subset
 
 Explicit root width/height in mm, cm, in, pt, pc, px (unitless/px means 96 dpi and raises a note).
-Positive viewBox, meet alignment or `preserveAspectRatio="none"`. Source page defines the imported
-physical placement frame, including any blank margins. Artwork outside the page is rejected rather
+Positive viewBox, meet alignment or `preserveAspectRatio="none"`. Source page coordinates and
+dimensions are retained. The explicitly selected source frame controls sizing/placement:
+original page (including blank margins) or supported visible-artwork bounds. Artwork outside
+the page is still rejected rather
 than silently clipping. SVG limit: 10 MB, 20,000 elements/source segments.
 
 Paths (M/L/H/V/C/S/Q/T/A/Z), lines, polylines, polygons, rectangles including rounded corners,
@@ -39,9 +41,52 @@ clipping; actual clip-path references remain unsupported. Fill-rule is retained 
 independently, including class rules overriding an inherited evenodd value with nonzero.
 Corel compatibility regressions are synthetic; real job artwork is tested locally, not committed.
 
+## Source framing
+
+Visible bounds are cached on immutable Artwork. The existing solid-paint conversion
+pipeline resolves supported inherited/class styles, fill rules, implicit fill closure,
+compound paths and stroke outlines in canonical page mm. Transparent/hidden paint
+and line-only fills contribute no bounds. Analytical curve extrema, including nested
+affine transforms and ellipse extrema, are retained before sampling. Bounds come from
+supported painted geometry, not control-point hulls or the SVG viewBox alone.
+
+Straight stroke outlines use their actual caps/joins. Curved/round strokes use a
+tighter numerical outline budget and an outward 0.00001 mm source envelope, with
+miter amplification included in the local budget. This is a numerical envelope under
+the existing outline approximation, not a browser-renderer or interval-arithmetic
+proof. Visible-frame conversion uses the same or tighter source outline precision.
+If the envelope scaled to the target exceeds one quarter of production tolerance,
+conversion fails explicitly. The preview cannot bypass that production-accuracy gate.
+
+Existing source-page, topology, node/time, paint and resource limits still apply. A
+failed bounds calculation is reported and cannot select guessed visible bounds.
+The GUI falls back visibly to original-page framing; this does not bypass a conversion
+error for unsupported geometry. Masks, clipping, filters, dashes and other unsupported
+appearance features remain rejected. Simplify the source or use original-page framing
+where the existing converter can safely handle it.
+
+Version 2 stores `artwork_frame` as `page` or `visible`. Version-1 files migrate only
+in memory to `page`, preserving placement, source coordinates and object settings.
+Opening does not write the source project. Explicit saves write version 2; older
+WrapLab versions cannot read those files. Programmatic `Project()` retains page
+semantics for existing callers; new GUI jobs and CLI conversions prefer visible.
+
+The selected frame is translated to a local origin before scaling; derivative bounds
+are unchanged by translation, while measured-knot source coordinates include the frame
+offset. The same frame controls import fit, aspect lock/reset, placement, support-band
+validation, original/front previews and production conversion. Switching frames keeps
+target height and physical top/horizontal anchors; locked proportions update width.
+Neither frame is a cutting sheet or transfer-tape model. The existing conformal solver
+still fits one selected rectangular support region. No grouping is implemented.
+
+Production SVG pages continue to trim to the exported vectors; metadata records the
+translation, selected frame, intended frame size and calculated flat artwork size.
+Selecting original-page framing preserves input page sizing semantics, including
+margins; it does not change this existing output trimming rule.
+
 ## Nonlinear transformation and quality
 
-Artwork -> canonical page mm -> physical placement -> optional front-view inverse projection ->
+Artwork -> canonical page mm -> selected frame origin/size -> physical placement -> optional front-view inverse projection ->
 exact development / experimental conformal map -> flat-sheet rotation -> canonical export.
 
 Adaptive subdivision evaluates the whole curve F(p(t)), including explicit and implicit closing

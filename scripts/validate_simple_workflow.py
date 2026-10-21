@@ -79,6 +79,8 @@ def run(output, reference_source, scale_factor=1.0):
         window.object_fields["diameter"].setValue(70)
         window.object_fields["height"].setValue(120)
         window.import_file(ROOT / "tests/fixtures/lettering.svg")
+        # Historical engine comparisons use the historical page framing contract.
+        window.artwork_frame.setCurrentIndex(window.artwork_frame.findData('page'))
         window.placement_fields["width"].setValue(40)
         window.center_artwork()
         settle()
@@ -102,7 +104,10 @@ def run(output, reference_source, scale_factor=1.0):
             assert window.development.renderer.isValid()
             if mode == 2:
                 assert "Experimental" in window.badge.text()
-            baseline = baseline_domain.Project.from_dict(window.project.to_dict())
+            legacy_data = window.project.to_dict()
+            legacy_data.pop('artwork_frame')
+            legacy_data['schema_version'] = 1
+            baseline = baseline_domain.Project.from_dict(legacy_data)
             artwork = baseline_svg.import_svg(window.project.source_svg)
             for export_mode in ["artwork", "guides", "template", "original"]:
                 target = output / f"{name}-{export_mode}.svg"
@@ -110,11 +115,18 @@ def run(output, reference_source, scale_factor=1.0):
                 previous = (baseline_svg.convert(artwork, baseline, original=export_mode == "original")
                             if export_mode != "template" else None)
                 expected = baseline_svg.export_svg(previous, baseline, export_mode, window.project.source_name)
-                assert text == expected, f"Baseline SVG changed: {name}/{export_mode}"
                 svg = ET.fromstring(text)
+                old_svg = ET.fromstring(expected)
+                assert svg.attrib == old_svg.attrib, f"Baseline dimensions changed: {name}/{export_mode}"
+                assert [p.attrib for p in svg.findall('.//{*}path')] == [
+                    p.attrib for p in old_svg.findall('.//{*}path')
+                ], f"Baseline vectors changed: {name}/{export_mode}"
+                assert json.loads(svg.find('{*}metadata').text)['page_origin_mm'] == json.loads(
+                    old_svg.find('{*}metadata').text)['page_origin_mm']
                 assert svg.get("width").endswith("mm") and not svg.findall(".//{*}image")
                 records.append({"scenario": name, "mode": export_mode,
-                                "baseline_bytes_identical": True, "width": svg.get("width"),
+                                "baseline_vectors_identical": True,
+                                "baseline_metadata_changed": text != expected, "width": svg.get("width"),
                                 "height": svg.get("height"), "nodes": result.node_count if result else None})
             path = output / f"{name}.wraplab"
             save_project(path, window.project)

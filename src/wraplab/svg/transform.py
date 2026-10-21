@@ -70,7 +70,7 @@ def validate_contours(before, after, name):
                 raise ValueError(f"{name}: compensation changed a counter/hole relationship.")
 
 
-def convert_artwork(artwork, mapper, tolerance, placement_scale=1.0):
+def convert_artwork(artwork, mapper, tolerance, placement_scale=1.0, outline_tolerance=None):
     paths, warnings = [], list(artwork.warnings)
     deadline = time.monotonic() + 120
 
@@ -155,6 +155,10 @@ def convert_artwork(artwork, mapper, tolerance, placement_scale=1.0):
             if width == 0:
                 continue
             local_tol = tolerance / (4 * max(shape.transform.scale_bound * placement_scale, 1))
+            if outline_tolerance is not None:
+                # Visible framing uses the same source stroke envelope as bounds.
+                # A coarser outline could overshoot that frame at a physical endpoint.
+                local_tol = min(local_tol, outline_tolerance / (4 * max(shape.transform.scale_bound, 1)))
             outline_before, outline_after = [], []
             caps = {"round": 1, "butt": 2, "square": 3}
             joins = {"round": 1, "miter": 2, "bevel": 3}

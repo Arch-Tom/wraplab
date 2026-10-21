@@ -126,11 +126,13 @@ class PreviewJob(QRunnable):
                     if self.project.physical_model == "front-view-vinyl"
                     else None
                 )
-                payload = (result, text, original_text, front)
+                dimensions = (None if self.export_mode == 'template' else
+                              original if self.export_mode == 'original' else result)
+                payload = (result, text, original_text, front, dimensions)
             else:
                 text = (None if self.project.object.mode == "measured" and self.export_mode != "template"
                         else export_svg(None, self.project, "template"))
-                payload = (None, text, None, None)
+                payload = (None, text, None, None, None)
             self.signals.finished.emit(self.generation, payload, None)
         except Exception as exc:
             self.signals.finished.emit(self.generation, None, str(exc))
@@ -148,7 +150,7 @@ class MainWindow(QMainWindow):
             self.resize(min(1370, max(980, available.width() - 40)),
                         min(900, max(650, available.height() - 70)))
         self.setAcceptDrops(True)
-        self.project = Project()
+        self.project = Project(artwork_frame='visible')
         self.artwork = None
         self.source_path = None
         self.project_path = None
@@ -200,7 +202,7 @@ class MainWindow(QMainWindow):
         except (ValueError, OSError) as exc:
             self.error("The current job could not be preserved. Save it before starting another. " + str(exc))
             return
-        self.project = Project()
+        self.project = Project(artwork_frame='visible')
         self.artwork = self.source_path = self.project_path = None
         self._invalid_cells.clear()
         self.dirty = False
@@ -223,6 +225,30 @@ class MainWindow(QMainWindow):
         for control in [self.aspect, self.center_button]:
             control.setEnabled(editable_support)
         self.reset_button.setEnabled(imported)
+        self.artwork_frame.setEnabled(imported)
+        frame_name = 'Visible' if self.project.artwork_frame == 'visible' else 'Page'
+        for key in ('width', 'height'):
+            label = f'{frame_name} target {key}'
+            self.placement_labels[key].setText(label)
+            self.placement_fields[key].setAccessibleName(label)
+        self.frame_help.setText(
+            ('On-object front-view target' if front else 'Surface-distance target')
+            + (' · visible design only.' if self.project.artwork_frame == 'visible'
+               else ' · includes blank SVG page margins.')
+            + ' Flat cutting dimensions may differ. Position anchors refer to this frame.'
+        )
+        if self.artwork:
+            art = self.artwork
+            bounds = art.bounds_result
+            def size(width, height):
+                return (f'{self.unit.from_mm(width):.3f} × '
+                        f'{self.unit.from_mm(height):.3f} {self.project.units}')
+            self.source_label.setText(
+                self.project.source_name + '\nSource page: ' + size(art.width_mm, art.height_mm)
+                + ('\nVisible artwork: ' + size(bounds.frame.width, bounds.frame.height)
+                   + (' (numerical stroke envelope)' if bounds.frame.accuracy_mm else '')
+                   if bounds.frame else '\nVisible bounds unavailable: ' + bounds.error)
+            )
         self.original_section.toggle.setEnabled(imported)
         self.position_section.toggle.setEnabled(editable_support)
         self.advanced.toggle.setText("Advanced · " + self.workflow.currentText())
@@ -242,12 +268,12 @@ class MainWindow(QMainWindow):
         }[selected_export] if imported or selected_export == "template" else
             "Reference area · import artwork to see the cutting pattern")
         self.workflow_help.setText(
-            "Match the source page you want to see from the front. Width includes blank page margins."
+            "Match the selected frame you want to see from the front. Target size differs from flat cutting size."
             if front else "Wrap around the surface. Width and horizontal position are surface distances."
         )
         self.horizontal_label.setText("Horizontal offset" if front else "Distance from seam")
         self.placement_fields["x"].setToolTip(
-            "Offset from the front center; zero is centered." if front else
+            "Selected frame's center offset from the object front center; zero is centered." if front else
             "Surface distance from the left seam at mid-height; Center places artwork within the wrap."
         )
         self.next_step.setText(
@@ -272,6 +298,7 @@ class MainWindow(QMainWindow):
         self.mode.setCurrentIndex([value for _, value in MODES].index(self.project.object.mode))
         self.workflow.setCurrentIndex(0 if self.project.physical_model == "front-view-vinyl" else 1)
         self.units.setCurrentIndex(0 if self.project.units == "mm" else 1)
+        self.artwork_frame.setCurrentIndex(self.artwork_frame.findData(self.project.artwork_frame))
         for key, spin in self.object_fields.items():
             spin.setSuffix(" " + self.project.units)
             spin.setValue(self.unit.from_mm(getattr(self.project.object, key)))
@@ -404,6 +431,28 @@ class MainWindow(QMainWindow):
             self.project.placement.lock_aspect = value
             self._changed()
 
+    def frame_changed(self, index):
+        if self._loading or not self.artwork:
+            return
+        previous = self.project.artwork_frame
+        selected = self.artwork_frame.itemData(index)
+        try:
+            frame = (self.artwork.visible_frame if selected == 'visible'
+                     else self.artwork.page_frame)
+        except ValueError as exc:
+            self._loading = True
+            self.artwork_frame.setCurrentIndex(self.artwork_frame.findData(previous))
+            self._loading = False
+            self.error(str(exc))
+            return
+        self.project.artwork_frame = selected
+        if self.project.placement.lock_aspect:
+            self.project.placement.width = self.project.placement.height * frame.width / frame.height
+        self._load_controls()
+        self._changed()
+        self.statusBar().showMessage('Sizing frame changed; target height and top/horizontal anchors kept. '
+                                     'Check the preview before export.')
+
     def coverage_changed(self, value):
         if not self._loading:
             self.project.wrap_degrees = value
@@ -484,9 +533,13 @@ class MainWindow(QMainWindow):
 
     def reset_artwork(self):
         if self.artwork:
-            self.project.placement.width = self.artwork.width_mm
-            self.project.placement.height = self.artwork.height_mm
-            self.center_artwork()
+            try:
+                frame = self.project.source_frame(self.artwork)
+                self.project.placement.width = frame.width
+                self.project.placement.height = frame.height
+                self.center_artwork()
+            except ValueError as exc:
+                self.error(str(exc))
 
     def name_changed(self):
         if not self._loading and self.preset_name.text().strip():
@@ -534,6 +587,10 @@ class MainWindow(QMainWindow):
             raise ValueError("SVG exceeds the 10 MB import limit.")
         artwork = import_svg(path.read_text(encoding="utf-8-sig"))
         surface = self.project.validate(False)
+        # Only a trustworthy supported bound can select visible-artwork sizing.
+        if self.project.artwork_frame == 'visible' and artwork.bounds_result.frame is None:
+            self.project.artwork_frame = 'page'
+        frame = self.project.source_frame(artwork)
         available = self.project.wrap_width()
         if self.project.physical_model == "front-view-vinyl":
             zs = [surface.height * (i / 100) for i in range(100)] + [surface.height]
@@ -546,21 +603,19 @@ class MainWindow(QMainWindow):
             )
             available = 2 * min(radii) * limit
         scale = min(
-            1, 0.85 * available / artwork.width_mm, 0.85 * surface.height / artwork.height_mm
+            1, 0.85 * available / frame.width, 0.85 * surface.height / frame.height
         )
         self.project.source_svg = artwork.source
         self.project.source_name = path.name
         self.artwork = artwork
         self.source_path = path.resolve()
-        self.project.placement.width = artwork.width_mm * scale
-        self.project.placement.height = artwork.height_mm * scale
+        self.project.placement.width = frame.width * scale
+        self.project.placement.height = frame.height * scale
         self.project.center_artwork()
         self._load_controls()
-        self.source_label.setText(
-            f"{path.name}\nOriginal page: {self.unit.from_mm(artwork.width_mm):.3f} × {self.unit.from_mm(artwork.height_mm):.3f} {self.project.units}"
-            + ("\nSized to fit the object; adjust below." if scale < 1 else "")
-        )
         self._changed()
+        if scale < 1:
+            self.statusBar().showMessage('Selected frame sized to fit the object; inspect target dimensions.')
 
     def choose_svg(self):
         path, _ = QFileDialog.getOpenFileName(
@@ -581,9 +636,6 @@ class MainWindow(QMainWindow):
         self.project_path, self.source_path = Path(path), None
         self.dirty = False
         self._load_controls()
-        self.source_label.setText(
-            project.source_name or "Drop a path-based SVG here, or use Import SVG."
-        )
         self.refresh()
 
     def choose_project(self):
@@ -648,6 +700,7 @@ class MainWindow(QMainWindow):
         if self._loading:
             return
         self._generation += 1
+        self.flat_dimensions.setText('Flat artwork dimensions pending' if self.artwork else '')
         self.export_button.setEnabled(False)
         self._sync_presentation()
         self._set_preview_active(False)
@@ -704,7 +757,7 @@ class MainWindow(QMainWindow):
         if error:
             self.error(error)
             return
-        result, text, original_text, front_text = payload
+        result, text, original_text, front_text, dimensions = payload
         try:
             if text is None:
                 self.development.set_message("Import SVG to define the curved artwork region.")
@@ -719,6 +772,18 @@ class MainWindow(QMainWindow):
             )
             self._set_preview_active(True)
             self._sync_presentation()
+            if dimensions:
+                points = [p for path in dimensions.paths for c in path.contours for p in c.points]
+                width = max(p.real for p in points) - min(p.real for p in points)
+                height = max(p.imag for p in points) - min(p.imag for p in points)
+                label = ('Uncompensated artwork' if self.export_mode.currentData() == 'original'
+                         else 'Flat artwork')
+                self.flat_dimensions.setText(
+                    f'{label} (preview): {self.unit.from_mm(width):.3f} × '
+                    f'{self.unit.from_mm(height):.3f} {self.project.units}'
+                )
+            else:
+                self.flat_dimensions.setText('')
             warnings = result.warnings if result else self.project.profile_warnings()
             if self.export_mode.currentData() in {"guides", "template"}:
                 warnings = [
@@ -754,6 +819,7 @@ class MainWindow(QMainWindow):
                 item.setOpacity(1 if active else 0.25)
 
     def error(self, message):
+        self.flat_dimensions.setText('Flat dimensions unavailable · export paused')
         self.notice.setText(message)
         self.notice.setObjectName("Error")
         self.notice.setStyleSheet("background:#fff0e9;color:#9e4325;padding:8px;")

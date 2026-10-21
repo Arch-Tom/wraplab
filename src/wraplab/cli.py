@@ -25,6 +25,9 @@ def run(argv):
     parser.add_argument("--top", type=float, default=65, help="Frustum top diameter in mm")
     parser.add_argument("--height", type=float, default=100, help="Axial object height in mm")
     parser.add_argument("--width", type=float, help="Artwork width in mm (aspect ratio preserved)")
+    parser.add_argument('--frame', choices=['page', 'visible'],
+                        help='Sizing frame; new conversions default to visible artwork. '
+                             'Saved projects retain their frame unless explicitly overridden.')
     parser.add_argument("--coverage", type=float, default=180, help="Wrap coverage in degrees")
     parser.add_argument("--tolerance", type=float, default=0.01, help="Production tolerance in mm")
     parser.add_argument(
@@ -35,6 +38,8 @@ def run(argv):
         artwork = import_svg(args.input.read_text(encoding="utf-8-sig"))
         if args.project:
             project = load_project(args.project)
+            if args.frame:
+                project.artwork_frame = args.frame
         else:
             project = Project(
                 object=ObjectSpec(
@@ -47,10 +52,12 @@ def run(argv):
                 wrap_degrees=args.coverage,
                 export_tolerance_mm=args.tolerance,
                 physical_model=args.workflow,
+                artwork_frame=args.frame or 'visible',
             )
-            project.placement.width = args.width or artwork.width_mm
+            frame = project.source_frame(artwork)
+            project.placement.width = args.width or frame.width
             project.placement.height = (
-                artwork.height_mm * project.placement.width / artwork.width_mm
+                frame.height * project.placement.width / frame.width
             )
             project.center_artwork()
         result = convert(artwork, project, original=args.export == "original")
