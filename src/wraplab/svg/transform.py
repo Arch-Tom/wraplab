@@ -95,9 +95,10 @@ def convert_artwork(artwork, mapper, tolerance, placement_scale=1.0, outline_tol
     def mapped(point):
         return mapper(within_canvas(point))
 
-    for shape in artwork.shapes:
+    for shape_index, shape in enumerate(artwork.shapes):
         style = shape.style
         opacity = float(style["opacity"])
+        first_paint = len(paths)
         before, after = [], []
         if (
             style["fill"] not in {"none", "transparent"}
@@ -238,6 +239,14 @@ def convert_artwork(artwork, mapper, tolerance, placement_scale=1.0, outline_tol
                 warnings.append(
                     "Strokes converted to filled outlines for physical-width compensation."
                 )
+        if opacity != 1 and len(paths) - first_paint == 2:
+            # SVG element opacity composites the completed fill/stroke once. Keep
+            # both cutting paths unchanged, with their own paint opacity inside
+            # one element group. Single-paint/opaque output retains its old form.
+            fill, stroke = paths[first_paint:]
+            fill.opacity = float(style["fill-opacity"])
+            stroke.opacity = float(style["stroke-opacity"])
+            fill.opacity_group = stroke.opacity_group = (shape_index, opacity)
         if sum(len(c.points) for p in paths for c in p.contours) > MAX_NODES:
             raise ValueError(
                 "Artwork exceeds 200,000 output nodes. Simplify the source or increase tolerance."

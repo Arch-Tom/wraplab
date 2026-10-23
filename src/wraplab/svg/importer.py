@@ -3,7 +3,7 @@
 import math
 import re
 from types import MappingProxyType
-from xml.etree.ElementTree import Element, ParseError
+from xml.etree.ElementTree import Element, ParseError, TreeBuilder
 
 from defusedxml import ElementTree as SafeET
 from defusedxml.common import DefusedXmlException, EntitiesForbidden, ExternalReferenceForbidden
@@ -13,6 +13,21 @@ from ..geometry.units import positive
 from .model import Affine, Artwork, Shape, Subpath
 
 SVG_NS = "http://www.w3.org/2000/svg"
+CONDITIONAL_ATTRIBUTES = {"requiredExtensions", "requiredFeatures", "systemLanguage"}
+
+
+class _SVGTreeBuilder(TreeBuilder):
+    """Observe stylesheet instructions before the ordinary tree discards them."""
+
+    def __init__(self):
+        super().__init__()
+        self.has_stylesheet = False
+
+    def pi(self, target, text):
+        if target == "xml-stylesheet":
+            self.has_stylesheet = True
+
+
 NUMBER = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?"
 NUM_RE = re.compile(NUMBER)
 LENGTH_RE = re.compile(rf"\s*({NUMBER})\s*(mm|cm|in|pt|pc|px)?\s*\Z")
@@ -431,7 +446,10 @@ def import_svg(text: str) -> Artwork:
     if not isinstance(text, str) or len(text.encode("utf-8")) > 10_000_000:
         raise ValueError("SVG exceeds the 10 MB import limit.")
     try:
-        root = SafeET.fromstring(text)
+        builder = _SVGTreeBuilder()
+        parser = SafeET.DefusedXMLParser(target=builder)
+        parser.feed(text)
+        root = parser.close()
     except EntitiesForbidden as exc:
         raise ValueError("This SVG contains XML entity declarations, which cannot be imported. "
                          "Export a plain SVG without entity declarations; artwork was not changed.") from exc
@@ -447,6 +465,9 @@ def import_svg(text: str) -> Artwork:
                          "Export it again as SVG, or repair the XML at that location.") from exc
     except Exception as exc:
         raise ValueError("This SVG could not be parsed. Export it again as a plain SVG.") from exc
+    if builder.has_stylesheet:
+        raise ValueError("SVG stylesheet processing instructions are unsupported. "
+                         "Export a self-contained plain SVG with inline solid fill/stroke styles.")
     if root.tag not in {"svg", f"{{{SVG_NS}}}svg"}:
         raise ValueError("The file must contain an SVG root element.")
     if len(list(root.iter())) > 20_000:
@@ -454,6 +475,12 @@ def import_svg(text: str) -> Artwork:
     stack = [(root, 0)]
     while stack:
         element, depth = stack.pop()
+        for key in element.attrib:
+            attribute = key.split("}")[-1]
+            if attribute in CONDITIONAL_ATTRIBUTES:
+                raise ValueError(f"SVG conditional attribute {attribute} is unsupported. "
+                                 "Resolve conditional content in the source editor and export "
+                                 "a plain, unconditional SVG.")
         if element.tag.split("}")[-1] == "script" or any(
             key.split("}")[-1].lower().startswith("on") for key in element.attrib
         ):

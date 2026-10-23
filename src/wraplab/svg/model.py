@@ -98,6 +98,9 @@ class VectorPath:
     opacity: float = 1.0
     stroke: str = "none"
     stroke_width: float = 0.0
+    # Consecutive paints from one source element: (local identity, element opacity).
+    # Their individual opacity remains the paint opacity, applied before this group.
+    opacity_group: tuple[int, float] | None = None
 
 
 @dataclass

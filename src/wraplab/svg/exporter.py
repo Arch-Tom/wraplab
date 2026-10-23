@@ -215,7 +215,17 @@ def export_svg(conversion, project, mode="artwork", source_name=""):
         if not paths:
             continue
         group = ET.SubElement(root, f"{{{SVG_NS}}}g", {"id": group_name})
+        current_opacity_group = None
+        paint_parent = group
         for i, path in enumerate(paths):
+            if path.opacity_group is None:
+                current_opacity_group, paint_parent = None, group
+            elif path.opacity_group != current_opacity_group:
+                current_opacity_group = path.opacity_group
+                paint_parent = ET.SubElement(
+                    group, f"{{{SVG_NS}}}g",
+                    {"opacity": number(path.opacity_group[1])},
+                )
             attrs = {
                 "id": f"{group_name}-{i + 1}",
                 "d": path_data(path, complex(left, top)),
@@ -227,7 +237,7 @@ def export_svg(conversion, project, mode="artwork", source_name=""):
                 attrs["opacity"] = number(path.opacity)
             if path.stroke != "none":
                 attrs["stroke-width"] = number(path.stroke_width)
-            ET.SubElement(group, f"{{{SVG_NS}}}path", attrs)
+            ET.SubElement(paint_parent, f"{{{SVG_NS}}}path", attrs)
     ET.indent(root, space="  ")
     text = '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding="unicode") + "\n"
     validate_serialized(text, all_paths, complex(left, top))
@@ -283,6 +293,7 @@ def ideal_front_svg(artwork, project, preview=True):
                 path.fill,
                 path.fill_rule,
                 path.opacity,
+                opacity_group=path.opacity_group,
             )
         )
     return export_svg(Conversion(paths, [], original.tolerance_mm), project, "original")

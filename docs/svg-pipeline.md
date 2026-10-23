@@ -23,6 +23,21 @@ XML parsing disables DTD/entity expansion. Solid supported CSS colors are hex, b
 and comma-separated rgb; fancy CSS color/paint syntax is rejected. Safe strictness takes precedence
 over pretending to import every Corel SVG variant.
 
+Conditional-processing attributes (`requiredExtensions`, `requiredFeatures`, `systemLanguage`)
+are rejected throughout the document, including groups, hidden descendants and unused definitions.
+Resolve the intended visible content in the source editor and export an unconditional plain SVG.
+XML stylesheet processing instructions are detected by the safe parser before they are discarded
+and rejected; ordinary comments, metadata text and unrelated processing instructions remain valid.
+No stylesheet resource is loaded.
+
+Element opacity is applied after its fill and outlined stroke have been painted. When conversion
+emits both paints, export keeps their separate cutting contours and individual paint opacity in
+one SVG group carrying the element opacity. Opaque and single-paint output retains its existing
+representation. The ideal-front preview preserves this grouping as well. Arbitrary group opacity
+on imported SVG remains unsupported; importing a newly exported semitransparent two-paint group
+therefore still requires resolving it in the source editor. Its downstream CorelDRAW behavior is
+unverified. This export correction does not change geometry or broaden the imported SVG subset.
+
 The parser blocks XML entity declarations and external XML references. A bare SVG DOCTYPE
 does not necessarily fail and is not fetched as a rendering resource. Malformed XML is reported
 with parser-provided line/column; blocked declarations get separate operator guidance without
