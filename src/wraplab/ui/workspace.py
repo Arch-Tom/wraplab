@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 )
 
 from .views import Canvas, ProfileCanvas
+from .planning import MaskCanvas, PlanningPanel
 
 
 class MeasurementSpinBox(QDoubleSpinBox):
@@ -261,7 +262,19 @@ def build_workspace(window, notice_type):
     options.addWidget(w.surface_summary)
     w.result_label = note("")
     options.addWidget(w.result_label)
+    w.warning_details = note("")
+    w.warning_details.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+    options.addWidget(w.warning_details)
     side.addWidget(w.advanced)
+
+    w.mask_section = Disclosure("Mask planning · experimental")
+    w.planner = PlanningPanel()
+    w.planner.changed.connect(w.preview_settings_changed)
+    w.planner.historicalRequested.connect(w.apply_historical_trial)
+    w.planner.groupingRequested.connect(w.apply_verified_grouping)
+    w.planner.exportRequested.connect(w.choose_mask_export)
+    w.mask_section.body.addWidget(w.planner)
+    side.addWidget(w.mask_section)
 
     w.preset_section = Disclosure("Saved objects & measurement notes")
     saved = w.preset_section.body
@@ -349,6 +362,24 @@ def build_workspace(window, notice_type):
     w.notice.setTextFormat(Qt.TextFormat.PlainText)
     w.notice.setObjectName("Notice")
     layout.addWidget(w.notice)
+    camera_row = QHBoxLayout()
+    w.preview_mode = ChoiceBox()
+    w.preview_mode.addItem("Interactive 3D", "3d")
+    w.preview_mode.addItem("Original 2D preview", "2d")
+    w.preview_mode.setAccessibleName("Object preview mode")
+    w.preview_mode.currentIndexChanged.connect(w.preview_mode_changed)
+    camera_row.addWidget(w.preview_mode)
+    w.camera_views = ChoiceBox()
+    for name in ("Front", "Left", "Right", "Rear", "Seam"):
+        w.camera_views.addItem(name)
+    w.camera_views.setAccessibleName("3D camera direction")
+    w.camera_views.activated.connect(w.camera_view_changed)
+    camera_row.addWidget(w.camera_views)
+    reset = QPushButton("Reset view")
+    reset.clicked.connect(lambda: w.camera_view_changed(-1))
+    camera_row.addWidget(reset)
+    camera_row.addStretch()
+    layout.addLayout(camera_row)
     w.preview_splitter = QSplitter(Qt.Orientation.Horizontal)
     w.preview_splitter.setChildrenCollapsible(False)
     w.front_view, w.development, w.original = Canvas(), Canvas(), Canvas()
@@ -356,9 +387,25 @@ def build_workspace(window, notice_type):
     w.object_preview_stack = QStackedWidget()
     w.object_preview_stack.addWidget(w.front_view)
     w.object_preview_stack.addWidget(w.profile_view)
+    w.scene_view = None
+    try:
+        from .scene3d import SceneView
+        w.scene_view = SceneView()
+        w.scene_view.failed.connect(w.renderer_failed)
+        w.scene_view.cameraChanged.connect(w.camera_changed)
+        w.scene_view.maskSelected.connect(w.select_mask)
+        w.object_preview_stack.addWidget(w.scene_view)
+    except (ImportError, RuntimeError) as exc:
+        w._renderer_error = str(exc)
+    w.mask_canvas = MaskCanvas()
+    w.flat_preview_stack = QStackedWidget()
+    w.flat_preview_stack.addWidget(w.development)
+    w.flat_preview_stack.addWidget(w.mask_canvas)
+    w.mask_canvas.maskSelected.connect(w.select_mask)
+    w.development.maskSelected.connect(w.select_mask)
     for title, view, caption_name, caption in [
         ("On the Object", w.object_preview_stack, "front_caption", "Front-view target · 2D preview"),
-        ("Flat Cutting Pattern", w.development, "flat_caption", "Compensated artwork · preview only"),
+        ("Flat Cutting Pattern", w.flat_preview_stack, "flat_caption", "Compensated artwork · preview only"),
     ]:
         frame = QFrame()
         frame.setObjectName("PreviewPanel")

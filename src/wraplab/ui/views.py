@@ -1,4 +1,4 @@
-from PySide6.QtCore import QByteArray, Qt
+from PySide6.QtCore import QByteArray, Qt, Signal
 from PySide6.QtGui import QColor, QPainter, QPainterPath, QPen
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtSvgWidgets import QGraphicsSvgItem
@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QGraphicsScene, QGraphicsView
 
 
 class Canvas(QGraphicsView):
+    maskSelected = Signal(str)
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setScene(QGraphicsScene(self))
@@ -20,6 +21,8 @@ class Canvas(QGraphicsView):
         self.svg_text = None
         self.item = None
         self.auto_fit = True
+        self._mask_items = []
+        self._mask_press = None
 
     def set_svg(self, text):
         renderer = QSvgRenderer(QByteArray(text.encode("utf-8")), self)
@@ -27,6 +30,7 @@ class Canvas(QGraphicsView):
             renderer.deleteLater()
             raise ValueError("Preview renderer could not read the generated SVG.")
         self.scene().clear()
+        self._mask_items = []
         if self.renderer:
             self.renderer.deleteLater()
         self.renderer = renderer
@@ -40,6 +44,7 @@ class Canvas(QGraphicsView):
 
     def set_message(self, text):
         self.scene().clear()
+        self._mask_items = []
         if self.renderer:
             self.renderer.deleteLater()
         self.renderer = self.item = self.svg_text = None
@@ -66,6 +71,18 @@ class Canvas(QGraphicsView):
             self.auto_fit = False
             self.scale(scale, scale)
         event.accept()
+
+    def mousePressEvent(self, event):
+        self._mask_press = event.position()
+        super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        if self._mask_press is not None and (event.position()-self._mask_press).manhattanLength()<4:
+            item=self.itemAt(event.position().toPoint())
+            if item is not None and isinstance(item.data(0),str):
+                self.maskSelected.emit(item.data(0))
+        self._mask_press=None
+        super().mouseReleaseEvent(event)
 
 
 class ProfileCanvas(Canvas):

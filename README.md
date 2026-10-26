@@ -59,8 +59,9 @@ Use the existing checkout; cloud tasks are already isolated and do not need a wo
    Existing projects retain original-page framing and saved placement.
 5. Compare **On the Object** and **Flat Cutting Pattern** side by side. **Position artwork**
    exposes accurate horizontal and top-referenced placement; Center artwork sets both automatically.
-   Wheel zooms; drag pans the preview, not the artwork. Fit views resets zoom. Original artwork
-   is available below the previews. The front target is a 2D viewing model, not physical approval.
+   Interactive 3D shows the actual SVG on the measured object: drag orbits, right-drag pans,
+   and wheel zooms. Front/side/rear/seam cameras and the retained 2D preview are available.
+   Original artwork is below the previews. Neither display establishes physical approval.
 6. Inspect measured-profile warnings and stretch/compression estimates. Test paper/vinyl first.
 7. Use **Export Compensated SVG** for artwork-only output. **Export options** holds guides,
    full templates and uncompensated comparison; guide paths may cut. **Advanced** holds the
@@ -75,6 +76,7 @@ Production output is in explicit **mm** even when the interface displays inches.
 New job preserves a modified job in the existing recovery file; Resume last job reopens it.
 Common shortcuts: Ctrl+O import, Ctrl+Shift+O open project, Ctrl+S save, Ctrl+E export, Ctrl+N new.
 See [the simple-workflow guide and validation](docs/simple-workflow.md).
+See [interactive 3D, three-mask planning and separate experimental output](docs/3d-mask-planning.md).
 
 ## Validate / build
 

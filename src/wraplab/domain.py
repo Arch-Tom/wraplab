@@ -119,8 +119,12 @@ class Project:
     # Preserve the programmatic API's original meaning. Operator entry points
     # (new GUI jobs and CLI conversions) explicitly prefer visible framing.
     artwork_frame: str = "page"
+    # Optional presentation/planning state. Never consumed by ordinary SVG export.
+    preview_options: dict = field(default_factory=dict)
 
     def validate(self, artwork: bool = True):
+        from .preview.settings import options
+        options(self.preview_options)
         if (self.schema_version != 2 or self.artwork_frame not in {"page", "visible"}
                 or self.physical_model not in {
             "surface-template",
@@ -154,14 +158,43 @@ class Project:
         surface = self.validate()
         development = self.development(surface)
         p = self.placement
-        reference_radius = surface.radius(surface.height / 2)
-        center = math.radians(self.wrap_degrees) / 2
+        locate = self.surface_mapper(canvas_width, canvas_height)
         rotation = complex(
             math.cos(math.radians(self.rotation_degrees)),
             math.sin(math.radians(self.rotation_degrees)),
         )
 
         def mapping(point: complex) -> complex:
+            theta, z = locate(point)
+            x, y = develop(development, theta, z)
+            return complex(x, y) * rotation
+
+        mapping.profile_y = (
+            [(z - p.z) * canvas_height / p.height for z, _ in surface.points]
+            if isinstance(surface, MeasuredProfile)
+            else []
+        )
+        mapping.derivative_bounds = self.mapping_derivative_bounds(surface)
+        mapping.placement_affine = (p.width / canvas_width, p.height / canvas_height)
+        mapping.certificate_level = (
+            "analytical-exact-surface"
+            if not isinstance(surface, MeasuredProfile)
+            else "analytical-derivatives-numerical-profile-quadrature"
+        )
+        return mapping
+
+    def surface_mapper(self, canvas_width: float, canvas_height: float):
+        """Canonical source-frame -> (front-relative angle, z-down mm).
+
+        Extracted without changing arithmetic from mapper, shared by development and
+        preview. A renderer must not independently reinterpret front or seam offsets.
+        """
+        surface = self.validate()
+        p = self.placement
+        reference_radius = surface.radius(surface.height / 2)
+        center = math.radians(self.wrap_degrees) / 2
+
+        def locate(point: complex):
             # Retain intended frame endpoints; multiplication before division can
             # reconstruct the bottom one ULP beyond the strictly checked surface.
             z = (p.z if point.imag == 0 else p.z + p.height if point.imag == canvas_height
@@ -181,22 +214,9 @@ class Project:
             else:
                 u = p.x + point.real * p.width / canvas_width
                 theta = u / reference_radius - center
-            x, y = develop(development, theta, z)
-            return complex(x, y) * rotation
+            return theta, z
 
-        mapping.profile_y = (
-            [(z - p.z) * canvas_height / p.height for z, _ in surface.points]
-            if isinstance(surface, MeasuredProfile)
-            else []
-        )
-        mapping.derivative_bounds = self.mapping_derivative_bounds(surface)
-        mapping.placement_affine = (p.width / canvas_width, p.height / canvas_height)
-        mapping.certificate_level = (
-            "analytical-exact-surface"
-            if not isinstance(surface, MeasuredProfile)
-            else "analytical-derivatives-numerical-profile-quadrature"
-        )
-        return mapping
+        return locate
 
     def development(self, surface=None):
         surface = surface or self.validate(False)

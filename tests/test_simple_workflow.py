@@ -57,7 +57,7 @@ def test_empty_state_common_controls_and_export_remain_accessible(window):
     assert window.export_button.isVisible() and not window.export_button.isEnabled()
     assert not window.center_button.isEnabled()
     assert not window.placement_fields["width"].isEnabled()
-    assert window.profile_view.isVisible() and window.development.isVisible()
+    assert window.object_preview_stack.currentWidget().isVisible() and window.development.isVisible()
 
 
 def test_cylinder_job_preserves_reference_engine_output_units_and_counters(window, tmp_path):
@@ -72,7 +72,7 @@ def test_cylinder_job_preserves_reference_engine_output_units_and_counters(windo
     assert window.project.placement.height == pytest.approx(25 * 40 / 60)
     assert window.project.placement.x == 0
     assert window.project.placement.z == pytest.approx((120 - 25 * 40 / 60) / 2)
-    assert window.front_view.isVisible() and window.development.isVisible()
+    assert window.object_preview_stack.currentWidget().isVisible() and window.development.isVisible()
     assert window.export_button.isEnabled()
     reference = Project()
     reference.object.diameter, reference.object.height = 70, 120

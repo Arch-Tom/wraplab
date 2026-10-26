@@ -34,6 +34,7 @@ from ..persistence import PresetStore, load_project, save_project
 from ..svg import convert, export_svg, import_svg
 from ..svg.exporter import ideal_front_svg, write_export
 from .workspace import MeasurementSpinBox, build_workspace
+from ..preview.settings import options as preview_options
 
 MODES = [
     ("Cylinder — Exact", "cylinder"),
@@ -133,7 +134,26 @@ class PreviewJob(QRunnable):
                 text = (None if self.project.object.mode == "measured" and self.export_mode != "template"
                         else export_svg(None, self.project, "template"))
                 payload = (None, text, None, None, None)
-            self.signals.finished.emit(self.generation, payload, None)
+            # Renderer/planner failures must not turn a valid ordinary SVG job into
+            # an export failure. Geometry stays on the existing worker/generation guard.
+            extra = {"scene": None, "plan": None, "scene_error": None, "plan_error": None}
+            try:
+                from ..preview.scene import build_scene
+                from ..masks.model import assignment_from_dict
+                from ..masks.planner import plan_masks
+                settings = preview_options(self.project.preview_options)
+                if self.artwork and settings["assignment"]:
+                    try:
+                        extra["plan"] = plan_masks(self.artwork, self.project,
+                            assignment_from_dict(settings["assignment"]), settings["method"],
+                            settings["margins_mm"], preview=True)
+                    except (ValueError, ArithmeticError) as exc:
+                        extra["plan_error"] = str(exc)
+                extra["scene"] = build_scene(self.project, self.artwork,
+                    original=original if self.artwork else None, plan=extra["plan"])
+            except Exception as exc:
+                extra["scene_error"] = str(exc)
+            self.signals.finished.emit(self.generation, (*payload, extra), None)
         except Exception as exc:
             self.signals.finished.emit(self.generation, None, str(exc))
 
@@ -141,7 +161,7 @@ class PreviewJob(QRunnable):
 class MainWindow(QMainWindow):
     def __init__(self, data_dir: Path | None = None):
         super().__init__()
-        self.setWindowTitle(f"WrapLab {__version__} · Simple workflow")
+        self.setWindowTitle(f"WrapLab {__version__} · 3D preview & mask planning")
         self.resize(1370, 900)
         self.setMinimumSize(980, 650)
         screen = QApplication.primaryScreen()
@@ -169,6 +189,8 @@ class MainWindow(QMainWindow):
         self._timer = QTimer(self)
         self._timer.setSingleShot(True)
         self._timer.timeout.connect(self._start_preview)
+        self._plan = self._scene = None
+        self._renderer_error = None
         self._build()
         self._load_controls()
         self._load_presets()
@@ -252,11 +274,22 @@ class MainWindow(QMainWindow):
         self.original_section.toggle.setEnabled(imported)
         self.position_section.toggle.setEnabled(editable_support)
         self.advanced.toggle.setText("Advanced · " + self.workflow.currentText())
-        self.object_preview_stack.setCurrentIndex(0 if imported and front else 1)
+        settings = preview_options(self.project.preview_options)
+        use_3d = settings["view"] == "3d" and self.scene_view is not None and not self._renderer_error
+        self.object_preview_stack.setCurrentIndex(2 if use_3d else 0 if imported and front else 1)
+        self.preview_mode.blockSignals(True)
+        self.preview_mode.setCurrentIndex(0 if use_3d else 1)
+        self.preview_mode.blockSignals(False)
+        self.camera_views.setEnabled(use_3d)
+        self.planner.restore(self.project.preview_options, self.artwork)
         self.front_caption.setText(
-            "Front-view target · upright object · 2D preview"
+            "Orbit: drag · Pan: right-drag / Shift-drag · Zoom: wheel · Preview only"
+            if use_3d else "Front-view target · upright object · 2D preview"
             if imported and front else "Object profile (schematic) · TOP is height 0"
         )
+        if self._renderer_error and settings["view"]=="3d":
+            self.front_caption.setText("3D unavailable · existing 2D view retained")
+            self.front_caption.setToolTip(self._renderer_error)
         selected_export = self.export_mode.currentData()
         self.flat_title.setText("Uncompensated Comparison" if selected_export == "original" else
                                 "Full Surface Template" if selected_export == "template" else "Flat Cutting Pattern")
@@ -290,6 +323,10 @@ class MainWindow(QMainWindow):
         self.export_summary.setText("SVG in millimeters · artwork only" if imported and mode == "artwork"
                                     else "Import artwork to begin." if not imported and mode != "template"
                                     else "SVG in millimeters · " + self.export_mode.currentText())
+        if imported and settings["assignment"] is not None:
+            if mode=="artwork":
+                self.export_button.setText("Export Whole Compensated SVG…")
+            self.export_summary.setText("Whole layout · separate mask SVGs use Mask planning.")
         for spin in self.object_fields.values():
             spin.setStyleSheet("border:1px solid #bc5940;" if spin.value() <= 0 else "")
 
@@ -608,6 +645,15 @@ class MainWindow(QMainWindow):
         self.project.source_svg = artwork.source
         self.project.source_name = path.name
         self.artwork = artwork
+        # Source-bound membership never transfers to a different imported document.
+        settings = preview_options(self.project.preview_options)
+        from ..masks.model import cantor_assignment
+        try:
+            settings["assignment"] = cantor_assignment(artwork).to_dict()
+        except ValueError:
+            settings["assignment"] = None
+        settings.update(selected_mask="all", method="global-split", mask_layout=False)
+        self.project.preview_options = settings
         self.source_path = path.resolve()
         self.project.placement.width = frame.width * scale
         self.project.placement.height = frame.height * scale
@@ -701,7 +747,9 @@ class MainWindow(QMainWindow):
             return
         self._generation += 1
         self.flat_dimensions.setText('Flat artwork dimensions pending' if self.artwork else '')
+        self.warning_details.setText("Preview details pending.")
         self.export_button.setEnabled(False)
+        self.planner.export_button.setEnabled(False)
         self._sync_presentation()
         self._set_preview_active(False)
         try:
@@ -757,7 +805,7 @@ class MainWindow(QMainWindow):
         if error:
             self.error(error)
             return
-        result, text, original_text, front_text, dimensions = payload
+        result, text, original_text, front_text, dimensions, extra = payload
         try:
             if text is None:
                 self.development.set_message("Import SVG to define the curved artwork region.")
@@ -772,6 +820,15 @@ class MainWindow(QMainWindow):
             )
             self._set_preview_active(True)
             self._sync_presentation()
+            self._plan, self._scene = extra["plan"], extra["scene"]
+            self.planner.set_plan(self._plan, extra["plan_error"])
+            if extra["scene_error"]:
+                self.renderer_failed(extra["scene_error"])
+            elif self._scene is not None and self.scene_view is not None:
+                if not self.scene_view.failure:
+                    self._renderer_error=None
+                self.scene_view.set_scene(self._scene, self.project.preview_options)
+            self.update_mask_views()
             if dimensions:
                 points = [p for path in dimensions.paths for c in path.contours for p in c.points]
                 width = max(p.real for p in points) - min(p.real for p in points)
@@ -795,14 +852,18 @@ class MainWindow(QMainWindow):
                 if self.project.physical_model == "front-view-vinyl"
                 else "Surface-wrap artwork: dimensions follow the surface. The object profile is a schematic."
             )
-            self.notice.setText(
-                assumption
-                + (
-                    "\n" + "\n".join(warnings)
-                    if warnings
-                    else ""
-                )
-            )
+            self.warning_details.setText("Full preview warnings\n"+"\n".join(warnings)
+                                         if warnings else "No additional preview warnings.")
+            if self.project.object.mode=="measured" and self.artwork:
+                low,high=self.project.development().strain_extrema()
+                summary=(f"EXPERIMENTAL measured band · modeled support extension {max(0,high):.2%}, "
+                         f"compression {max(0,-low):.2%}. Carrier/adhesion unmodeled; no material limit approved. "
+                         "Full warnings in Advanced.")
+                if self.export_mode.currentData() in {"guides","template"}:
+                    summary+=" Guide paths may cut."
+                self.notice.setText(summary)
+            else:
+                self.notice.setText(assumption+("\n"+"\n".join(warnings) if warnings else ""))
             self.result_label.setText(
                 f"Preview: {result.node_count:,} nodes · 0.08 mm tolerance · Wheel to zoom, drag to pan"
                 if result
@@ -813,6 +874,8 @@ class MainWindow(QMainWindow):
             self.error(str(exc))
 
     def _set_preview_active(self, active):
+        if self.scene_view is not None:
+            self.scene_view.setEnabled(active)
         for view in [self.front_view, self.development, self.original, self.profile_view]:
             view.setEnabled(active)
             for item in view.scene().items():
@@ -886,6 +949,121 @@ class MainWindow(QMainWindow):
     def fit_views(self):
         for view in [self.front_view, self.development, self.original, self.profile_view]:
             view.fit()
+        self.mask_canvas.fit()
+        if self.scene_view is not None:
+            self.scene_view.set_camera_view("Reset")
+
+    def preview_mode_changed(self, *_):
+        settings = preview_options(self.project.preview_options)
+        settings["view"] = self.preview_mode.currentData()
+        self.preview_settings_changed(settings)
+
+    def preview_settings_changed(self, settings):
+        previous = preview_options(self.project.preview_options)
+        self.project.preview_options = preview_options(settings)
+        self.dirty = True
+        if any(previous[key] != settings[key] for key in ("method", "margins_mm", "assignment", "physical_top_datum_mm")):
+            self._changed()
+        else:
+            self._sync_presentation()
+            if self.scene_view is not None:
+                self.scene_view.set_options(settings)
+            self.update_mask_views()
+
+    def camera_changed(self, camera):
+        settings = preview_options(self.project.preview_options)
+        settings["camera"] = camera
+        self.project.preview_options = settings
+        self.dirty = True
+
+    def camera_view_changed(self, index):
+        if self.scene_view is not None:
+            self.scene_view.set_camera_view(self.camera_views.itemText(index) if index >= 0 else "Reset")
+
+    def renderer_failed(self, message):
+        self._renderer_error = message
+        self._sync_presentation()
+        self.front_caption.setText("3D unavailable · existing 2D view retained")
+        self.front_caption.setToolTip(message)
+        self.statusBar().showMessage(message)
+
+    def select_mask(self, mask_id):
+        settings = preview_options(self.project.preview_options)
+        settings["selected_mask"] = mask_id
+        self.preview_settings_changed(settings)
+
+    def update_mask_views(self):
+        from .planning import highlight_global, apply_visibility
+        settings = preview_options(self.project.preview_options)
+        separate = bool(self._plan and (settings["mask_layout"] or self._plan.method=="independent"
+                                       or settings["isolate"] and settings["selected_mask"]!="all"))
+        self.flat_preview_stack.setCurrentIndex(1 if separate else 0)
+        apply_visibility(self.development,settings)
+        if not self._plan:
+            return
+        self.planner.set_plan(self._plan)
+        if separate:
+            self.mask_canvas.set_plan(self._plan, self.project, settings["selected_mask"], settings["isolate"],settings)
+            self.flat_title.setText("Experimental Mask Patterns" if self._plan.method == "independent" else "Separate Mask Patterns")
+            self.flat_caption.setText("Display gaps are not installation spacing · ordinary Export SVG remains unchanged")
+        elif self._plan.method == "global-split" and self.export_mode.currentData() != "template":
+            highlight_global(self.development, self._plan, self.project, settings,
+                             original=self.export_mode.currentData() == "original")
+
+    def apply_verified_grouping(self):
+        if not self.artwork:
+            return
+        from ..masks.model import cantor_assignment
+        try:
+            settings=preview_options(self.project.preview_options)
+            settings.update(assignment=cantor_assignment(self.artwork).to_dict(),
+                            selected_mask="all",method="global-split",mask_layout=False)
+            self.preview_settings_changed(settings)
+        except ValueError as exc:
+            self.planner.status.setText(str(exc))
+
+    def apply_historical_trial(self):
+        if not self.artwork:
+            return
+        from ..masks.model import cantor_trial
+        try:
+            self._autosave()  # Preserve the current project before this explicit replacement.
+            trial = cantor_trial(self.artwork)
+            trial.source_name = self.project.source_name
+            self.project = trial
+            self.project_path = None
+            self._invalid_cells.clear()
+            self._load_controls()
+            self._changed()
+            self.statusBar().showMessage("Historical nominal bell trial loaded. Measurements and production fit are NOT approved.")
+        except (ValueError, OSError) as exc:
+            self.planner.status.setText("Historical trial not applied: " + str(exc))
+
+    def choose_mask_export(self):
+        if self._busy or self._timer.isActive() or self._plan is None:
+            return
+        settings = preview_options(self.project.preview_options)
+        if settings["method"] == "independent" and not self.planner.ack.isChecked():
+            self.planner.status.setText("Acknowledge the experimental fit before exporting candidate masks.")
+            return
+        path, _ = QFileDialog.getSaveFileName(self, "Name a NEW mask-package folder",
+                                             "WrapLab-masks-"+settings["method"], "New package folder (*)")
+        if not path:
+            return
+        try:
+            from ..masks.model import assignment_from_dict
+            from ..masks.exporter import export_masks
+            self._assert_inputs()
+            QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+            _,manifest = export_masks(Path(path), self.artwork, self.project,
+                assignment_from_dict(settings["assignment"]), settings["method"], settings["margins_mm"],
+                acknowledge_experimental=self.planner.ack.isChecked())
+            self.planner.status.setText(f"Saved {manifest['mask_count']} vector masks to {Path(path).resolve()}. "
+                "Reference SVG is DO NOT CUT. Corel/cutter/material verification remains pending.")
+        except (ValueError, OSError) as exc:
+            self.planner.status.setText("Mask export paused: "+str(exc))
+        finally:
+            QApplication.restoreOverrideCursor()
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls() and len(event.mimeData().urls()) == 1:

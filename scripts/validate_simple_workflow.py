@@ -105,6 +105,7 @@ def run(output, reference_source, scale_factor=1.0):
             if mode == 2:
                 assert "Experimental" in window.badge.text()
             legacy_data = window.project.to_dict()
+            legacy_data.pop('preview_options', None)  # Presentation state is absent in the reference.
             legacy_data.pop('artwork_frame')
             legacy_data['schema_version'] = 1
             baseline = baseline_domain.Project.from_dict(legacy_data)
